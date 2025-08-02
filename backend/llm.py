@@ -86,9 +86,9 @@ def test_api_key():
             }
 
 SCRIPT_PROMPT = """
-Create a clean, engaging 60-90 second info reel script from this article.
+Create a clean, engaging 30 second info reel script from this article.
 Style: Viral social media, hook-driven, punchy delivery
-Structure: Hook → 3-4 key points → Call-to-action
+Structure: Hook → 2 key points → Call-to-action
 Tone: Conversational, energetic, informative but accessible
 Target: Short-form vertical video (TikTok/Instagram Reels)
 
@@ -126,22 +126,33 @@ def generate_script(article_text: str) -> str:
         raise Exception(f"Failed to generate script: {str(e)}") 
 
 CONVERSATIONAL_SCRIPT_PROMPT = """
-Create a HILARIOUS, realistic 60-90 second conversational script between Elon Musk and Donald Trump discussing this article.
+Write a 30-second comedy skit featuring Elon Musk as a patient teacher and Donald Trump as a loud and curious student discussing this article.
+
+Follow this structure:
+1. Musk opens the scene by asking a tech-related question to the class about the article topic.
+2. Trump eagerly asks short follow-up questions—but his ideas are exaggerated and overly simplified. 
+3. Musk patiently explains the concept in detail using a simple real-life analogy.
+
+Tone:
+- Fast-paced, sharp, and character-driven.
+- If adding them makes the conversation better, Trump and Musk should use their famous catchphrases.
 
 CRITICAL REQUIREMENTS:
+- Dialogue only. No narration.
+- Skit must fit within 30 seconds of spoken conversation.
 - Create ONLY natural dialogue between Elon and Trump
 - NO annotations, scene markers, or formatting
 - NO speaker labels like "Elon:" or "Trump:"
 - NO asterisks, parentheses, or special formatting
 - NO stage directions like (scoffs), (laughs), etc.
 - Just pure conversational dialogue that flows naturally
-- Make it EXTREMELY FUNNY and capture their real-world feud/dynamics
+- Make it EXTREMELY FUNNY and capture their real-world dynamics
 - Include their actual speaking styles, mannerisms, and famous phrases
 - Reference their real conflicts, Twitter feuds, and public disagreements
 - Make it sound like two people having a real, heated but funny conversation
 - Each speaker should have distinct personality and speaking style
 - Keep it engaging, informative, and HILARIOUS
-- Target length: 60-90 seconds when spoken
+- Target length: 30 seconds when spoken
 - Make it suitable for social media (TikTok/Instagram Reels)
 
 CRITICAL FOCUS REQUIREMENT:
@@ -155,9 +166,9 @@ CRITICAL FOCUS REQUIREMENT:
 - Make complex topics accessible and entertaining
 
 CONVERSATION STRUCTURE:
-- Create ONLY 6-8 total segments (3-4 exchanges)
-- Each speaker should have 3-4 substantial speaking turns
-- Make each response longer and more detailed
+- Create ONLY 4-6 total segments (2-3 exchanges)
+- Each speaker should have 2-3 speaking turns
+- Make each response concise but impactful
 - Natural back-and-forth conversation about the article
 - Include reactions, questions, and responses about the article content
 - End with a natural conclusion about the article topic
@@ -171,10 +182,10 @@ REAL-WORLD DYNAMICS TO CAPTURE:
 - Include their actual catchphrases and mannerisms
 
 SEGMENT LENGTH:
-- Each speaking turn should be 10-15 seconds when spoken
-- Make responses substantial but concise
-- Keep total duration to 60-90 seconds maximum
-- Aim for 6-8 total segments (3-4 exchanges)
+- Each speaking turn should be 5-8 seconds when spoken
+- Make responses concise and punchy
+- Keep total duration to 30 seconds maximum
+- Aim for 4-6 total segments (2-3 exchanges)
 
 HUMOR REQUIREMENTS:
 - Make it EXTREMELY FUNNY with real-world nuances
@@ -204,7 +215,7 @@ FORMATTING RULES:
 
 Article: {article_text}
 
-Generate ONLY clean, natural conversational dialogue with 6-8 short segments:
+Generate ONLY clean, natural conversational dialogue with 4-6 short segments:
 """
 
 def generate_conversational_script(article_text: str) -> str:

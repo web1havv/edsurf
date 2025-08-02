@@ -11,7 +11,7 @@ import json
 logger = logging.getLogger(__name__)
 
 # Voice IDs for different speakers
-TRUMP_VOICE_ID = "ANHNqAseXGR3gBQps4vo"  # Current Trump voice
+TRUMP_VOICE_ID = "ANHNqAseXGR3gBQps4vo"  # Trump voice from ElevenLabs
 ELON_VOICE_ID = "5p344brGATMrJ2N3FKFT"   # Elon Musk voice from ElevenLabs
 
 def parse_conversational_script(script_text):

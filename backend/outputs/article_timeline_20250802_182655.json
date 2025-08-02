@@ -1,0 +1,44 @@
+[
+  {
+    "speaker": "elon",
+    "start_time": 0.0,
+    "end_time": 10.5,
+    "text": "So, class, what's the big deal with this Docker thing. It's like\u2026totally changing the game. It's HUGE, like, really, really HUGE."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 10.7,
+    "end_time": 18.7,
+    "text": "So you just, like, put your stuff in a box, right. And it works anywhere. Exactly."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 18.9,
+    "end_time": 30.9,
+    "text": "Think of it like\u2026 a perfectly pre-packaged Big Mac. Same ingredients, same taste, no matter which McDonald's you go to. That's your Docker image."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 31.099999999999998,
+    "end_time": 38.599999999999994,
+    "text": "The container is the wrapper, keeping everything contained. Makes sense, right. Yeah, it's very bigly."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 38.8,
+    "end_time": 54.8,
+    "text": "But what about that\u2026Docker Compose thing. Is that like, a better deal. It's like building a whole McDonald's \u2013 you got your Big Macs, your fries, your milkshakes, all working together perfectly."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 55.0,
+    "end_time": 62.5,
+    "text": "Docker Compose orchestrates all the containers. So it\u2019s\u2026like\u2026the best deal ever. You know, the best."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 62.7,
+    "end_time": 64.7,
+    "text": "Everyone agrees. Totally tremendous."
+  }
+]

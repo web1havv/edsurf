@@ -11,7 +11,7 @@ from datetime import datetime
 
 from llm import generate_script, generate_conversational_script, test_api_key
 from conversational_tts import generate_conversational_voiceover
-from conversational_video import create_conversational_video
+from opencv_video_generator import create_background_video_with_speaker_overlays
 from article_extractor import extract_article_from_url
 
 # Configure comprehensive logging
@@ -201,10 +201,10 @@ async def generate_conversational_reel(article: ArticleInput):
         audio_path = await loop.run_in_executor(None, generate_conversational_voiceover, script)
         logger.info(f"🎵 [{request_id}] Conversational audio generated: {audio_path}")
         
-        # Step 4: Create conversational video
-        logger.info(f"🎬 [{request_id}] Step 4: Creating conversational video")
-        video_path = await loop.run_in_executor(None, create_conversational_video, script, audio_path)
-        logger.info(f"🎬 [{request_id}] Conversational video created: {video_path}")
+        # Step 4: Create conversational video with background and speaker overlays
+        logger.info(f"🎬 [{request_id}] Step 4: Creating conversational video with background and speaker overlays")
+        video_path = await loop.run_in_executor(None, create_background_video_with_speaker_overlays, script, audio_path)
+        logger.info(f"🎬 [{request_id}] Conversational video with background created: {video_path}")
         
         # Save all content to organized folder structure
         logger.info(f"💾 [{request_id}] Step 5: Saving files to organized folder structure")
@@ -304,14 +304,17 @@ async def generate_article_reel(article: ArticleInput):
         audio_path = await loop.run_in_executor(None, generate_conversational_voiceover, script)
         logger.info(f"🎵 [{request_id}] Audio generated successfully: {audio_path}")
         
-        # Step 4: Create conversational video
-        logger.info(f"🎬 [{request_id}] Step 4: Creating conversational video")
-        video_path = await loop.run_in_executor(None, create_conversational_video, script, audio_path)
-        logger.info(f"🎬 [{request_id}] Video created successfully: {video_path}")
+        # Step 4: Create conversational video with background and speaker overlays
+        logger.info(f"🎬 [{request_id}] Step 4: Creating conversational video with background and speaker overlays")
+        video_path = await loop.run_in_executor(None, create_background_video_with_speaker_overlays, script, audio_path)
+        logger.info(f"🎬 [{request_id}] Video with background created successfully: {video_path}")
         
         # Step 5: Save files to outputs directory
         logger.info(f"💾 [{request_id}] Step 5: Saving files to outputs directory")
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        
+        # Ensure outputs directory exists
+        os.makedirs("outputs", exist_ok=True)
         
         # Save script
         script_filename = f"article_script_{timestamp}.txt"
@@ -321,10 +324,15 @@ async def generate_article_reel(article: ArticleInput):
         logger.info(f"📝 [{request_id}] Script saved: {script_path}")
         
         # Save timeline
+        from conversational_tts import create_speaker_timeline
         timeline = create_speaker_timeline(script)
         timeline_filename = f"article_timeline_{timestamp}.json"
         timeline_path = os.path.join("outputs", timeline_filename)
         import json
+        
+        # Ensure outputs directory exists
+        os.makedirs("outputs", exist_ok=True)
+        
         with open(timeline_path, 'w', encoding='utf-8') as f:
             json.dump(timeline, f, indent=2)
         logger.info(f"⏰ [{request_id}] Timeline saved: {timeline_path}")
@@ -366,38 +374,64 @@ async def generate_article_reel(article: ArticleInput):
 @app.get("/download/{filename}")
 async def download_file(filename: str):
     logger.info(f"📥 Download request for file: {filename}")
-    file_path = os.path.join("static", filename)
-    if not os.path.exists(file_path):
-        logger.error(f"❌ File not found: {file_path}")
-        raise HTTPException(status_code=404, detail="File not found")
-    logger.info(f"✅ File found, serving: {file_path}")
-    return FileResponse(file_path)
+    
+    # Check outputs directory first (for new API-generated files)
+    outputs_path = os.path.join("outputs", filename)
+    if os.path.exists(outputs_path):
+        logger.info(f"✅ File found in outputs: {outputs_path}")
+        return FileResponse(outputs_path)
+    
+    # Fallback to static directory (for legacy files)
+    static_path = os.path.join("static", filename)
+    if os.path.exists(static_path):
+        logger.info(f"✅ File found in static: {static_path}")
+        return FileResponse(static_path)
+    
+    logger.error(f"❌ File not found in outputs or static: {filename}")
+    raise HTTPException(status_code=404, detail="File not found")
 
 @app.get("/files")
 async def list_files():
     """List all stored files with their details"""
     try:
-        static_dir = "static"
-        if not os.path.exists(static_dir):
-            return {"files": [], "total_files": 0, "total_size": 0}
-        
         files = []
         total_size = 0
         
-        for filename in os.listdir(static_dir):
-            file_path = os.path.join(static_dir, filename)
-            if os.path.isfile(file_path):
-                file_size = os.path.getsize(file_path)
-                file_type = "audio" if filename.endswith(".wav") else "video" if filename.endswith(".mp4") else "other"
-                
-                files.append({
-                    "filename": filename,
-                    "size_bytes": file_size,
-                    "size_mb": round(file_size / 1024 / 1024, 2),
-                    "type": file_type,
-                    "download_url": f"/download/{filename}"
-                })
-                total_size += file_size
+        # Check both outputs and static directories
+        directories = [
+            ("outputs", "API Generated"),
+            ("static", "Legacy")
+        ]
+        
+        for dir_name, dir_label in directories:
+            if os.path.exists(dir_name):
+                for filename in os.listdir(dir_name):
+                    file_path = os.path.join(dir_name, filename)
+                    if os.path.isfile(file_path):
+                        file_size = os.path.getsize(file_path)
+                        
+                        # Determine file type
+                        if filename.endswith((".wav", ".mp3")):
+                            file_type = "audio"
+                        elif filename.endswith(".mp4"):
+                            file_type = "video" 
+                        elif filename.endswith(".txt"):
+                            file_type = "script"
+                        elif filename.endswith(".json"):
+                            file_type = "timeline"
+                        else:
+                            file_type = "other"
+                        
+                        files.append({
+                            "filename": filename,
+                            "size_bytes": file_size,
+                            "size_mb": round(file_size / 1024 / 1024, 2),
+                            "type": file_type,
+                            "source": dir_label,
+                            "location": dir_name,
+                            "download_url": f"/download/{filename}"
+                        })
+                        total_size += file_size
         
         # Sort by creation time (newest first)
         files.sort(key=lambda x: x["filename"], reverse=True)

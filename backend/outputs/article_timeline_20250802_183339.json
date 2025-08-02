@@ -1,0 +1,44 @@
+[
+  {
+    "speaker": "elon",
+    "start_time": 0.0,
+    "end_time": 8.0,
+    "text": "So, class, what's a Docker container, huh. Think of it like\u2026 a really fancy, self-contained apartment."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 8.2,
+    "end_time": 17.2,
+    "text": "It's like, a tiny apartment building, right. You can put anything in it,  huge success, the best apartment."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 17.4,
+    "end_time": 28.9,
+    "text": "No, Donald, it's more like\u2026  your code lives in this self-contained unit. It has everything it needs \u2013  the plumbing, the electricity, everything."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 29.099999999999998,
+    "end_time": 39.599999999999994,
+    "text": "It runs independently of the building, which is your operating system. So, like,  it\u2019s totally secure,  nobody can touch it, right."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 39.8,
+    "end_time": 52.8,
+    "text": "Like my wall around the White House,  the best wall. It's secure, yes, but think of it more like\u2026 a perfectly isolated ecosystem, like a terrarium."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 53.0,
+    "end_time": 59.0,
+    "text": "It contains everything to operate independent of any outside factors. Beautiful, beautiful."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 59.2,
+    "end_time": 66.2,
+    "text": "So it\u2019s like,  a really, really bigly successful terrarium,  the best terrarium, everybody agrees."
+  }
+]

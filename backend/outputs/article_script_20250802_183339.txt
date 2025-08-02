@@ -1,0 +1,14 @@
+Title: Introduction to Docker
+URL: https://medium.com/@anshulganvir/introduction-to-docker-337b9d09a079
+
+So, class, what's a Docker container, huh?  Think of it like… a really fancy, self-contained apartment.
+
+It's like, a tiny apartment building, right?  You can put anything in it,  huge success, the best apartment!
+
+No, Donald, it's more like…  your code lives in this self-contained unit. It has everything it needs –  the plumbing, the electricity, everything.  It runs independently of the building, which is your operating system.
+
+So, like,  it’s totally secure,  nobody can touch it, right?  Like my wall around the White House,  the best wall!
+
+It's secure, yes, but think of it more like… a perfectly isolated ecosystem, like a terrarium.  It contains everything to operate independent of any outside factors.
+
+Beautiful, beautiful.  So it’s like,  a really, really bigly successful terrarium,  the best terrarium, everybody agrees.
