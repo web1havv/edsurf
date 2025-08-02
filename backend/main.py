@@ -1,0 +1,478 @@
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+import asyncio
+import os
+import tempfile
+import logging
+import sys
+from datetime import datetime
+
+from llm import generate_script, generate_conversational_script, test_api_key
+from conversational_tts import generate_conversational_voiceover
+from conversational_video import create_conversational_video
+from article_extractor import extract_article_from_url
+
+# Configure comprehensive logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('app.log'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
+
+app = FastAPI(title="Info Reeler API")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class ArticleInput(BaseModel):
+    url: str = None
+    text: str = None
+    title: str = None
+
+class ReelResponse(BaseModel):
+    script: str
+    audio_url: str
+    video_url: str = None
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info("🚀 Starting Info Reeler API Server")
+    logger.info(f"📅 Server started at: {datetime.now()}")
+    
+    # Test API key validity
+    try:
+        logger.info("🔑 Testing Gemini API key validity...")
+        api_key_status = test_api_key()
+        if api_key_status["valid"]:
+            logger.info("✅ Gemini API key is valid and working!")
+            logger.info(f"📊 API Key Info: {api_key_status.get('info', 'N/A')}")
+        else:
+            logger.error(f"❌ Gemini API key is invalid: {api_key_status.get('error', 'Unknown error')}")
+    except Exception as e:
+        logger.error(f"❌ Failed to test API key: {str(e)}")
+    
+    logger.info("🏥 Health check endpoint available at /health")
+    logger.info("📝 Generate reel endpoint available at /generate-reel")
+
+@app.post("/generate-reel", response_model=ReelResponse)
+async def generate_info_reel(article: ArticleInput):
+    request_id = f"req_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    logger.info(f"🔄 [{request_id}] Starting reel generation process")
+    logger.info(f"📄 [{request_id}] Input: URL={article.url}, Text length={len(article.text) if article.text else 0}")
+    
+    try:
+        # Step 1: Extract/clean content
+        logger.info(f"📖 [{request_id}] Step 1: Extracting content")
+        if article.url:
+            logger.info(f"🌐 [{request_id}] Extracting from URL: {article.url}")
+            content = extract_from_url(article.url)
+            logger.info(f"📄 [{request_id}] Extracted content length: {len(content)} characters")
+        else:
+            logger.info(f"📝 [{request_id}] Using provided text content")
+            content = article.text
+            logger.info(f"📄 [{request_id}] Content length: {len(content)} characters")
+        
+        # Step 2: Generate script (async)
+        logger.info(f"🤖 [{request_id}] Step 2: Generating script with Gemini AI")
+        loop = asyncio.get_event_loop()
+        script = await loop.run_in_executor(None, generate_script, content)
+        logger.info(f"📜 [{request_id}] Script generated successfully")
+        logger.info(f"📜 [{request_id}] Script length: {len(script)} characters")
+        logger.debug(f"📜 [{request_id}] Script preview: {script[:200]}...")
+        
+        # Step 3: Generate constant image and audio in parallel
+        logger.info(f"🎨 [{request_id}] Step 3: Generating constant image and audio in parallel")
+        image_task = loop.run_in_executor(None, create_constant_image)
+        audio_task = loop.run_in_executor(None, generate_voiceover, script)
+        
+        logger.info(f"🎨 [{request_id}] Starting constant image generation...")
+        logger.info(f"🎵 [{request_id}] Starting audio generation...")
+        
+        constant_image, audio_path = await asyncio.gather(image_task, audio_task)
+        
+        logger.info(f"🎨 [{request_id}] Constant image generated successfully")
+        logger.info(f"🎵 [{request_id}] Audio generated: {audio_path}")
+        
+        # Step 4: Create video with constant image
+        logger.info(f"🎬 [{request_id}] Step 4: Creating vertical video with constant image")
+        video_path = await loop.run_in_executor(None, create_vertical_video, [constant_image], audio_path, script)
+        logger.info(f"🎬 [{request_id}] Video created: {video_path}")
+        
+        # Save all content to organized folder structure
+        logger.info(f"💾 [{request_id}] Step 5: Saving files to organized folder structure")
+        
+        # Create organized output directories
+        output_base = os.path.expanduser("~/Downloads/info_reeler_outputs")
+        scripts_dir = os.path.join(output_base, "scripts")
+        audio_dir = os.path.join(output_base, "audio")
+        videos_dir = os.path.join(output_base, "videos")
+        
+        for directory in [scripts_dir, audio_dir, videos_dir]:
+            os.makedirs(directory, exist_ok=True)
+        
+        # Create better filenames with timestamp and request ID
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        script_filename = f"script_{timestamp}_{request_id}.txt"
+        audio_filename = f"audio_{timestamp}_{request_id}.wav"
+        video_filename = f"video_{timestamp}_{request_id}.mp4"
+        
+        # Save script to organized folder
+        script_path = os.path.join(scripts_dir, script_filename)
+        with open(script_path, 'w', encoding='utf-8') as f:
+            f.write(script)
+        logger.info(f"📝 [{request_id}] Script saved: {script_path}")
+        
+        # Move audio and video to organized folders
+        audio_url = os.path.join(audio_dir, audio_filename)
+        video_url = os.path.join(videos_dir, video_filename)
+        
+        os.rename(audio_path, audio_url)
+        os.rename(video_path, video_url)
+        
+        # Also save to static dir for web access
+        static_dir = "static"
+        os.makedirs(static_dir, exist_ok=True)
+        static_audio_url = os.path.join(static_dir, audio_filename)
+        static_video_url = os.path.join(static_dir, video_filename)
+        
+        # Copy files to static directory for web access
+        import shutil
+        shutil.copy2(audio_url, static_audio_url)
+        shutil.copy2(video_url, static_video_url)
+        
+        logger.info(f"✅ [{request_id}] Reel generation completed successfully!")
+        logger.info(f"📁 [{request_id}] Files saved to organized folders:")
+        logger.info(f"📝 Script: {script_path}")
+        logger.info(f"🎵 Audio: {audio_url}")
+        logger.info(f"🎬 Video: {video_url}")
+        logger.info(f"📊 [{request_id}] File sizes: Audio={os.path.getsize(audio_url)} bytes, Video={os.path.getsize(video_url)} bytes")
+        
+        return ReelResponse(
+            script=script,
+            audio_url=f"/download/{audio_filename}",
+            video_url=f"/download/{video_filename}"
+        )
+    except Exception as e:
+        logger.error(f"❌ [{request_id}] Error during reel generation: {str(e)}")
+        logger.error(f"❌ [{request_id}] Error type: {type(e).__name__}")
+        logger.error(f"❌ [{request_id}] Full error details: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/generate-conversational-reel", response_model=ReelResponse)
+async def generate_conversational_reel(article: ArticleInput):
+    request_id = f"req_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    logger.info(f"🔄 [{request_id}] Starting conversational reel generation process")
+    logger.info(f"📄 [{request_id}] Input: URL={article.url}, Text length={len(article.text) if article.text else 0}")
+    
+    try:
+        # Step 1: Extract/clean content
+        logger.info(f"📖 [{request_id}] Step 1: Extracting content")
+        if article.url:
+            logger.info(f"🌐 [{request_id}] Extracting from URL: {article.url}")
+            content = extract_from_url(article.url)
+            logger.info(f"📄 [{request_id}] Extracted content length: {len(content)} characters")
+        else:
+            logger.info(f"📝 [{request_id}] Using provided text content")
+            content = article.text
+            logger.info(f"📄 [{request_id}] Content length: {len(content)} characters")
+        
+        # Step 2: Generate conversational script (async)
+        logger.info(f"🤖 [{request_id}] Step 2: Generating conversational script with Gemini AI")
+        loop = asyncio.get_event_loop()
+        script = await loop.run_in_executor(None, generate_conversational_script, content)
+        logger.info(f"📜 [{request_id}] Conversational script generated successfully")
+        logger.info(f"📜 [{request_id}] Script length: {len(script)} characters")
+        logger.debug(f"📜 [{request_id}] Script preview: {script[:200]}...")
+        
+        # Step 3: Generate conversational audio
+        logger.info(f"🎵 [{request_id}] Step 3: Generating conversational audio")
+        audio_path = await loop.run_in_executor(None, generate_conversational_voiceover, script)
+        logger.info(f"🎵 [{request_id}] Conversational audio generated: {audio_path}")
+        
+        # Step 4: Create conversational video
+        logger.info(f"🎬 [{request_id}] Step 4: Creating conversational video")
+        video_path = await loop.run_in_executor(None, create_conversational_video, script, audio_path)
+        logger.info(f"🎬 [{request_id}] Conversational video created: {video_path}")
+        
+        # Save all content to organized folder structure
+        logger.info(f"💾 [{request_id}] Step 5: Saving files to organized folder structure")
+        
+        # Create organized output directories
+        output_base = os.path.expanduser("~/Downloads/info_reeler_outputs")
+        scripts_dir = os.path.join(output_base, "scripts")
+        audio_dir = os.path.join(output_base, "audio")
+        videos_dir = os.path.join(output_base, "videos")
+        
+        for directory in [scripts_dir, audio_dir, videos_dir]:
+            os.makedirs(directory, exist_ok=True)
+        
+        # Create better filenames with timestamp and request ID
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        script_filename = f"conversational_script_{timestamp}_{request_id}.txt"
+        audio_filename = f"conversational_audio_{timestamp}_{request_id}.wav"
+        video_filename = f"conversational_video_{timestamp}_{request_id}.mp4"
+        
+        # Save script to organized folder
+        script_path = os.path.join(scripts_dir, script_filename)
+        with open(script_path, 'w', encoding='utf-8') as f:
+            f.write(script)
+        logger.info(f"📝 [{request_id}] Conversational script saved: {script_path}")
+        
+        # Move audio and video to organized folders
+        audio_url = os.path.join(audio_dir, audio_filename)
+        video_url = os.path.join(videos_dir, video_filename)
+        
+        os.rename(audio_path, audio_url)
+        os.rename(video_path, video_url)
+        
+        # Also save to static dir for web access
+        static_dir = "static"
+        os.makedirs(static_dir, exist_ok=True)
+        static_audio_url = os.path.join(static_dir, audio_filename)
+        static_video_url = os.path.join(static_dir, video_filename)
+        
+        # Copy files to static directory for web access
+        import shutil
+        shutil.copy2(audio_url, static_audio_url)
+        shutil.copy2(video_url, static_video_url)
+        
+        logger.info(f"✅ [{request_id}] Conversational reel generation completed successfully!")
+        logger.info(f"📁 [{request_id}] Files saved to organized folders:")
+        logger.info(f"📝 Script: {script_path}")
+        logger.info(f"🎵 Audio: {audio_url}")
+        logger.info(f"🎬 Video: {video_url}")
+        logger.info(f"📊 [{request_id}] File sizes: Audio={os.path.getsize(audio_url)} bytes, Video={os.path.getsize(video_url)} bytes")
+        
+        return ReelResponse(
+            script=script,
+            audio_url=f"/download/{audio_filename}",
+            video_url=f"/download/{video_filename}"
+        )
+    except Exception as e:
+        logger.error(f"❌ [{request_id}] Error during conversational reel generation: {str(e)}")
+        logger.error(f"❌ [{request_id}] Error type: {type(e).__name__}")
+        logger.error(f"❌ [{request_id}] Full error details: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/generate-article-reel", response_model=ReelResponse)
+async def generate_article_reel(article: ArticleInput):
+    """
+    Generate conversational reel from any article URL
+    """
+    request_id = f"req_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    logger.info(f"🔄 [{request_id}] Starting article reel generation process")
+    logger.info(f"📄 [{request_id}] Input: URL={article.url}, Text length={len(article.text) if article.text else 0}")
+    
+    try:
+        # Step 1: Extract article content from URL
+        logger.info(f"📖 [{request_id}] Step 1: Extracting article content")
+        if article.url:
+            logger.info(f"🌐 [{request_id}] Extracting from URL: {article.url}")
+            article_data = await asyncio.get_event_loop().run_in_executor(None, extract_article_from_url, article.url)
+            content = article_data['content']
+            title = article_data['title']
+            logger.info(f"📄 [{request_id}] Extracted content length: {len(content)} characters")
+            logger.info(f"📝 [{request_id}] Article title: {title}")
+        else:
+            logger.info(f"📝 [{request_id}] Using provided text content")
+            content = article.text
+            title = article.title or "Article"
+            logger.info(f"📄 [{request_id}] Content length: {len(content)} characters")
+        
+        # Step 2: Generate conversational script
+        logger.info(f"🤖 [{request_id}] Step 2: Generating conversational script")
+        loop = asyncio.get_event_loop()
+        script = await loop.run_in_executor(None, generate_conversational_script, content)
+        logger.info(f"📜 [{request_id}] Conversational script generated successfully")
+        logger.info(f"📜 [{request_id}] Script length: {len(script)} characters")
+        logger.debug(f"📜 [{request_id}] Script preview: {script[:200]}...")
+        
+        # Step 3: Generate conversational audio
+        logger.info(f"🎵 [{request_id}] Step 3: Generating conversational audio")
+        audio_path = await loop.run_in_executor(None, generate_conversational_voiceover, script)
+        logger.info(f"🎵 [{request_id}] Audio generated successfully: {audio_path}")
+        
+        # Step 4: Create conversational video
+        logger.info(f"🎬 [{request_id}] Step 4: Creating conversational video")
+        video_path = await loop.run_in_executor(None, create_conversational_video, script, audio_path)
+        logger.info(f"🎬 [{request_id}] Video created successfully: {video_path}")
+        
+        # Step 5: Save files to outputs directory
+        logger.info(f"💾 [{request_id}] Step 5: Saving files to outputs directory")
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        
+        # Save script
+        script_filename = f"article_script_{timestamp}.txt"
+        script_path = os.path.join("outputs", script_filename)
+        with open(script_path, 'w', encoding='utf-8') as f:
+            f.write(f"Title: {title}\nURL: {article.url}\n\n{script}")
+        logger.info(f"📝 [{request_id}] Script saved: {script_path}")
+        
+        # Save timeline
+        timeline = create_speaker_timeline(script)
+        timeline_filename = f"article_timeline_{timestamp}.json"
+        timeline_path = os.path.join("outputs", timeline_filename)
+        import json
+        with open(timeline_path, 'w', encoding='utf-8') as f:
+            json.dump(timeline, f, indent=2)
+        logger.info(f"⏰ [{request_id}] Timeline saved: {timeline_path}")
+        
+        # Copy audio to outputs
+        audio_filename = f"article_audio_{timestamp}.wav"
+        audio_output_path = os.path.join("outputs", audio_filename)
+        import shutil
+        shutil.copy2(audio_path, audio_output_path)
+        logger.info(f"🎵 [{request_id}] Audio saved: {audio_output_path}")
+        
+        # Copy video to outputs
+        video_filename = f"article_video_{timestamp}.mp4"
+        video_output_path = os.path.join("outputs", video_filename)
+        shutil.copy2(video_path, video_output_path)
+        logger.info(f"🎬 [{request_id}] Video saved: {video_output_path}")
+        
+        # Clean up temporary files
+        try:
+            os.remove(audio_path)
+            os.remove(video_path)
+            logger.debug(f"🗑️ [{request_id}] Cleaned up temporary files")
+        except Exception as e:
+            logger.warning(f"⚠️ [{request_id}] Failed to clean up temporary files: {str(e)}")
+        
+        logger.info(f"✅ [{request_id}] Article reel generation completed successfully!")
+        
+        return ReelResponse(
+            script=script,
+            audio_url=f"/download/{audio_filename}",
+            video_url=f"/download/{video_filename}"
+        )
+        
+    except Exception as e:
+        logger.error(f"❌ [{request_id}] Failed to generate article reel: {str(e)}")
+        logger.error(f"❌ [{request_id}] Error type: {type(e).__name__}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate article reel: {str(e)}")
+
+@app.get("/download/{filename}")
+async def download_file(filename: str):
+    logger.info(f"📥 Download request for file: {filename}")
+    file_path = os.path.join("static", filename)
+    if not os.path.exists(file_path):
+        logger.error(f"❌ File not found: {file_path}")
+        raise HTTPException(status_code=404, detail="File not found")
+    logger.info(f"✅ File found, serving: {file_path}")
+    return FileResponse(file_path)
+
+@app.get("/files")
+async def list_files():
+    """List all stored files with their details"""
+    try:
+        static_dir = "static"
+        if not os.path.exists(static_dir):
+            return {"files": [], "total_files": 0, "total_size": 0}
+        
+        files = []
+        total_size = 0
+        
+        for filename in os.listdir(static_dir):
+            file_path = os.path.join(static_dir, filename)
+            if os.path.isfile(file_path):
+                file_size = os.path.getsize(file_path)
+                file_type = "audio" if filename.endswith(".wav") else "video" if filename.endswith(".mp4") else "other"
+                
+                files.append({
+                    "filename": filename,
+                    "size_bytes": file_size,
+                    "size_mb": round(file_size / 1024 / 1024, 2),
+                    "type": file_type,
+                    "download_url": f"/download/{filename}"
+                })
+                total_size += file_size
+        
+        # Sort by creation time (newest first)
+        files.sort(key=lambda x: x["filename"], reverse=True)
+        
+        logger.info(f"📁 Listed {len(files)} files, total size: {total_size} bytes")
+        
+        return {
+            "files": files,
+            "total_files": len(files),
+            "total_size_bytes": total_size,
+            "total_size_mb": round(total_size / 1024 / 1024, 2)
+        }
+    except Exception as e:
+        logger.error(f"❌ Error listing files: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to list files: {str(e)}")
+
+@app.delete("/files/{filename}")
+async def delete_file(filename: str):
+    """Delete a specific file"""
+    try:
+        file_path = os.path.join("static", filename)
+        if not os.path.exists(file_path):
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_size = os.path.getsize(file_path)
+        os.remove(file_path)
+        
+        logger.info(f"🗑️ Deleted file: {filename} ({file_size} bytes)")
+        
+        return {
+            "message": "File deleted successfully",
+            "filename": filename,
+            "size_bytes": file_size
+        }
+    except Exception as e:
+        logger.error(f"❌ Error deleting file {filename}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete file: {str(e)}")
+
+@app.delete("/files")
+async def clear_all_files():
+    """Delete all stored files"""
+    try:
+        static_dir = "static"
+        if not os.path.exists(static_dir):
+            return {"message": "No files to delete", "deleted_count": 0}
+        
+        deleted_count = 0
+        total_size = 0
+        
+        for filename in os.listdir(static_dir):
+            file_path = os.path.join(static_dir, filename)
+            if os.path.isfile(file_path):
+                file_size = os.path.getsize(file_path)
+                os.remove(file_path)
+                deleted_count += 1
+                total_size += file_size
+        
+        logger.info(f"🗑️ Deleted {deleted_count} files, total size: {total_size} bytes")
+        
+        return {
+            "message": "All files deleted successfully",
+            "deleted_count": deleted_count,
+            "total_size_bytes": total_size,
+            "total_size_mb": round(total_size / 1024 / 1024, 2)
+        }
+    except Exception as e:
+        logger.error(f"❌ Error clearing files: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to clear files: {str(e)}")
+
+@app.get("/")
+async def serve_frontend():
+    """Serve the main frontend"""
+    return FileResponse("static/index.html")
+
+@app.get("/health")
+async def health_check():
+    logger.info("🏥 Health check requested")
+    return {"status": "healthy", "models_loaded": True} 

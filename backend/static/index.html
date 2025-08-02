@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info Reeler - Article to Video Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            text-align: left;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .result video, .result audio {
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        .result a {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #e1e5e9;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .features {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .features h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            padding: 8px 0;
+            color: #666;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Info Reeler</div>
+        <div class="subtitle">Transform any article into a hilarious Elon & Trump conversation video!</div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('url')">Article URL</button>
+            <button class="tab" onclick="switchTab('text')">Paste Text</button>
+        </div>
+
+        <div id="url-tab" class="tab-content active">
+            <div class="input-group">
+                <label for="articleUrl">Article URL:</label>
+                <input type="url" id="articleUrl" placeholder="https://example.com/article" />
+            </div>
+            <button class="button" onclick="generateFromUrl()">Generate Video from URL</button>
+        </div>
+
+        <div id="text-tab" class="tab-content">
+            <div class="input-group">
+                <label for="articleText">Article Text:</label>
+                <textarea id="articleText" placeholder="Paste your article content here..."></textarea>
+            </div>
+            <button class="button" onclick="generateFromText()">Generate Video from Text</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generating your hilarious video... This may take a minute!</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <h3>🎉 Your Video is Ready!</h3>
+            <video id="videoPlayer" controls>
+                Your browser does not support the video tag.
+            </video>
+            <audio id="audioPlayer" controls>
+                Your browser does not support the audio tag.
+            </audio>
+            <div>
+                <a id="downloadVideo" href="#" download>Download Video</a>
+                <a id="downloadAudio" href="#" download>Download Audio</a>
+            </div>
+        </div>
+
+        <div class="features">
+            <h3>✨ Features:</h3>
+            <ul>
+                <li>Extract content from any article URL</li>
+                <li>Generate hilarious Elon & Trump conversations</li>
+                <li>Deep explanations of complex topics</li>
+                <li>Professional voice synthesis</li>
+                <li>Dynamic speaker switching</li>
+                <li>Optimized for social media</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showError(message) {
+            hideLoading();
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function showResult(data) {
+            hideLoading();
+            const resultDiv = document.getElementById('result');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const downloadVideo = document.getElementById('downloadVideo');
+            const downloadAudio = document.getElementById('downloadAudio');
+
+            if (data.video_url) {
+                videoPlayer.src = data.video_url;
+                downloadVideo.href = data.video_url;
+            }
+
+            if (data.audio_url) {
+                audioPlayer.src = data.audio_url;
+                downloadAudio.href = data.audio_url;
+            }
+
+            resultDiv.style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        async function generateFromUrl() {
+            const url = document.getElementById('articleUrl').value.trim();
+            
+            if (!url) {
+                showError('Please enter a valid article URL');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch('/generate-article-reel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: url
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to generate video');
+                }
+
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+
+        async function generateFromText() {
+            const text = document.getElementById('articleText').value.trim();
+            
+            if (!text) {
+                showError('Please enter article text');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch('/generate-conversational-reel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to generate video');
+                }
+
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html> 

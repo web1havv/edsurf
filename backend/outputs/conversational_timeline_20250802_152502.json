@@ -1,0 +1,38 @@
+[
+  {
+    "speaker": "elon",
+    "start_time": 0.0,
+    "end_time": 20.0,
+    "text": "So this article says Docker and Kubernetes are, like, totally revolutionizing things. Huge. Yeah, well, I knew that. It's very bigly. Everyone knows it. Tremendous. My administration\u2026 well, maybe we could\u2019ve done more. But it\u2019s happening now, and that\u2019s fantastic."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 20.2,
+    "end_time": 42.7,
+    "text": "Right, but the article points out how it\u2019s boosting efficiency and cutting costs. That\u2019s the real game-changer, right. It\u2019s all about optimization. Think of the potential for\u2026 you know\u2026  Mars colonization. Optimization. I\u2019m all about optimization. Believe me. We optimized the economy, best economy ever."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 42.9,
+    "end_time": 62.4,
+    "text": "This Docker thing sounds\u2026  pretty good, I guess. It\u2019s something. But my buildings are much more impressive. Way bigger. The article talks about microservices architecture, too. That\u2019s a big deal for scaling applications. Imagine the possibilities. It\u2019s crazy disruptive."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 62.599999999999994,
+    "end_time": 85.6,
+    "text": "Disruptive, you say. Fake news. I\u2019m the most disruptive guy ever. I\u2019ve disrupted the political system, the media, the whole damn thing. Nobody\u2019s ever disrupted anything quite like me. This Docker thing is nothing. But seriously, the projected market growth is insane. We\u2019re talking massive expansion."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 85.8,
+    "end_time": 114.3,
+    "text": "This is a huge opportunity for\u2026  well, for a lot of people. Massive, you say. I build massive things. The best buildings. The biggest crowds. And, frankly, this\u2026 this Docker sounds like a small, insignificant thing compared to my accomplishments. SAD. It's not a building, it's a software platform, but the potential is definitely massive for innovation."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 114.5,
+    "end_time": 131.5,
+    "text": "Think of all the new apps, new tech\u2026\n\nYeah, well,  we\u2019ll see. We\u2019ll see. It\u2019s all very\u2026 interesting. But you know what\u2019s really interesting. Winning. And I win a lot. Everyone agrees. The best."
+  }
+]

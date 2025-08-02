@@ -1,0 +1,44 @@
+[
+  {
+    "speaker": "elon",
+    "start_time": 0.0,
+    "end_time": 18.5,
+    "text": "So this article says Docker and Kubernetes are\u2026 huge. Revolutionizing everything, apparently. Yeah, well, my hotels are HUGE, the biggest, the best. Nobody does hotels bigger than me. These\u2026 Dockers and Kubern\u2026 whatever,  they're probably fake news."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 18.7,
+    "end_time": 28.7,
+    "text": "Sad. Fake news. These things are literally powering the internet, Donald. SpaceX uses them. It's not fake news, it's\u2026  technology."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 28.9,
+    "end_time": 44.9,
+    "text": "Real, actual rocket science stuff. Rocket science, you say. I know about rockets, believe me. I've seen bigger, better, more beautiful rockets than whatever those things are. They're probably made in China."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 45.099999999999994,
+    "end_time": 55.099999999999994,
+    "text": "Total losers. China. They're open source, actually. Anyone can use them. It's the opposite of your, uh\u2026  \"America First\" approach."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 55.3,
+    "end_time": 69.3,
+    "text": "America First is the BEST approach. The greatest. And speaking of great, my rallies were bigger than any launch you ever had. Bigger crowds, I tell you. HUGE."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 69.5,
+    "end_time": 91.5,
+    "text": "Well, my rockets actually go to space, unlike your\u2026 uh\u2026 promises. So I'm pretty sure my crowds are a little more\u2026 scientifically proven. See, this is why I won. You're all about your rockets and your\u2026  what do you call those things. Electric cars."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 91.7,
+    "end_time": 99.2,
+    "text": "People want something REAL. They want results. Bigly results. And I delivered those. Believe me."
+  }
+]

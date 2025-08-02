@@ -1,0 +1,6 @@
+body { width: 350px; padding: 20px; font-family: -apple-system, sans-serif; }
+.status { padding: 10px; border-radius: 6px; margin: 10px 0; }
+.processing { background: #e3f2fd; color: #1976d2; }
+.complete { background: #e8f5e8; color: #2e7d32; }
+.preview { display: grid; gap: 10px; margin-top: 15px; }
+.download-btn { background: #1976d2; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; } 
