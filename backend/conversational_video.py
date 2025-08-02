@@ -32,7 +32,7 @@ ELON_PHOTO_PATH = "../63b84b16d1c5130019f95f8c.webp"
 TRUMP_PHOTO_PATH = "../trump-removebg-preview.png"
 
 # Background video - using Minecraft video
-MINECRAFT_BACKGROUND_PATH = "../minecraft-1.mp4"
+MINECRAFT_BACKGROUND_PATH = "minecraft-1.mp4"
 
 def load_speaker_photo(speaker_name):
     """Load speaker photo from local file"""

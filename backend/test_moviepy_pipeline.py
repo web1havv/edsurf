@@ -149,7 +149,7 @@ def test_minecraft_background():
     try:
         logger.info("🎮 Testing Minecraft background video...")
         
-        minecraft_path = "../minecraft-1.mp4"
+        minecraft_path = "minecraft-1.mp4"
         if not os.path.exists(minecraft_path):
             logger.error(f"❌ Minecraft video not found: {minecraft_path}")
             return False

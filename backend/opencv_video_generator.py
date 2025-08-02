@@ -28,21 +28,42 @@ class OpenCVVideoGenerator:
         logger.info(f"🎬 OpenCV Video Generator initialized")
         logger.info(f"📐 Output format: {self.video_width}x{self.video_height} @ {self.fps}fps")
     
-    def load_and_resize_image(self, image_path, target_size):
+    def load_and_resize_image(self, image_path):
         """Load and resize image using PIL and OpenCV"""
         try:
             # Load with PIL first for better format support
             pil_img = Image.open(image_path)
-            if pil_img.mode != 'RGB':
+
+            if pil_img.mode == 'RGBA':
+                pass
+            elif pil_img.mode == 'LA':
+                pil_img = pil_img.convert('RGBA')
+            else:
                 pil_img = pil_img.convert('RGB')
+
+            # Calculate target height as 40% of screen height
+            target_height = int(self.video_height * 0.4)  # 40% of 1920 = 768 pixels
+
+            # Calculate proportional width based on target height
+            original_width, original_height = pil_img.size
+            aspect_ratio = original_width / original_height
+            target_width = int(target_height * aspect_ratio)
+            target_size = (target_width, target_height)
             
             # Resize using PIL
             pil_img = pil_img.resize(target_size, Image.Resampling.LANCZOS)
             
-            # Convert to OpenCV format (BGR)
-            cv_img = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
+            # Convert to OpenCV format
+            img_array = np.array(pil_img)
+            if len(img_array.shape) == 3 and img_array.shape[2] == 4:
+                # RGBA image - convert to BGRA for OpenCV
+                cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGBA2BGRA)
+                logger.info(f"✅ Image loaded with alpha: {image_path} -> {target_size}")
+            else:
+                # RGB image - convert to BGR for OpenCV
+                cv_img = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+                logger.info(f"✅ Image loaded: {image_path} -> {target_size}")
             
-            logger.info(f"✅ Image loaded and resized: {image_path} -> {target_size}")
             return cv_img
             
         except Exception as e:
@@ -51,14 +72,6 @@ class OpenCVVideoGenerator:
             placeholder = np.zeros((target_size[1], target_size[0], 3), dtype=np.uint8)
             placeholder[:] = (128, 128, 128)  # Gray
             return placeholder
-    
-    def create_circular_mask(self, size):
-        """Create circular mask for rounded speaker images"""
-        mask = np.zeros((size[1], size[0]), dtype=np.uint8)
-        center = (size[0]//2, size[1]//2)
-        radius = min(size[0], size[1])//2
-        cv2.circle(mask, center, radius, 255, -1)
-        return mask
     
     def load_background_video(self, video_path):
         """Load background video using OpenCV"""
@@ -87,6 +100,25 @@ class OpenCVVideoGenerator:
     
     def get_audio_duration(self, audio_path, timeline=None):
         """Get audio duration using timeline first, then fallback methods"""
+
+        # Handle None audio_path case - create silent video
+        if audio_path is None:
+            logger.info("🔇 No audio provided - creating silent video")
+            
+            # Method 1: Use timeline duration (most reliable for our use case)
+            if timeline and len(timeline) > 0:
+                try:
+                    max_end_time = max(segment['end_time'] for segment in timeline)
+                    if max_end_time > 0:
+                        logger.info(f"🔇 Silent video duration (timeline): {max_end_time:.2f}s")
+                        return max_end_time
+                except Exception as e:
+                    logger.warning(f"⚠️ Timeline duration extraction failed: {str(e)}")
+            
+            # Fallback: Use default duration for silent video
+            default_duration = 30.0  # 30 seconds default
+            logger.info(f"🔇 Using default silent video duration: {default_duration}s")
+            return default_duration
         
         # Method 1: Use timeline duration (most reliable for our use case)
         if timeline and len(timeline) > 0:
@@ -180,20 +212,13 @@ class OpenCVVideoGenerator:
             logger.info(f"🎬 [{request_id}] Creating {total_frames} frames for {audio_duration:.2f}s")
             
             # Load speaker images
-            elon_img = self.load_and_resize_image("../63b84b16d1c5130019f95f8c.webp", (200, 200))
-            trump_img = self.load_and_resize_image("../trump-removebg-preview.png", (200, 200))
-            
-            # Create circular masks for speaker images
-            mask = self.create_circular_mask((200, 200))
-            
-            # Apply circular mask to speaker images
-            elon_masked = cv2.bitwise_and(elon_img, elon_img, mask=mask)
-            trump_masked = cv2.bitwise_and(trump_img, trump_img, mask=mask)
+            elon_img = self.load_and_resize_image("elon.png")
+            trump_img = self.load_and_resize_image("trump.png")
             
             logger.info(f"✅ [{request_id}] Speaker images loaded and processed")
             
             # Load background video
-            background_cap, bg_duration = self.load_background_video(background_video_path or "../minecraft-1.mp4")
+            background_cap, bg_duration = self.load_background_video(background_video_path or "minecraft-1.mp4")
             if background_cap is None:
                 raise Exception("Could not load background video")
             
@@ -235,15 +260,19 @@ class OpenCVVideoGenerator:
                 
                 # Add speaker overlay
                 if current_speaker == 'elon':
-                    # Position Elon on the right
-                    y_pos = 200
-                    x_pos = self.video_width - 300  # Right side
-                    self._overlay_image(bg_frame, elon_masked, mask, x_pos, y_pos)
+                    # Position Elon at bottom-right
+                    img_height = elon_img.shape[0]
+                    img_width = elon_img.shape[1]
+                    y_pos = self.video_height - img_height  # Bottom of screen
+                    x_pos = self.video_width - img_width - 50  # Right side with margin
+                    self._overlay_image(bg_frame, elon_img, x_pos, y_pos)
                 elif current_speaker == 'trump':
-                    # Position Trump on the left
-                    y_pos = 200
-                    x_pos = 100  # Left side
-                    self._overlay_image(bg_frame, trump_masked, mask, x_pos, y_pos)
+                    # Position Trump at bottom-left
+                    img_height = trump_img.shape[0]
+                    img_width = trump_img.shape[1]
+                    y_pos = self.video_height - img_height  # Bottom of screen
+                    x_pos = 50  # Left side with margin
+                    self._overlay_image(bg_frame, trump_img, x_pos, y_pos)
                 
                 # Write frame
                 video_writer.write(bg_frame)
@@ -259,9 +288,14 @@ class OpenCVVideoGenerator:
             
             logger.info(f"✅ [{request_id}] Video frames generated: {temp_video_path}")
             
-            # Combine video with audio using FFmpeg
-            logger.info(f"🎵 [{request_id}] Adding audio with FFmpeg...")
-            self._add_audio_with_ffmpeg(temp_video_path, audio_path, output_path)
+            if audio_path is None:
+                # Silent video - just copy the temp video to final output
+                logger.info(f"🔇 [{request_id}] Creating silent video - no audio to add")
+                self._create_silent_video(temp_video_path, output_path)
+            else:
+                # Combine video with audio using FFmpeg
+                logger.info(f"🎵 [{request_id}] Adding audio with FFmpeg...")
+                self._add_audio_with_ffmpeg(temp_video_path, audio_path, output_path)
             
             # Clean up temporary video
             if os.path.exists(temp_video_path):
@@ -280,32 +314,45 @@ class OpenCVVideoGenerator:
             logger.error(f"❌ [{request_id}] OpenCV video generation failed: {str(e)}")
             raise Exception(f"OpenCV video generation failed: {str(e)}")
     
-    def _overlay_image(self, background, overlay_img, mask, x_pos, y_pos):
-        """Overlay image with transparency using mask"""
+    def _overlay_image(self, background, overlay_img, x_pos, y_pos):
+        """Overlay image"""
         try:
-            h, w = overlay_img.shape[:2]
+            # Get overlay dimensions
+            if len(overlay_img.shape) == 3 and overlay_img.shape[2] == 4:
+                # Image has alpha channel (BGRA)
+                h, w = overlay_img.shape[:2]
+                has_alpha = True
+                logger.debug(f"🎭 Overlaying transparent image at ({x_pos}, {y_pos})")
+            else:
+                # Image is opaque (BGR)
+                h, w = overlay_img.shape[:2]
+                has_alpha = False
+                logger.debug(f"🖼️ Overlaying opaque image at ({x_pos}, {y_pos})")
             
             # Ensure position is within bounds
             x_pos = max(0, min(x_pos, self.video_width - w))
             y_pos = max(0, min(y_pos, self.video_height - h))
-            
-            # Region of interest in background
+
+            # Get the region of interest from background
             roi = background[y_pos:y_pos+h, x_pos:x_pos+w]
-            
-            # Create inverse mask
-            mask_inv = cv2.bitwise_not(mask)
-            
-            # Black out the area of overlay in ROI
-            background_masked = cv2.bitwise_and(roi, roi, mask=mask_inv)
-            
-            # Take only region of overlay from overlay image
-            overlay_masked = cv2.bitwise_and(overlay_img, overlay_img, mask=mask)
-            
-            # Add overlay to background
-            combined = cv2.add(background_masked, overlay_masked)
-            
-            # Replace ROI in background
-            background[y_pos:y_pos+h, x_pos:x_pos+w] = combined
+
+            if has_alpha:
+                # 🔧 FIX: Proper alpha blending for transparent images
+                overlay_bgr = overlay_img[:, :, :3]  # BGR channels
+                alpha = overlay_img[:, :, 3] / 255.0  # Alpha channel (0-1)
+                
+                # Create 3-channel alpha mask
+                alpha_3ch = np.dstack([alpha, alpha, alpha])
+                
+                # Alpha blend: result = foreground * alpha + background * (1 - alpha)
+                blended = (overlay_bgr * alpha_3ch + roi * (1 - alpha_3ch)).astype(np.uint8)
+                
+                # Update background with blended result
+                background[y_pos:y_pos+h, x_pos:x_pos+w] = blended
+                
+            else:
+                # Opaque image - direct replacement (existing behavior)
+                background[y_pos:y_pos+h, x_pos:x_pos+w] = overlay_img
             
         except Exception as e:
             logger.warning(f"⚠️ Failed to overlay image at ({x_pos}, {y_pos}): {str(e)}")
@@ -337,6 +384,30 @@ class OpenCVVideoGenerator:
             logger.error(f"❌ Failed to add audio: {str(e)}")
             raise
 
+    def _create_silent_video(self, video_path, output_path):
+        """Convert video to final format without audio using FFmpeg"""
+        try:
+            # Use local ffmpeg binary
+            ffmpeg_path = './ffmpeg' if os.path.exists('./ffmpeg') else 'ffmpeg'
+            cmd = [
+                ffmpeg_path, '-y',      # Overwrite output
+                '-i', video_path,       # Input video only
+                '-c:v', 'libx264',      # Video codec (same as audio version)
+                '-an',                  # No audio stream
+                output_path
+            ]
+            
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                logger.error(f"❌ FFmpeg failed: {result.stderr}")
+                raise Exception(f"FFmpeg failed: {result.stderr}")
+            
+            logger.info(f"✅ Silent video created successfully with FFmpeg")
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to create silent video: {str(e)}")
+            raise
+
 # Global instance
 video_generator = OpenCVVideoGenerator()
 
@@ -351,3 +422,98 @@ def create_background_video_with_speaker_overlays(script_text, audio_path, backg
         background_video_path=background_video_path,
         output_path=output_path
     )
+
+# Add this simple test function to opencv_video_generator.py
+
+def test_video_overlay():
+    """
+    Generate and test a fresh video with speaker overlays
+    Creates a new video each time with current image loading (including placeholders if images missing)
+    """
+    import subprocess
+    import platform
+    from datetime import datetime
+    from conversational_tts import generate_conversational_voiceover
+    
+    try:
+        logger.info("🧪 Generating fresh video with speaker overlays...")
+        
+        # Create a simple test script for Elon-Trump conversation
+        test_script = """**Elon:** You know, I've been thinking about how we can revolutionize social media and make it more efficient. 
+
+**Trump:** That's fantastic, Elon! We need the best technology, the most incredible innovations. Make it huge!
+
+**Elon:** Exactly. With neural interfaces and sustainable technology, we could create something unprecedented.
+
+**Trump:** Absolutely tremendous! The American people deserve the best platforms, the most amazing user experience. We're going to make social media great again!"""
+        
+        logger.info("📝 Test script created for Elon-Trump conversation")
+        logger.info(f"📄 Script length: {len(test_script)} characters")
+        
+        # Step 1: Generate conversational audio
+        logger.info("🎵 Generating fresh conversational audio...")
+        audio_path = None
+        # audio_path = generate_conversational_voiceover(test_script)
+        # logger.info(f"✅ Audio generated: {audio_path}")
+        
+        # Step 2: Create video with speaker overlays (this will use current image loading including placeholders)
+        logger.info("🎬 Creating fresh video with speaker overlays...")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        video_output_path = f"outputs/test_fresh_video_{timestamp}.mp4"
+        
+        # Ensure outputs directory exists
+        os.makedirs("outputs", exist_ok=True)
+        
+        video_path = create_background_video_with_speaker_overlays(
+            script_text=test_script,
+            audio_path=audio_path,
+            output_path=video_output_path
+        )
+        
+        if not video_path or not os.path.exists(video_path):
+            logger.error("❌ Failed to generate fresh video")
+            return False
+            
+        file_size = os.path.getsize(video_path)
+        logger.info(f"✅ Fresh video generated: {video_path}")
+        logger.info(f"📊 File size: {file_size/1024/1024:.2f} MB")
+        logger.info("🎭 Video includes speaker overlays (real images or placeholders if missing)")
+        
+        # Step 3: Open the fresh video with system default player
+        system = platform.system()
+        
+        if system == "Darwin":  # macOS
+            subprocess.run(["open", video_path])
+            logger.info("🎬 Opening fresh video with macOS default player...")
+            
+        elif system == "Windows":
+            subprocess.run(["start", video_path], shell=True)
+            logger.info("🎬 Opening fresh video with Windows default player...")
+            
+        elif system == "Linux":
+            subprocess.run(["xdg-open", video_path])
+            logger.info("🎬 Opening fresh video with Linux default player...")
+            
+        else:
+            logger.warning(f"⚠️ Unsupported system: {system}")
+            logger.info(f"💡 Manually open: {video_path}")
+            return False
+        
+        logger.info("✅ Fresh video should now be playing - check your video player!")
+        logger.info("🔄 Each run generates a completely new video with current image loading")
+        logger.info(f"📝 Generated video: {os.path.basename(video_path)}")
+        
+        # Clean up temporary audio file
+        try:
+            if audio_path and os.path.exists(audio_path) and audio_path != video_path:
+                os.remove(audio_path)
+                logger.debug(f"🗑️ Cleaned up temporary audio file: {audio_path}")
+        except Exception as cleanup_error:
+            logger.warning(f"⚠️ Could not clean up audio file: {cleanup_error}")
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to generate fresh video overlay: {str(e)}")
+        logger.error(f"🔧 Error details: {type(e).__name__}: {e}")
+        return False
