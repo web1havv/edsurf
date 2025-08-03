@@ -9,6 +9,7 @@ import logging
 import sys
 from datetime import datetime
 
+from opencv_video_generator import test_video_overlay
 from llm import generate_script, generate_conversational_script, test_api_key
 from conversational_tts import generate_conversational_voiceover, SPEAKER_PAIRS
 from opencv_video_generator import create_background_video_with_speaker_overlays
