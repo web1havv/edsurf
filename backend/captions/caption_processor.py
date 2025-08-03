@@ -72,8 +72,87 @@ class CaptionProcessor:
         except Exception as e:
             logger.error(f"❌ Failed to estimate word timing: {str(e)}")
             return []
+
+    def _extract_word_timing_from_elevenlabs(self, text: str, segment_start_time: float, timing_data: Dict) -> List[Dict]:
+        """
+        Extract precise word timing from ElevenLabs character-level data
+        
+        Args:
+            text: The text segment
+            segment_start_time: When this segment starts in the overall timeline
+            timing_data: ElevenLabs alignment data with character timings
+            
+        Returns:
+            List of word timing dictionaries with precise timing
+        """
+        # Handle None timing_data gracefully
+        if timing_data is None:
+            logger.warning("⚠️ No timing data provided - using fallback estimation")
+            return self.estimate_word_timing(text, segment_start_time, segment_start_time + len(text) * 0.1)
+        
+        words = re.findall(r'\S+', text)  # Extract words, keeping punctuation
+        
+        # Handle actual ElevenLabs format
+        characters = timing_data.get('characters', [])
+        start_times = timing_data.get('character_start_times_seconds', [])
+        end_times = timing_data.get('character_end_times_seconds', [])
+        
+        if not characters or not start_times or not end_times:
+            logger.warning("⚠️ No character timing data available - using fallback estimation")
+            return self.estimate_word_timing(text, segment_start_time, segment_start_time + len(text) * 0.1)
+        
+        if len(characters) != len(start_times) or len(characters) != len(end_times):
+            logger.warning("⚠️ Character timing arrays have mismatched lengths - using fallback estimation")
+            return self.estimate_word_timing(text, segment_start_time, segment_start_time + len(text) * 0.1)
+        
+        logger.info(f"🎯 Using ElevenLabs precise timing: {len(characters)} characters")
+        
+        word_timings = []
+        char_index = 0
     
-    def create_caption_chunks(self, text: str, start_time: float, end_time: float, speaker: str) -> List[Dict]:
+        for word in words:
+            word_start = None
+            word_end = None
+            word_char_count = 0
+            
+            # Find character timing for this word
+            while word_char_count < len(word) and char_index < len(characters):
+                character = characters[char_index]
+                char_start_time = start_times[char_index]
+                char_end_time = end_times[char_index]
+                
+                # Set word start time from first character
+                if word_start is None:
+                    word_start = segment_start_time + char_start_time
+                
+                # Update word end time with each character
+                word_end = segment_start_time + char_end_time
+                
+                char_index += 1
+                word_char_count += 1
+
+            # Skip whitespace characters between words
+            while char_index < len(characters):
+                character = characters[char_index]
+                if not character.isspace():
+                    break
+                char_index += 1
+            
+            # Add word timing if we found valid start/end times
+            if word_start is not None and word_end is not None:
+                word_timings.append({
+                    "word": word,
+                    "start": round(word_start, 2),
+                    "end": round(word_end, 2)
+                })
+                logger.debug(f"📍 Word '{word}': {word_start:.2f}s - {word_end:.2f}s")
+            else:
+                logger.warning(f"⚠️ Could not find timing for word: '{word}'")
+        
+        logger.info(f"✅ Extracted precise timing for {len(word_timings)} words using ElevenLabs data")
+        return word_timings
+    
+    def create_caption_chunks(self, text: str, start_time: float, end_time: float, speaker: str, word_timings: List[Dict]) -> List[Dict]:
         """
         Break text into caption-sized chunks with timing
         
@@ -82,13 +161,13 @@ class CaptionProcessor:
             start_time: Segment start time  
             end_time: Segment end time
             speaker: Speaker name (for styling)
+            word_timings: Pre-computed word timing data from _extract_word_timing_from_elevenlabs
             
         Returns:
             List of caption chunks: [{"text": str, "start": float, "end": float, "speaker": str}, ...]
         """
         try:
             # Get word-level timing
-            word_timings = self.estimate_word_timing(text, start_time, end_time)
             if not word_timings:
                 return []
             
@@ -169,6 +248,12 @@ class CaptionProcessor:
         try:
             logger.info(f"🎬 Enhancing timeline with caption data for {len(timeline)} segments")
             
+            # 🔍 DEBUG: Check timeline data structure
+            logger.info(f"🔍 DEBUG: Timeline type: {type(timeline)}")
+            if timeline:
+                logger.info(f"🔍 DEBUG: First segment type: {type(timeline[0])}")
+                logger.info(f"🔍 DEBUG: First segment content: {timeline[0]}")
+            
             enhanced_segments = []
             all_captions = []
             total_duration = 0
@@ -179,17 +264,40 @@ class CaptionProcessor:
                 "samay": {"duration": 0, "words": 0}
             }
             
-            for segment in timeline:
-                speaker = segment['speaker']
-                start_time = segment['start_time'] 
-                end_time = segment['end_time']
-                text = segment['text']
-                
-                # Add word-level timing
-                word_timings = self.estimate_word_timing(text, start_time, end_time)
-                
-                # Create caption chunks
-                caption_chunks = self.create_caption_chunks(text, start_time, end_time, speaker)
+            for i, segment in enumerate(timeline):
+                try:
+                    # 🔍 DEBUG: Check segment type
+                    if not isinstance(segment, dict):
+                        logger.error(f"❌ Segment {i} is not a dictionary! Type: {type(segment)}, Content: {segment}")
+                        raise Exception(f"Timeline segment {i} is invalid - expected dictionary but got {type(segment)}")
+                    
+                    logger.info(f"🔍 DEBUG: Processing segment {i}: {segment.keys()}")
+                    
+                    speaker = segment['speaker']
+                    logger.info(f"🔍 DEBUG: Got speaker: {speaker}")
+                    
+                    start_time = segment['start_time'] 
+                    end_time = segment['end_time']
+                    text = segment['text']
+                    logger.info(f"🔍 DEBUG: Got timing: {start_time} - {end_time}")
+
+                    timing_data = segment.get('real_timing_data', None)
+                    logger.info(f"🔍 DEBUG: Got timing_data type: {type(timing_data)}")
+                    
+                    # Add word-level timing
+                    logger.info(f"🔍 DEBUG: About to call _extract_word_timing_from_elevenlabs")
+                    word_timings = self._extract_word_timing_from_elevenlabs(text, start_time, timing_data)
+                    logger.info(f"🔍 DEBUG: Got word_timings: {len(word_timings)} words")
+                    
+                    # Create caption chunks
+                    logger.info(f"🔍 DEBUG: About to call create_caption_chunks")
+                    caption_chunks = self.create_caption_chunks(text, start_time, end_time, speaker, word_timings)
+                    logger.info(f"🔍 DEBUG: Got caption_chunks: {len(caption_chunks)} chunks")
+                    
+                except Exception as segment_error:
+                    logger.error(f"❌ Error processing segment {i}: {type(segment_error).__name__}: {str(segment_error)}")
+                    logger.error(f"🔍 DEBUG: Segment content: {segment}")
+                    raise
                 
                 # Update enhanced segment
                 enhanced_segment = {

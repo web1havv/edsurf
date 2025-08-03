@@ -6,7 +6,7 @@ import logging
 import re
 import requests
 from datetime import datetime
-import json
+import json, base64
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ SPEAKER_CONFIG = {
         "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
     },
     "elon": {
-        "voice_id": "5p344brGATMrJ2N3FKFT",   # Elon Musk voice from ElevenLabs
+        "voice_id": "uTsZKELdeD1KQZz4M45o",   # Elon Musk voice from ElevenLabs
         "api_key_env": "ELEVENLABS_API_KEY_ELON",   # Separate API key for Elon
         "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
     },
@@ -38,7 +38,7 @@ SPEAKER_CONFIG = {
 SPEAKER_PAIRS = {
     "trump_elon": {
         "name": "Trump & Elon",
-        "speakers": ["trump", "elon"],
+        "speakers": ["elon", "trump"],  # Fixed: Elon speaks first to match script generation
         "description": "Political discussions with tech innovation"
     },
     "baburao_samay": {
@@ -116,8 +116,13 @@ def parse_conversational_script(script_text, speaker_pair="trump_elon"):
             pair_speakers = SPEAKER_PAIRS[speaker_pair]["speakers"]
         else:
             # Fallback to trump-elon
-            pair_speakers = ["trump", "elon"]
-            logger.warning(f"Unknown speaker pair '{speaker_pair}', using trump-elon")
+            pair_speakers = ["elon", "trump"]  # Fixed fallback order too
+            logger.warning(f"Unknown speaker pair '{speaker_pair}', using elon-trump")
+        
+        logger.info(f"🎭 SPEAKER ASSIGNMENT DEBUG for {speaker_pair}:")
+        logger.info(f"🎭 - Speaker order: {pair_speakers}")
+        logger.info(f"🎭 - First speaker will be: {pair_speakers[0]}")
+        logger.info(f"🎭 - Second speaker will be: {pair_speakers[1]}")
         
         current_speaker = pair_speakers[0]
         current_segment = ""
@@ -134,6 +139,7 @@ def parse_conversational_script(script_text, speaker_pair="trump_elon"):
                     if current_segment.strip():
                         speakers.append((current_speaker, current_segment.strip()))
                         segment_count += 1
+                        logger.info(f"🎭 Segment {segment_count}: {current_speaker} -> '{current_segment.strip()[:50]}...'")
                         # Switch to next speaker in pair
                         current_index = pair_speakers.index(current_speaker)
                         next_index = (current_index + 1) % len(pair_speakers)
@@ -204,7 +210,7 @@ def generate_elevenlabs_voice_segment(text, voice_id, output_path, speaker_name=
         logger.info(f"🆔 Voice ID: {voice_id}")
         logger.info(f"📝 Text: {text[:50]}...")
         
-        url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+        url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps"
         
         # Get appropriate API key for this speaker
         api_key = get_api_key_for_speaker(speaker_name) if speaker_name else os.getenv("ELEVENLABS_API_KEY", "")
@@ -228,13 +234,20 @@ def generate_elevenlabs_voice_segment(text, voice_id, output_path, speaker_name=
         response = requests.post(url, json=data, headers=headers)
         
         if response.status_code == 200:
+            result = response.json()
+
+            audio_data = base64.b64decode(result['audio_base64'])
             with open(output_path, 'wb') as f:
-                f.write(response.content)
+                f.write(audio_data)
             
             file_size = os.path.getsize(output_path)
             logger.info(f"✅ Voice segment generated successfully")
             logger.info(f"📊 File size: {file_size} bytes")
-            return True
+            return {
+                'success': True,
+                'audio_path': output_path,
+                'timing_data': result['alignment']
+            }
         else:
             logger.warning(f"⚠️ ElevenLabs failed: {response.status_code} - {response.text}")
             return False
@@ -254,6 +267,7 @@ def batch_generate_elevenlabs_voice_segments(segments_data, output_dir):
         # Process in smaller batches to avoid rate limits
         batch_size = 3  # Process 3 segments at a time
         successful_segments = []
+        timing_data_collection = []
         
         for i in range(0, len(segments_data), batch_size):
             batch = segments_data[i:i + batch_size]
@@ -275,7 +289,7 @@ def batch_generate_elevenlabs_voice_segments(segments_data, output_dir):
                 logger.info(f"📝 Text: {text[:50]}...")
                 
                 # Make API request with speaker-specific API key
-                url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
+                url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps"
                 
                 # Get appropriate API key for this speaker
                 api_key = get_api_key_for_speaker(speaker_name) if speaker_name else os.getenv("ELEVENLABS_API_KEY", "")
@@ -300,16 +314,32 @@ def batch_generate_elevenlabs_voice_segments(segments_data, output_dir):
                     response = requests.post(url, json=data, headers=headers, timeout=30)
                     
                     if response.status_code == 200:
+                        result = response.json()
+                        
+                        # 🔍 DEBUG: Check timing data specifically
+                        alignment = result.get('alignment')
+    
+                    if alignment:
+                        audio_data = base64.b64decode(result['audio_base64'])
                         with open(output_path, 'wb') as f:
-                            f.write(response.content)
+                            f.write(audio_data)
                         
                         file_size = os.path.getsize(output_path)
                         logger.info(f"✅ Voice segment generated successfully")
                         logger.info(f"📊 File size: {file_size} bytes")
                         
                         # Extract speaker from filename
-                        speaker = "elon" if "elon" in filename else "trump"
+                        speaker = speaker_name  # Use the actual speaker name passed in
                         successful_segments.append((speaker, output_path))
+
+                        timing_data_collection.append({
+                            'speaker': speaker,
+                            'text': text,
+                            'timing_data': result['alignment'],
+                            'segment_index': segment_index
+                        })
+
+                        logger.info(f"🔍 DEBUG: Added to timing_data_collection: speaker={speaker}, has_alignment={result.get('alignment') is not None}")
                         
                     elif response.status_code == 401:
                         error_data = response.json()
@@ -352,11 +382,11 @@ def batch_generate_elevenlabs_voice_segments(segments_data, output_dir):
                 time.sleep(1)
         
         logger.info(f"✅ Successfully generated {len(successful_segments)} out of {len(segments_data)} segments")
-        return successful_segments
+        return successful_segments, timing_data_collection
         
     except Exception as e:
         logger.error(f"❌ Failed to batch generate voice segments: {str(e)}")
-        return []
+        return ([], [])
 
 def combine_audio_segments(segments, output_path):
     """
@@ -458,7 +488,7 @@ def generate_conversational_voiceover(script_text, output_path=None, speaker_pai
         logger.info(f"📁 [{request_id}] Using temporary directory: {temp_dir}")
         
         # Batch generate all voice segments
-        audio_segments = batch_generate_elevenlabs_voice_segments(batch_data, temp_dir)
+        audio_segments, timing_data = batch_generate_elevenlabs_voice_segments(batch_data, temp_dir)
         
         if not audio_segments:
             logger.error(f"❌ [{request_id}] No audio segments were generated successfully")
@@ -485,7 +515,7 @@ def generate_conversational_voiceover(script_text, output_path=None, speaker_pai
             except Exception as e:
                 logger.warning(f"⚠️ [{request_id}] Failed to remove temporary directory {temp_dir}: {str(e)}")
             
-            return output_path
+            return output_path, timing_data
         else:
             raise Exception("Failed to combine audio segments")
             
@@ -494,39 +524,62 @@ def generate_conversational_voiceover(script_text, output_path=None, speaker_pai
         logger.error(f"❌ [{request_id}] Error type: {type(e).__name__}")
         raise Exception(f"Failed to generate conversational voiceover: {str(e)}")
 
-def create_speaker_timeline(script_text, speaker_pair="trump_elon"):
+def create_speaker_timeline_with_timing_data(script_text, speaker_pair="trump_elon", timing_data=None):
     """
-    Create a timeline of when each speaker is talking
-    Returns list of (speaker, start_time, end_time, text) tuples
+    Create a timeline using real timing data from ElevenLabs
     """
     try:
-        logger.info("⏰ Creating speaker timeline")
-        logger.info(f"🎭 TIMELINE CREATION - speaker_pair: {speaker_pair}")
-        
-        # Parse script into speaker segments with speaker_pair
-        speaker_segments = parse_conversational_script(script_text, speaker_pair)
-        logger.info(f"🎭 TIMELINE - speaker_segments: {speaker_segments}")
+        logger.info("⏰ Creating speaker timeline with real timing data")
         
         timeline = []
         current_time = 0.0
         
-        for speaker, text in speaker_segments:
-            # Estimate duration (roughly 0.5 seconds per word)
-            word_count = len(text.split())
-            duration = word_count * 0.5
+        for timing_info in timing_data:
+            speaker = timing_info['speaker']
+            text = timing_info['text']
+            alignment = timing_info['timing_data']
             
+            # Calculate duration using documented ElevenLabs format
+            duration = calculate_duration_from_documented_format(alignment, text)
+
             timeline.append({
                 'speaker': speaker,
                 'start_time': current_time,
                 'end_time': current_time + duration,
-                'text': text
+                'text': text,
+                'real_timing_data': alignment  # Include raw timing data
             })
             
-            current_time += duration + 0.2  # Add 0.2s pause between speakers
+            current_time += duration + 0.2  # Add pause between speakers
         
-        logger.info(f"✅ Created timeline with {len(timeline)} segments")
+        logger.info(f"✅ Created timeline with real timing data: {len(timeline)} segments")
         return timeline
         
     except Exception as e:
-        logger.error(f"❌ Failed to create speaker timeline: {str(e)}")
-        raise Exception(f"Failed to create speaker timeline: {str(e)}") 
+        logger.error(f"❌ Failed to create timeline with timing data: {str(e)}")
+        logger.error(f"🔍 DEBUG: Exception details: {type(e).__name__}: {str(e)}")
+        logger.error(f"🔍 DEBUG: timing_data type: {type(timing_data)}")
+        logger.error(f"🔍 DEBUG: timing_data content: {timing_data}")
+        return []  # Return empty list instead of None
+
+def calculate_duration_from_documented_format(alignment, text):
+    """
+    Calculate duration from ElevenLabs alignment data according to official docs
+    Expected format: alignment['character_end_times_seconds'][-1]
+    """
+    try:
+        if not alignment or not isinstance(alignment, dict):
+            return len(text.split()) * 0.5
+        
+        # Use documented ElevenLabs API format
+        if 'character_end_times_seconds' in alignment:
+            end_times = alignment['character_end_times_seconds']
+            if end_times and isinstance(end_times, list):
+                return float(end_times[-1])  # Last character's end time = total duration
+        
+        # Fallback to word estimation
+        return len(text.split()) * 0.5
+        
+    except Exception as e:
+        logger.warning(f"⚠️ Could not parse alignment: {e}, using fallback")
+        return len(text.split()) * 0.5

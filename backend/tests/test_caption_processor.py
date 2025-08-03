@@ -20,7 +20,7 @@ logging.basicConfig(
 )
 
 from caption_processor import CaptionProcessor, enhance_timeline_with_captions, get_current_caption
-from conversational_tts import create_speaker_timeline
+from conversational_tts import create_speaker_timeline_with_timing_data
 
 def test_basic_caption_functionality():
     """Test basic caption processing functionality"""

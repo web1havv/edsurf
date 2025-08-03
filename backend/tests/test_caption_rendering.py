@@ -78,7 +78,8 @@ def test_full_video_with_captions():
             audio_path=None,  # Silent video for testing
             output_path=output_path,
             speaker_pair='trump_elon',
-            enable_captions=True
+            enable_captions=True,
+            timing_data=None
         )
             
         if result and os.path.exists(result):

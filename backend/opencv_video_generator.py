@@ -186,7 +186,7 @@ class OpenCVVideoGenerator:
     
 
 
-    def create_video_with_overlays_and_captions(self, script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon", enable_captions=True):
+    def create_video_with_overlays_and_captions(self, script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon", enable_captions=True, timing_data=None):
 
         """
         Create video with background video and speaker overlays
@@ -200,9 +200,9 @@ class OpenCVVideoGenerator:
                 output_path = f"opencv_video_{request_id}.mp4"
             
             # Create speaker timeline first (needed for duration detection)
-            from conversational_tts import create_speaker_timeline
+            from conversational_tts import create_speaker_timeline_with_timing_data
             logger.info(f"🎭 [{request_id}] TIMELINE CREATION - Using speaker_pair: {speaker_pair}")
-            timeline = create_speaker_timeline(script_text, speaker_pair)
+            timeline = create_speaker_timeline_with_timing_data(script_text, speaker_pair, timing_data)
             logger.info(f"⏰ [{request_id}] Created timeline with {len(timeline)} segments")
             
             # Enhance timeline with caption data if captions are enabled
@@ -503,7 +503,7 @@ class OpenCVVideoGenerator:
 # Global instance
 video_generator = OpenCVVideoGenerator()
 
-def create_background_video_with_speaker_overlays(script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon"):
+def create_background_video_with_speaker_overlays(script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon", timing_data=None):
     """
     Main function to replace MoviePy video generation
     """
@@ -517,7 +517,8 @@ def create_background_video_with_speaker_overlays(script_text, audio_path, backg
         background_video_path=background_video_path,
         output_path=output_path,
         speaker_pair=speaker_pair,
-        enable_captions=True
+        enable_captions=True,
+        timing_data=timing_data
     )
 
 # Add this simple test function to opencv_video_generator.py

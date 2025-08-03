@@ -266,11 +266,12 @@
 <body>
     <div class="container">
         <div class="logo">Info Reeler</div>
-        <div class="subtitle">Transform any article into a hilarious Elon & Trump conversation video!</div>
+        <div class="subtitle">Transform articles into hilarious conversations OR search any topic and we'll find & explain it!</div>
 
         <div class="tabs">
             <button class="tab active" onclick="switchTab('url')">Article URL</button>
             <button class="tab" onclick="switchTab('text')">Paste Text</button>
+            <button class="tab" onclick="switchTab('topic')">🔍 Topic Search</button>
         </div>
 
         <div id="url-tab" class="tab-content active">
@@ -315,6 +316,37 @@
             <button class="button" onclick="generateFromText()">Generate Video from Text</button>
         </div>
 
+        <div id="topic-tab" class="tab-content">
+            <div class="input-group">
+                <label for="topicInput">🔍 Enter any topic:</label>
+                <input type="text" id="topicInput" placeholder="e.g., artificial intelligence, climate change, quantum computing..." />
+            </div>
+            
+            <!-- Speaker Pair Selection -->
+            <div class="speaker-selection">
+                <label for="speakerPairTopic">🎭 Choose Speaker Pair:</label>
+                <select id="speakerPairTopic" onchange="updateSpeakerDescription('speakerPairTopic', 'speakerDescriptionTopic')">
+                    <option value="trump_elon">Trump & Elon</option>
+                    <option value="baburao_samay">Baburao & Samay</option>
+                </select>
+                <div class="speaker-description" id="speakerDescriptionTopic">
+                    Political discussions with tech innovation
+                </div>
+            </div>
+            
+            <button class="button" onclick="generateFromTopic()">🎯 Search & Generate Reel</button>
+            
+            <div class="topic-info" style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 10px; font-size: 14px; color: #666;">
+                <p><strong>How it works:</strong></p>
+                <ul style="text-align: left; padding-left: 20px;">
+                    <li>🔍 Search the web for quality articles about your topic</li>
+                    <li>📖 Extract and analyze the best article found</li>
+                    <li>🎭 Create an engaging conversation between your chosen speakers</li>
+                    <li>🎬 Generate a professional video reel</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <p>Generating your hilarious video... This may take a minute!</p>
@@ -339,6 +371,7 @@
         <div class="features">
             <h3>✨ Features:</h3>
             <ul>
+                <li>🎯 <strong>Topic Search:</strong> Enter any topic and we'll find & explain it</li>
                 <li>Extract content from any article URL</li>
                 <li>🎭 Choose from multiple speaker pairs:</li>
                 <li style="margin-left: 20px;">• Trump & Elon (Political + Tech)</li>
@@ -482,6 +515,41 @@
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.detail || 'Failed to generate video');
+                }
+
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+
+        async function generateFromTopic() {
+            const topic = document.getElementById('topicInput').value.trim();
+            const speakerPair = document.getElementById('speakerPairTopic').value;
+            
+            if (!topic) {
+                showError('Please enter a topic to search for');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                const response = await fetch('/generate-topic-reel', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: topic,
+                        speaker_pair: speakerPair
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to generate video from topic');
                 }
 
                 const data = await response.json();
