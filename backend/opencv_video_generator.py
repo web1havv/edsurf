@@ -184,7 +184,10 @@ class OpenCVVideoGenerator:
         logger.error(f"❌ Could not determine audio duration for {audio_path}")
         return 0
     
-    def create_video_with_overlays_and_captions(self, script_text, audio_path, background_video_path=None, output_path=None, enable_captions=True):
+
+
+    def create_video_with_overlays_and_captions(self, script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon", enable_captions=True):
+
         """
         Create video with background video and speaker overlays
         Using OpenCV for maximum reliability
@@ -198,7 +201,8 @@ class OpenCVVideoGenerator:
             
             # Create speaker timeline first (needed for duration detection)
             from conversational_tts import create_speaker_timeline
-            timeline = create_speaker_timeline(script_text)
+            logger.info(f"🎭 [{request_id}] TIMELINE CREATION - Using speaker_pair: {speaker_pair}")
+            timeline = create_speaker_timeline(script_text, speaker_pair)
             logger.info(f"⏰ [{request_id}] Created timeline with {len(timeline)} segments")
             
             # Enhance timeline with caption data if captions are enabled
@@ -216,12 +220,13 @@ class OpenCVVideoGenerator:
             
             total_frames = int(audio_duration * self.fps)
             logger.info(f"🎬 [{request_id}] Creating {total_frames} frames for {audio_duration:.2f}s")
-            
+
             # Load speaker images
             elon_img = self.load_and_resize_image("assets/elon.png")
             trump_img = self.load_and_resize_image("assets/trump.png")
             samay_img = self.load_and_resize_image("assets/samay.png")
             baburao_img = self.load_and_resize_image("assets/baburao.png")
+
 
             logger.info(f"✅ [{request_id}] Speaker images loaded and processed")
             
@@ -259,13 +264,50 @@ class OpenCVVideoGenerator:
                     bg_frame = np.zeros((self.video_height, self.video_width, 3), dtype=np.uint8)
                     bg_frame[:] = (50, 50, 150)  # Dark blue
                 
-                # Find current speaker
-                current_speaker = None
-                for segment in timeline:
-                    if segment['start_time'] <= current_time <= segment['end_time']:
-                        current_speaker = segment['speaker']
-                        break
+                # Enhanced smooth cross-fade transitions between speakers
+                transition_time = 0.8  # Longer transition for smoother effect
                 
+                # Dynamic alpha calculation for all possible speakers
+                speaker_alphas = {speaker: 0.0 for speaker in speaker_images_masked.keys()}
+                
+                for segment in timeline:
+                    speaker = segment['speaker']
+                    segment_start = segment['start_time']
+                    segment_end = segment['end_time']
+                    
+                    # Extend transition beyond segment boundaries
+                    transition_start = segment_start - transition_time * 0.5  # Start fading in before segment
+                    transition_end = segment_end + transition_time * 0.5    # Continue fading out after segment
+                    
+                    alpha = 0.0
+                    
+                    if transition_start <= current_time <= transition_end:
+                        if current_time < segment_start:
+                            # Pre-fade in (before segment officially starts)
+                            progress = (current_time - transition_start) / (transition_time * 0.5)
+                            alpha = max(0.0, min(1.0, progress))
+                        elif current_time <= segment_end:
+                            # Full visibility during segment
+                            fade_in_progress = min(1.0, (current_time - segment_start) / (transition_time * 0.5))
+                            fade_out_progress = min(1.0, (segment_end - current_time) / (transition_time * 0.5))
+                            alpha = min(fade_in_progress, fade_out_progress)
+                            alpha = max(0.7, alpha)  # Minimum visibility during main segment
+                        else:
+                            # Post-fade out (after segment officially ends)
+                            progress = 1.0 - ((current_time - segment_end) / (transition_time * 0.5))
+                            alpha = max(0.0, min(1.0, progress))
+                    
+                    # Apply calculated alpha to the respective speaker
+                    if speaker in speaker_alphas:
+                        speaker_alphas[speaker] = max(speaker_alphas[speaker], alpha)
+                
+                # Dynamic speaker positioning based on pair
+                active_speakers = [speaker for speaker, alpha in speaker_alphas.items() if alpha > 0.05]
+                
+                # Position speakers dynamically
+                positions = self._get_speaker_positions(active_speakers)
+                
+
                 # Add speaker overlay
                 if current_speaker == 'samay':
                     img_height = samay_img.shape[0]
@@ -291,6 +333,7 @@ class OpenCVVideoGenerator:
                     y_pos = self.video_height - img_height  # Bottom of screen
                     x_pos = 50  # Left side with margin
                     self._overlay_image(bg_frame, baburao_img, x_pos, y_pos)
+
                 
                 # 🆕 ADD CAPTION OVERLAY (if enabled)
                 if enable_captions and captions:
@@ -340,9 +383,10 @@ class OpenCVVideoGenerator:
         except Exception as e:
             logger.error(f"❌ [{request_id}] OpenCV video generation failed: {str(e)}")
             raise Exception(f"OpenCV video generation failed: {str(e)}")
-    
+
     def _overlay_image(self, background, overlay_img, x_pos, y_pos):
         """Overlay image"""
+
         try:
             # Get overlay dimensions
             if len(overlay_img.shape) == 3 and overlay_img.shape[2] == 4:
@@ -383,6 +427,34 @@ class OpenCVVideoGenerator:
             
         except Exception as e:
             logger.warning(f"⚠️ Failed to overlay image at ({x_pos}, {y_pos}): {str(e)}")
+    
+    def _overlay_image_with_alpha(self, background, overlay_img, mask, x_pos, y_pos, alpha):
+        """Overlay image with transparency using mask and alpha blending for smooth transitions"""
+        try:
+            h, w = overlay_img.shape[:2]
+            
+            # Ensure position is within bounds
+            x_pos = max(0, min(x_pos, self.video_width - w))
+            y_pos = max(0, min(y_pos, self.video_height - h))
+            
+            # Region of interest in background
+            roi = background[y_pos:y_pos+h, x_pos:x_pos+w]
+            
+            # Apply alpha to the overlay image
+            overlay_alpha = overlay_img.astype(float) * alpha
+            
+            # Create alpha mask for smooth blending
+            alpha_mask = (mask.astype(float) / 255.0) * alpha
+            alpha_mask_3ch = cv2.merge([alpha_mask, alpha_mask, alpha_mask])
+            
+            # Blend the images
+            blended = roi.astype(float) * (1 - alpha_mask_3ch) + overlay_alpha * alpha_mask_3ch
+            
+            # Convert back to uint8
+            background[y_pos:y_pos+h, x_pos:x_pos+w] = blended.astype(np.uint8)
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to overlay image with alpha at ({x_pos}, {y_pos}): {str(e)}")
     
     def _add_audio_with_ffmpeg(self, video_path, audio_path, output_path):
         """Add audio to video using FFmpeg"""
@@ -438,17 +510,21 @@ class OpenCVVideoGenerator:
 # Global instance
 video_generator = OpenCVVideoGenerator()
 
-def create_background_video_with_speaker_overlays(script_text, audio_path, background_video_path=None, output_path=None):
+def create_background_video_with_speaker_overlays(script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon"):
     """
     Main function to replace MoviePy video generation
     """
     logger.info("🎬 Using OpenCV-based video generation (MoviePy replacement)")
+
+
+    logger.info(f"🎭 WRAPPER FUNCTION - Received speaker_pair: {speaker_pair}")
     return video_generator.create_video_with_overlays_and_captions(
+
         script_text=script_text,
         audio_path=audio_path,
         background_video_path=background_video_path,
         output_path=output_path,
-        speaker_pair='trump_elon',
+        speaker_pair=speaker_pair,
         enable_captions=True
     )
 

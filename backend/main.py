@@ -11,7 +11,7 @@ from datetime import datetime
 
 from opencv_video_generator import test_video_overlay
 from llm import generate_script, generate_conversational_script, test_api_key
-from conversational_tts import generate_conversational_voiceover
+from conversational_tts import generate_conversational_voiceover, SPEAKER_PAIRS
 from opencv_video_generator import create_background_video_with_speaker_overlays
 from article_extractor import extract_article_from_url
 
@@ -41,6 +41,7 @@ class ArticleInput(BaseModel):
     url: str = None
     text: str = None
     title: str = None
+    speaker_pair: str = "trump_elon"  # Default to Trump & Elon
 
 class ReelResponse(BaseModel):
     script: str
@@ -197,14 +198,16 @@ async def generate_conversational_reel(article: ArticleInput):
         logger.info(f"📜 [{request_id}] Script length: {len(script)} characters")
         logger.debug(f"📜 [{request_id}] Script preview: {script[:200]}...")
         
-        # Step 3: Generate conversational audio
-        logger.info(f"🎵 [{request_id}] Step 3: Generating conversational audio")
-        audio_path = await loop.run_in_executor(None, generate_conversational_voiceover, script)
+        # Step 3: Generate conversational audio with speaker pair
+        speaker_pair = getattr(article, 'speaker_pair', 'trump_elon')  # Default to Trump & Elon
+        logger.info(f"🎵 [{request_id}] Step 3: Generating conversational audio with speaker pair: {speaker_pair}")
+        audio_path = await loop.run_in_executor(None, generate_conversational_voiceover, script, None, speaker_pair)
         logger.info(f"🎵 [{request_id}] Conversational audio generated: {audio_path}")
         
         # Step 4: Create conversational video with background and speaker overlays
         logger.info(f"🎬 [{request_id}] Step 4: Creating conversational video with background and speaker overlays")
-        video_path = await loop.run_in_executor(None, create_background_video_with_speaker_overlays, script, audio_path)
+        logger.info(f"🎭 [{request_id}] VIDEO GENERATION - Using speaker_pair for conversational-reel: {speaker_pair}")
+        video_path = await loop.run_in_executor(None, create_background_video_with_speaker_overlays, script, audio_path, None, None, speaker_pair)
         logger.info(f"🎬 [{request_id}] Conversational video with background created: {video_path}")
         
         # Save all content to organized folder structure
@@ -276,6 +279,17 @@ async def generate_article_reel(article: ArticleInput):
     logger.info(f"🔄 [{request_id}] Starting article reel generation process")
     logger.info(f"📄 [{request_id}] Input: URL={article.url}, Text length={len(article.text) if article.text else 0}")
     
+    # EXTENSIVE LOGGING FOR SPEAKER_PAIR DEBUG
+    logger.info(f"🎭 [{request_id}] DEBUGGING SPEAKER_PAIR:")
+    logger.info(f"🎭 [{request_id}] - Raw article object: {article}")
+    logger.info(f"🎭 [{request_id}] - article.speaker_pair value: {getattr(article, 'speaker_pair', 'NOT_FOUND')}")
+    logger.info(f"🎭 [{request_id}] - article.__dict__: {article.__dict__}")
+    logger.info(f"🎭 [{request_id}] - hasattr(article, 'speaker_pair'): {hasattr(article, 'speaker_pair')}")
+    if hasattr(article, 'speaker_pair'):
+        logger.info(f"🎭 [{request_id}] - Direct access article.speaker_pair: {article.speaker_pair}")
+    else:
+        logger.error(f"❌ [{request_id}] - SPEAKER_PAIR ATTRIBUTE NOT FOUND IN ARTICLE OBJECT!")
+    
     try:
         # Step 1: Extract article content from URL
         logger.info(f"📖 [{request_id}] Step 1: Extracting article content")
@@ -292,22 +306,29 @@ async def generate_article_reel(article: ArticleInput):
             title = article.title or "Article"
             logger.info(f"📄 [{request_id}] Content length: {len(content)} characters")
         
-        # Step 2: Generate conversational script
-        logger.info(f"🤖 [{request_id}] Step 2: Generating conversational script")
+        # Step 2: Generate conversational script with speaker pair
+        speaker_pair = getattr(article, 'speaker_pair', 'trump_elon')  # Default to Trump & Elon
+        logger.info(f"🤖 [{request_id}] Step 2: Generating conversational script for {speaker_pair}")
+        logger.info(f"🎭 [{request_id}] SCRIPT GENERATION - Selected speaker_pair: {speaker_pair}")
+        logger.info(f"🎭 [{request_id}] SCRIPT GENERATION - Calling generate_conversational_script with parameters:")
+        logger.info(f"🎭 [{request_id}] - content length: {len(content)}")
+        logger.info(f"🎭 [{request_id}] - speaker_pair: {speaker_pair}")
         loop = asyncio.get_event_loop()
-        script = await loop.run_in_executor(None, generate_conversational_script, content)
+        script = await loop.run_in_executor(None, generate_conversational_script, content, speaker_pair)
         logger.info(f"📜 [{request_id}] Conversational script generated successfully")
         logger.info(f"📜 [{request_id}] Script length: {len(script)} characters")
         logger.debug(f"📜 [{request_id}] Script preview: {script[:200]}...")
         
-        # Step 3: Generate conversational audio
-        logger.info(f"🎵 [{request_id}] Step 3: Generating conversational audio")
-        audio_path = await loop.run_in_executor(None, generate_conversational_voiceover, script)
+        # Step 3: Generate conversational audio with speaker pair
+        speaker_pair = getattr(article, 'speaker_pair', 'trump_elon')  # Default to Trump & Elon
+        logger.info(f"🎵 [{request_id}] Step 3: Generating conversational audio with speaker pair: {speaker_pair}")
+        audio_path = await loop.run_in_executor(None, generate_conversational_voiceover, script, None, speaker_pair)
         logger.info(f"🎵 [{request_id}] Audio generated successfully: {audio_path}")
         
         # Step 4: Create conversational video with background and speaker overlays
         logger.info(f"🎬 [{request_id}] Step 4: Creating conversational video with background and speaker overlays")
-        video_path = await loop.run_in_executor(None, create_background_video_with_speaker_overlays, script, audio_path)
+        logger.info(f"🎭 [{request_id}] VIDEO GENERATION - Using speaker_pair: {speaker_pair}")
+        video_path = await loop.run_in_executor(None, create_background_video_with_speaker_overlays, script, audio_path, None, None, speaker_pair)
         logger.info(f"🎬 [{request_id}] Video with background created successfully: {video_path}")
         
         # Step 5: Save files to outputs directory
@@ -510,6 +531,13 @@ async def serve_frontend():
 @app.get("/health")
 async def health_check():
     logger.info("🏥 Health check requested")
-    return {"status": "healthy", "models_loaded": True} 
+    return {"status": "healthy", "models_loaded": True}
 
-# test_video_overlay()
+@app.get("/speaker-pairs")
+async def get_speaker_pairs():
+    """Get available speaker pairs for frontend selection"""
+    logger.info("🎭 Speaker pairs requested")
+    return {
+        "speaker_pairs": SPEAKER_PAIRS,
+        "default": "trump_elon"
+    } 

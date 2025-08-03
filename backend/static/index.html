@@ -158,6 +158,49 @@
             display: none;
         }
 
+        .speaker-selection {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            border: 2px solid #dee2e6;
+        }
+
+        .speaker-selection label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #495057;
+            font-size: 1.1em;
+        }
+
+        .speaker-selection select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .speaker-selection select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .speaker-description {
+            font-size: 14px;
+            color: #6c757d;
+            font-style: italic;
+            text-align: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+        }
+
         .tabs {
             display: flex;
             margin-bottom: 20px;
@@ -235,6 +278,19 @@
                 <label for="articleUrl">Article URL:</label>
                 <input type="url" id="articleUrl" placeholder="https://example.com/article" />
             </div>
+            
+            <!-- Speaker Pair Selection -->
+            <div class="speaker-selection">
+                <label for="speakerPairUrl">🎭 Choose Speaker Pair:</label>
+                <select id="speakerPairUrl" onchange="updateSpeakerDescription('speakerPairUrl', 'speakerDescriptionUrl')">
+                    <option value="trump_elon">Trump & Elon</option>
+                    <option value="baburao_samay">Baburao & Samay</option>
+                </select>
+                <div class="speaker-description" id="speakerDescriptionUrl">
+                    Political discussions with tech innovation
+                </div>
+            </div>
+            
             <button class="button" onclick="generateFromUrl()">Generate Video from URL</button>
         </div>
 
@@ -243,6 +299,19 @@
                 <label for="articleText">Article Text:</label>
                 <textarea id="articleText" placeholder="Paste your article content here..."></textarea>
             </div>
+            
+            <!-- Speaker Pair Selection -->
+            <div class="speaker-selection">
+                <label for="speakerPairText">🎭 Choose Speaker Pair:</label>
+                <select id="speakerPairText" onchange="updateSpeakerDescription('speakerPairText', 'speakerDescriptionText')">
+                    <option value="trump_elon">Trump & Elon</option>
+                    <option value="baburao_samay">Baburao & Samay</option>
+                </select>
+                <div class="speaker-description" id="speakerDescriptionText">
+                    Political discussions with tech innovation
+                </div>
+            </div>
+            
             <button class="button" onclick="generateFromText()">Generate Video from Text</button>
         </div>
 
@@ -271,16 +340,30 @@
             <h3>✨ Features:</h3>
             <ul>
                 <li>Extract content from any article URL</li>
-                <li>Generate hilarious Elon & Trump conversations</li>
+                <li>🎭 Choose from multiple speaker pairs:</li>
+                <li style="margin-left: 20px;">• Trump & Elon (Political + Tech)</li>
+                <li style="margin-left: 20px;">• Baburao & Samay (Comedy + Chess)</li>
                 <li>Deep explanations of complex topics</li>
                 <li>Professional voice synthesis</li>
-                <li>Dynamic speaker switching</li>
+                <li>Dynamic speaker switching with smooth transitions</li>
                 <li>Optimized for social media</li>
             </ul>
         </div>
     </div>
 
     <script>
+        // Speaker pair descriptions
+        const speakerDescriptions = {
+            "trump_elon": "Political discussions with tech innovation",
+            "baburao_samay": "Comedy legend meets chess master insights"
+        };
+
+        function updateSpeakerDescription(selectId, descriptionId) {
+            const selectedPair = document.getElementById(selectId).value;
+            const descriptionElement = document.getElementById(descriptionId);
+            descriptionElement.textContent = speakerDescriptions[selectedPair] || "";
+        }
+
         function switchTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -340,6 +423,7 @@
 
         async function generateFromUrl() {
             const url = document.getElementById('articleUrl').value.trim();
+            const speakerPair = document.getElementById('speakerPairUrl').value;
             
             if (!url) {
                 showError('Please enter a valid article URL');
@@ -355,7 +439,8 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        url: url
+                        url: url,
+                        speaker_pair: speakerPair
                     })
                 });
 
@@ -373,6 +458,7 @@
 
         async function generateFromText() {
             const text = document.getElementById('articleText').value.trim();
+            const speakerPair = document.getElementById('speakerPairText').value;
             
             if (!text) {
                 showError('Please enter article text');
@@ -388,7 +474,8 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        text: text
+                        text: text,
+                        speaker_pair: speakerPair
                     })
                 });
 

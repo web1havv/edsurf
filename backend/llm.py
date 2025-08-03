@@ -8,12 +8,10 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-API_KEY = os.getenv("GEMINI_API_KEY")
-if not API_KEY:
-    logger.error("❌ GEMINI_API_KEY environment variable is not set!")
-    raise ValueError("GEMINI_API_KEY environment variable is required. Please set it in your .env file or environment.")
+# Hardcoded Gemini API key
+API_KEY = "AIzaSyC02D-Q6kkZxumAdUqtSo1VAYH0LZpIvZQ"
 
-logger.info(f"🔑 API Key loaded: {API_KEY[:10]}...{API_KEY[-4:] if len(API_KEY) > 14 else '***'}")
+logger.info(f"🔑 Using hardcoded Gemini API Key: {API_KEY[:10]}...{API_KEY[-4:]}")
 
 genai.configure(api_key=API_KEY)
 
@@ -218,17 +216,75 @@ Article: {article_text}
 Generate ONLY clean, natural conversational dialogue with 4-6 short segments:
 """
 
-def generate_conversational_script(article_text: str) -> str:
+BABURAO_SAMAY_SCRIPT_PROMPT = """
+Write a 30-second hilarious comedy skit featuring Baburao Ganpatrao Apte (from Hera Pheri) and Samay Raina (chess master and comedian) discussing this article. The dialogue should be in HINDI but written in ROMAN script (Hinglish).
+
+CHARACTER PERSONALITIES:
+- Baburao: Classic Hera Pheri style. Always confused, speaks mix of Hindi-English. Uses phrases like "Ye kya bakchodi hai?", "Arre yaar", "Kya baat kar rahe ho", "Samajh nahi aa raha", "Pareshaan kar diya", "Dimag kharab ho gaya". Gets everything completely wrong, makes absurd connections to daily life.
+- Samay: Chess master comedian who speaks in Hindi-English mix. Uses words like "Yaar", "Bhai", "Dekho", "Samjha", "Logic hai na", "Strategy chahiye". Patient but sarcastic, explains with chess analogies.
+
+DIALOGUE STYLE REQUIREMENTS:
+- Write dialogue in ROMAN HINDI (Hinglish) - NOT pure English
+- Use authentic Hindi words and phrases throughout
+- Baburao style: "Arre yaar", "Ye kya bakchodi hai", "Samajh nahi aaya", "Dimag kharab kar diya"
+- Samay style: "Dekho bhai", "Logic hai na", "Strategy chahiye", "Samjha", "Chess mein bolte hai na"
+- Mix Hindi and English naturally like real Indian conversations
+- Keep it authentic to how these characters actually speak
+
+CONVERSATION STRUCTURE:
+1. Baburao starts confused: "Ye kya bakchodi hai? Samajh nahi aa raha"
+2. Samay explains in Hindi-English: "Dekho bhai, ye simple hai"  
+3. Baburao misunderstands completely with Hindi phrases
+4. Samay uses chess analogy in Hindi-English
+5. Baburao relates to daily problems in typical Hindi style
+6. End with Baburao's classic confusion
+
+HINDI WORDS TO INCLUDE:
+- Bakchodi, samajh, dimag, pareshaan, yaar, bhai, dekho, kya, hai, nahi, aaya, kharab, logic, strategy, simple, problem
+
+CRITICAL REQUIREMENTS:
+- Dialogue ONLY in ROMAN HINDI/Hinglish 
+- NO English-only sentences
+- Make every line sound authentically Hindi
+- Format as alternating dialogue segments separated by double line breaks
+- Start with Baburao speaking, then alternate with Samay
+- NO speaker names in the dialogue text itself
+- Make it EXTREMELY FUNNY with authentic Indian humor
+- Include real Hindi expressions and reactions
+
+EXAMPLE FORMAT:
+Ye kya bakchodi hai? Samajh nahi aa raha yaar.
+
+Dekho bhai, simple hai na. Logic lagao.
+
+Dimag kharab kar diya. Pareshaan kar diya.
+
+Article: {article_text}
+
+Generate ONLY clean, natural HINGLISH alternating dialogue with 4-6 short segments:
+"""
+
+def generate_conversational_script(article_text: str, speaker_pair: str = "trump_elon") -> str:
     try:
-        logger.info(f"🤖 Generating conversational script for article of length: {len(article_text)} characters")
-        prompt = CONVERSATIONAL_SCRIPT_PROMPT.format(article_text=article_text)
+        logger.info(f"🤖 Generating conversational script for {speaker_pair} - article length: {len(article_text)} characters")
+        logger.info(f"🎭 SCRIPT GENERATION DEBUG:")
+        logger.info(f"🎭 - Received speaker_pair: {speaker_pair}")
+        logger.info(f"🎭 - Article text length: {len(article_text)}")
+
+        # Choose appropriate prompt based on speaker pair
+        if speaker_pair == "baburao_samay":
+            logger.info(f"🎭 - Using BABURAO_SAMAY_SCRIPT_PROMPT")
+            prompt = BABURAO_SAMAY_SCRIPT_PROMPT.format(article_text=article_text)
+        else:
+            logger.info(f"🎭 - Using default CONVERSATIONAL_SCRIPT_PROMPT for {speaker_pair}")
+            prompt = CONVERSATIONAL_SCRIPT_PROMPT.format(article_text=article_text)
         
-        logger.info("🤖 Sending conversational script request to Gemini API...")
+        logger.info(f"🤖 Sending request to Gemini API for {speaker_pair} conversational script...")
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         
         result = response.text.strip() if hasattr(response, 'text') else str(response)
-        logger.info(f"✅ Conversational script generated successfully, length: {len(result)} characters")
+        logger.info(f"✅ {speaker_pair} conversational script generated successfully, length: {len(result)} characters")
         logger.debug(f"📜 Script preview: {result[:200]}...")
         
         return result

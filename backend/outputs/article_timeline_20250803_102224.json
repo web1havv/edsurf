@@ -1,0 +1,38 @@
+[
+  {
+    "speaker": "trump",
+    "start_time": 0.0,
+    "end_time": 9.0,
+    "text": "So, class, what's the big deal about a blockchain server?  It's not just some fancy server, you know."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 9.2,
+    "end_time": 19.2,
+    "text": "It's like, a digital ledger, but everyone has a copy, right?  So, it's super secure.  Like, totally unhackable!  Believe me."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 19.4,
+    "end_time": 37.4,
+    "text": "Wrong, Donald.  It's decentralized,  meaning copies are spread across many servers.  Think of it like having a secret recipe, not just one copy in one kitchen, but a hundred.  If someone tries to change one copy..."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 37.599999999999994,
+    "end_time": 49.599999999999994,
+    "text": "They'd have to change them ALL!  Huge!  Like, the biggest, most beautiful, unhackable ledger ever made.  So, it's better than my tax returns, right?"
+  },
+  {
+    "speaker": "trump",
+    "start_time": 49.8,
+    "end_time": 62.3,
+    "text": "Exactly, but also incredibly complex to maintain.  A full node has the whole history, like a giant library.  A light node just has the headings."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 62.5,
+    "end_time": 75.5,
+    "text": "So a light node is like...a small library, with just the titles?  Sounds fake news to me.  Very sad.  But bigly efficient, right?  The best efficiency!"
+  }
+]
