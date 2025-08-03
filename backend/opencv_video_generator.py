@@ -220,7 +220,9 @@ class OpenCVVideoGenerator:
             # Load speaker images
             elon_img = self.load_and_resize_image("assets/elon.png")
             trump_img = self.load_and_resize_image("assets/trump.png")
-            
+            samay_img = self.load_and_resize_image("assets/samay.png")
+            baburao_img = self.load_and_resize_image("assets/baburao.png")
+
             logger.info(f"✅ [{request_id}] Speaker images loaded and processed")
             
             # Load background video
@@ -265,20 +267,30 @@ class OpenCVVideoGenerator:
                         break
                 
                 # Add speaker overlay
-                if current_speaker == 'elon':
-                    # Position Elon at bottom-right
+                if current_speaker == 'samay':
+                    img_height = samay_img.shape[0]
+                    img_width = samay_img.shape[1]
+                    y_pos = self.video_height - img_height  # Bottom of screen
+                    x_pos = self.video_width - img_width - 50  # Right side with margin
+                    self._overlay_image(bg_frame, samay_img, x_pos, y_pos)
+                elif current_speaker == 'elon':
                     img_height = elon_img.shape[0]
                     img_width = elon_img.shape[1]
                     y_pos = self.video_height - img_height  # Bottom of screen
                     x_pos = self.video_width - img_width - 50  # Right side with margin
                     self._overlay_image(bg_frame, elon_img, x_pos, y_pos)
                 elif current_speaker == 'trump':
-                    # Position Trump at bottom-left
                     img_height = trump_img.shape[0]
                     img_width = trump_img.shape[1]
                     y_pos = self.video_height - img_height  # Bottom of screen
                     x_pos = 50  # Left side with margin
                     self._overlay_image(bg_frame, trump_img, x_pos, y_pos)
+                elif current_speaker == 'baburao':
+                    img_height = baburao_img.shape[0]
+                    img_width = baburao_img.shape[1]
+                    y_pos = self.video_height - img_height  # Bottom of screen
+                    x_pos = 50  # Left side with margin
+                    self._overlay_image(bg_frame, baburao_img, x_pos, y_pos)
                 
                 # 🆕 ADD CAPTION OVERLAY (if enabled)
                 if enable_captions and captions:
@@ -436,6 +448,7 @@ def create_background_video_with_speaker_overlays(script_text, audio_path, backg
         audio_path=audio_path,
         background_video_path=background_video_path,
         output_path=output_path,
+        speaker_pair='trump_elon',
         enable_captions=True
     )
 

@@ -77,6 +77,7 @@ def test_full_video_with_captions():
             script_text=test_script,
             audio_path=None,  # Silent video for testing
             output_path=output_path,
+            speaker_pair='trump_elon',
             enable_captions=True
         )
             
