@@ -13,6 +13,9 @@ from PIL import Image, ImageDraw
 from datetime import datetime
 import json
 
+from captions.caption_processor import enhance_timeline_with_captions, get_current_caption
+from captions.caption_renderer import render_caption_on_frame
+
 logger = logging.getLogger(__name__)
 
 class OpenCVVideoGenerator:
@@ -181,7 +184,7 @@ class OpenCVVideoGenerator:
         logger.error(f"❌ Could not determine audio duration for {audio_path}")
         return 0
     
-    def create_video_with_overlays(self, script_text, audio_path, background_video_path=None, output_path=None):
+    def create_video_with_overlays_and_captions(self, script_text, audio_path, background_video_path=None, output_path=None, enable_captions=True):
         """
         Create video with background video and speaker overlays
         Using OpenCV for maximum reliability
@@ -198,11 +201,14 @@ class OpenCVVideoGenerator:
             timeline = create_speaker_timeline(script_text)
             logger.info(f"⏰ [{request_id}] Created timeline with {len(timeline)} segments")
             
-            # Log timeline details
-            if timeline:
-                for i, segment in enumerate(timeline):
-                    logger.info(f"   Segment {i+1}: {segment['speaker']} ({segment['start_time']:.1f}s - {segment['end_time']:.1f}s)")
-            
+            # Enhance timeline with caption data if captions are enabled
+            enhanced_timeline = None
+            captions = []
+            if enable_captions:
+                enhanced_timeline = enhance_timeline_with_captions(timeline)
+                captions = enhanced_timeline['captions']
+                logger.info(f"💬 [{request_id}] Enhanced timeline with {len(captions)} caption chunks")
+        
             # Get audio duration (using timeline as primary source)
             audio_duration = self.get_audio_duration(audio_path, timeline)
             if audio_duration <= 0:
@@ -212,13 +218,13 @@ class OpenCVVideoGenerator:
             logger.info(f"🎬 [{request_id}] Creating {total_frames} frames for {audio_duration:.2f}s")
             
             # Load speaker images
-            elon_img = self.load_and_resize_image("elon.png")
-            trump_img = self.load_and_resize_image("trump.png")
+            elon_img = self.load_and_resize_image("assets/elon.png")
+            trump_img = self.load_and_resize_image("assets/trump.png")
             
             logger.info(f"✅ [{request_id}] Speaker images loaded and processed")
             
             # Load background video
-            background_cap, bg_duration = self.load_background_video(background_video_path or "minecraft-1.mp4")
+            background_cap, bg_duration = self.load_background_video(background_video_path or "assets/minecraft-1.mp4")
             if background_cap is None:
                 raise Exception("Could not load background video")
             
@@ -274,6 +280,15 @@ class OpenCVVideoGenerator:
                     x_pos = 50  # Left side with margin
                     self._overlay_image(bg_frame, trump_img, x_pos, y_pos)
                 
+                # 🆕 ADD CAPTION OVERLAY (if enabled)
+                if enable_captions and captions:
+                    current_caption = get_current_caption(current_time, captions)
+                    if current_caption:
+                        caption_text = current_caption['text']
+                        caption_speaker = current_caption['speaker']
+                        bg_frame = render_caption_on_frame(bg_frame, caption_text, caption_speaker)
+            
+
                 # Write frame
                 video_writer.write(bg_frame)
                 
@@ -416,11 +431,12 @@ def create_background_video_with_speaker_overlays(script_text, audio_path, backg
     Main function to replace MoviePy video generation
     """
     logger.info("🎬 Using OpenCV-based video generation (MoviePy replacement)")
-    return video_generator.create_video_with_overlays(
+    return video_generator.create_video_with_overlays_and_captions(
         script_text=script_text,
         audio_path=audio_path,
         background_video_path=background_video_path,
-        output_path=output_path
+        output_path=output_path,
+        enable_captions=True
     )
 
 # Add this simple test function to opencv_video_generator.py
@@ -439,13 +455,13 @@ def test_video_overlay():
         logger.info("🧪 Generating fresh video with speaker overlays...")
         
         # Create a simple test script for Elon-Trump conversation
-        test_script = """**Elon:** You know, I've been thinking about how we can revolutionize social media and make it more efficient. 
+        test_script = """You know, I've been thinking about how we can revolutionize social media and make it more efficient. 
 
-**Trump:** That's fantastic, Elon! We need the best technology, the most incredible innovations. Make it huge!
+That's fantastic, Elon! We need the best technology, the most incredible innovations. Make it huge!
 
-**Elon:** Exactly. With neural interfaces and sustainable technology, we could create something unprecedented.
+Exactly. With neural interfaces and sustainable technology, we could create something unprecedented.
 
-**Trump:** Absolutely tremendous! The American people deserve the best platforms, the most amazing user experience. We're going to make social media great again!"""
+Absolutely tremendous! The American people deserve the best platforms, the most amazing user experience. We're going to make social media great again!"""
         
         logger.info("📝 Test script created for Elon-Trump conversation")
         logger.info(f"📄 Script length: {len(test_script)} characters")

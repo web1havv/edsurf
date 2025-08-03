@@ -512,4 +512,4 @@ async def health_check():
     logger.info("🏥 Health check requested")
     return {"status": "healthy", "models_loaded": True} 
 
-test_video_overlay()
+# test_video_overlay()

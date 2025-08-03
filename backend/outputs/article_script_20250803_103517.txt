@@ -1,0 +1,14 @@
+Title: What is a Vector Database & How Does it Work? Use Cases + Examples
+URL: https://www.pinecone.io/learn/vector-database/
+
+So, class, what's a vector database, huh?  Think… really think.
+
+It's like, a super-duper filing cabinet, right?  But instead of papers, it's got… ideas!  Bigly ideas!  The best ideas!
+
+Yeah, but these "ideas" are vectors,  mathematical representations of information.  Like,  imagine each idea as a point in space.  The closer the points, the more similar the ideas.  It's not just filing, it's finding relationships.
+
+So, you’re saying… it’s like… finding the best people for my next cabinet?  Totally brilliant!  The best cabinet, everyone agrees!
+
+Actually, it’s more about finding the most similar data points, regardless of "people". It uses fancy algorithms like LSH and HNSW to do super-fast searches – way faster than my old database.  Much, much faster.
+
+Fake news! My database is the best database!  But… uh… these algorithms, they sound… complicated.  Maybe we should use them to find the best… uh…  tweets?  The most beautiful tweets.  Believe me.
