@@ -9,7 +9,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 # Hardcoded Gemini API key
-API_KEY = "AIzaSyC02D-Q6kkZxumAdUqtSo1VAYH0LZpIvZQ"
+API_KEY = os.getenv("GEMINI_API_KEY")
 
 logger.info(f"🔑 Using hardcoded Gemini API Key: {API_KEY[:10]}...{API_KEY[-4:]}")
 

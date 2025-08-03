@@ -1,0 +1,38 @@
+[
+  {
+    "speaker": "trump",
+    "start_time": 0.0,
+    "end_time": 6.5,
+    "text": "So, class, what's a vector database, in the simplest terms you can muster?"
+  },
+  {
+    "speaker": "elon",
+    "start_time": 6.7,
+    "end_time": 16.7,
+    "text": "It's like\u2026 a super-duper smart filing cabinet, right?  It holds all the\u2026 you know\u2026 the really important stuff. Bigly important."
+  },
+  {
+    "speaker": "trump",
+    "start_time": 16.9,
+    "end_time": 33.4,
+    "text": "Not exactly.  It stores information as vectors, not files.  Think of it like this: each file is a point on a map.  Similar files are close together.  The database finds similar files quickly."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 33.599999999999994,
+    "end_time": 43.099999999999994,
+    "text": "So it's like\u2026 finding the closest McDonald's to my golf course?  You know, the best, the most tremendous McDonald's?"
+  },
+  {
+    "speaker": "trump",
+    "start_time": 43.3,
+    "end_time": 57.3,
+    "text": "It's more like finding the most similar documents to a query based on their meaning, not just keywords. It uses advanced math to determine similarity, not just location."
+  },
+  {
+    "speaker": "elon",
+    "start_time": 57.5,
+    "end_time": 66.5,
+    "text": "Yeah, but\u2026 can it handle\u2026 fake news?  Because, you know, the media is fake.  Totally fake.  Believe me."
+  }
+]

@@ -264,11 +264,15 @@ class OpenCVVideoGenerator:
                     bg_frame = np.zeros((self.video_height, self.video_width, 3), dtype=np.uint8)
                     bg_frame[:] = (50, 50, 150)  # Dark blue
                 
+                # Determine current speaker from timeline
+                current_speaker = None
+                for segment in timeline:
+                    if segment['start_time'] <= current_time <= segment['end_time']:
+                        current_speaker = segment['speaker']
+                        break
+
                 # Enhanced smooth cross-fade transitions between speakers
                 transition_time = 0.8  # Longer transition for smoother effect
-                
-                # Dynamic alpha calculation for all possible speakers
-                speaker_alphas = {speaker: 0.0 for speaker in speaker_images_masked.keys()}
                 
                 for segment in timeline:
                     speaker = segment['speaker']
@@ -296,18 +300,7 @@ class OpenCVVideoGenerator:
                             # Post-fade out (after segment officially ends)
                             progress = 1.0 - ((current_time - segment_end) / (transition_time * 0.5))
                             alpha = max(0.0, min(1.0, progress))
-                    
-                    # Apply calculated alpha to the respective speaker
-                    if speaker in speaker_alphas:
-                        speaker_alphas[speaker] = max(speaker_alphas[speaker], alpha)
                 
-                # Dynamic speaker positioning based on pair
-                active_speakers = [speaker for speaker, alpha in speaker_alphas.items() if alpha > 0.05]
-                
-                # Position speakers dynamically
-                positions = self._get_speaker_positions(active_speakers)
-                
-
                 # Add speaker overlay
                 if current_speaker == 'samay':
                     img_height = samay_img.shape[0]
@@ -519,7 +512,6 @@ def create_background_video_with_speaker_overlays(script_text, audio_path, backg
 
     logger.info(f"🎭 WRAPPER FUNCTION - Received speaker_pair: {speaker_pair}")
     return video_generator.create_video_with_overlays_and_captions(
-
         script_text=script_text,
         audio_path=audio_path,
         background_video_path=background_video_path,
