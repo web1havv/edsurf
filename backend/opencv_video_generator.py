@@ -149,7 +149,7 @@ class OpenCVVideoGenerator:
         logger.error(f"❌ Could not determine audio duration for {audio_path}")
         return 0
     
-    def create_video_with_overlays(self, script_text, audio_path, background_video_path=None, output_path=None):
+    def create_video_with_overlays(self, script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon"):
         """
         Create video with background video and speaker overlays
         Using OpenCV for maximum reliability
@@ -163,7 +163,8 @@ class OpenCVVideoGenerator:
             
             # Create speaker timeline first (needed for duration detection)
             from conversational_tts import create_speaker_timeline
-            timeline = create_speaker_timeline(script_text)
+            logger.info(f"🎭 [{request_id}] TIMELINE CREATION - Using speaker_pair: {speaker_pair}")
+            timeline = create_speaker_timeline(script_text, speaker_pair)
             logger.info(f"⏰ [{request_id}] Created timeline with {len(timeline)} segments")
             
             # Log timeline details
@@ -179,16 +180,46 @@ class OpenCVVideoGenerator:
             total_frames = int(audio_duration * self.fps)
             logger.info(f"🎬 [{request_id}] Creating {total_frames} frames for {audio_duration:.2f}s")
             
-            # Load speaker images
-            elon_img = self.load_and_resize_image("../63b84b16d1c5130019f95f8c.webp", (200, 200))
-            trump_img = self.load_and_resize_image("../trump-removebg-preview.png", (200, 200))
+            # Load all speaker images (bigger size for better visibility)
+            speaker_images = {}
+            
+            # Elon Musk
+            elon_img = self.load_and_resize_image("../63b84b16d1c5130019f95f8c.webp", (400, 400))
+            speaker_images['elon'] = elon_img
+            
+            # Trump
+            trump_img = self.load_and_resize_image("../trump-removebg-preview.png", (400, 400))
+            speaker_images['trump'] = trump_img
+            
+            # Samay - using the absolute MV5 image path
+            samay_img_path = "/Users/building_something/Desktop/info_reeler/MV5BNGVkYjQ2YWItN2JmYi00Mzc0LTk2ZTQtYmM1NjhmOWQzNTE3XkEyXkFqcGc@._V1_.jpg"
+            if os.path.exists(samay_img_path):
+                samay_img = self.load_and_resize_image(samay_img_path, (400, 400))
+                logger.info("✅ Samay speaker image loaded from absolute MV5 path")
+            else:
+                logger.warning("⚠️ Samay MV5 image not found at absolute path, creating placeholder")
+                samay_img = np.zeros((400, 400, 3), dtype=np.uint8)
+                samay_img[:] = (100, 150, 200)  # Light blue placeholder
+            speaker_images['samay'] = samay_img
+            
+            # Baburao - using the absolute download.jpeg path
+            baburao_img_path = "/Users/building_something/Desktop/info_reeler/download.jpeg"
+            if os.path.exists(baburao_img_path):
+                baburao_img = self.load_and_resize_image(baburao_img_path, (400, 400))
+                logger.info("✅ Baburao speaker image loaded from absolute download.jpeg path")
+            else:
+                logger.warning("⚠️ Baburao download.jpeg not found at absolute path, creating placeholder")
+                baburao_img = np.zeros((400, 400, 3), dtype=np.uint8)
+                baburao_img[:] = (255, 165, 0)  # Orange placeholder for Baburao (comedy legend)
+            speaker_images['baburao'] = baburao_img
             
             # Create circular masks for speaker images
-            mask = self.create_circular_mask((200, 200))
+            mask = self.create_circular_mask((400, 400))
             
-            # Apply circular mask to speaker images
-            elon_masked = cv2.bitwise_and(elon_img, elon_img, mask=mask)
-            trump_masked = cv2.bitwise_and(trump_img, trump_img, mask=mask)
+            # Apply circular mask to all speaker images
+            speaker_images_masked = {}
+            for speaker_name, img in speaker_images.items():
+                speaker_images_masked[speaker_name] = cv2.bitwise_and(img, img, mask=mask)
             
             logger.info(f"✅ [{request_id}] Speaker images loaded and processed")
             
@@ -226,24 +257,54 @@ class OpenCVVideoGenerator:
                     bg_frame = np.zeros((self.video_height, self.video_width, 3), dtype=np.uint8)
                     bg_frame[:] = (50, 50, 150)  # Dark blue
                 
-                # Find current speaker
-                current_speaker = None
-                for segment in timeline:
-                    if segment['start_time'] <= current_time <= segment['end_time']:
-                        current_speaker = segment['speaker']
-                        break
+                # Enhanced smooth cross-fade transitions between speakers
+                transition_time = 0.8  # Longer transition for smoother effect
                 
-                # Add speaker overlay
-                if current_speaker == 'elon':
-                    # Position Elon on the right
-                    y_pos = 200
-                    x_pos = self.video_width - 300  # Right side
-                    self._overlay_image(bg_frame, elon_masked, mask, x_pos, y_pos)
-                elif current_speaker == 'trump':
-                    # Position Trump on the left
-                    y_pos = 200
-                    x_pos = 100  # Left side
-                    self._overlay_image(bg_frame, trump_masked, mask, x_pos, y_pos)
+                # Dynamic alpha calculation for all possible speakers
+                speaker_alphas = {speaker: 0.0 for speaker in speaker_images_masked.keys()}
+                
+                for segment in timeline:
+                    speaker = segment['speaker']
+                    segment_start = segment['start_time']
+                    segment_end = segment['end_time']
+                    
+                    # Extend transition beyond segment boundaries
+                    transition_start = segment_start - transition_time * 0.5  # Start fading in before segment
+                    transition_end = segment_end + transition_time * 0.5    # Continue fading out after segment
+                    
+                    alpha = 0.0
+                    
+                    if transition_start <= current_time <= transition_end:
+                        if current_time < segment_start:
+                            # Pre-fade in (before segment officially starts)
+                            progress = (current_time - transition_start) / (transition_time * 0.5)
+                            alpha = max(0.0, min(1.0, progress))
+                        elif current_time <= segment_end:
+                            # Full visibility during segment
+                            fade_in_progress = min(1.0, (current_time - segment_start) / (transition_time * 0.5))
+                            fade_out_progress = min(1.0, (segment_end - current_time) / (transition_time * 0.5))
+                            alpha = min(fade_in_progress, fade_out_progress)
+                            alpha = max(0.7, alpha)  # Minimum visibility during main segment
+                        else:
+                            # Post-fade out (after segment officially ends)
+                            progress = 1.0 - ((current_time - segment_end) / (transition_time * 0.5))
+                            alpha = max(0.0, min(1.0, progress))
+                    
+                    # Apply calculated alpha to the respective speaker
+                    if speaker in speaker_alphas:
+                        speaker_alphas[speaker] = max(speaker_alphas[speaker], alpha)
+                
+                # Dynamic speaker positioning based on pair
+                active_speakers = [speaker for speaker, alpha in speaker_alphas.items() if alpha > 0.05]
+                
+                # Position speakers dynamically
+                positions = self._get_speaker_positions(active_speakers)
+                
+                for speaker, alpha in speaker_alphas.items():
+                    if alpha > 0.05 and speaker in positions:  # Only render if significantly visible
+                        x_pos, y_pos = positions[speaker]
+                        speaker_img = speaker_images_masked[speaker]
+                        self._overlay_image_with_alpha(bg_frame, speaker_img, mask, x_pos, y_pos, alpha)
                 
                 # Write frame
                 video_writer.write(bg_frame)
@@ -280,6 +341,34 @@ class OpenCVVideoGenerator:
             logger.error(f"❌ [{request_id}] OpenCV video generation failed: {str(e)}")
             raise Exception(f"OpenCV video generation failed: {str(e)}")
     
+    def _get_speaker_positions(self, speakers_in_timeline):
+        """
+        Get dynamic speaker positions based on which speakers are present
+        """
+        positions = {}
+        y_pos = self.video_height - 450  # Bottom area with margin
+        
+        # Different positioning strategies based on speaker combinations
+        if len(speakers_in_timeline) == 2:
+            # Two speakers: left and right
+            speaker_list = list(speakers_in_timeline)
+            positions[speaker_list[0]] = (50, y_pos)  # Left
+            positions[speaker_list[1]] = (self.video_width - 450, y_pos)  # Right
+        elif len(speakers_in_timeline) == 3:
+            # Three speakers: left, center, right
+            speaker_list = list(speakers_in_timeline)
+            positions[speaker_list[0]] = (50, y_pos)  # Left
+            positions[speaker_list[1]] = (self.video_width // 2 - 200, y_pos)  # Center
+            positions[speaker_list[2]] = (self.video_width - 450, y_pos)  # Right
+        else:
+            # Fallback: spread speakers evenly
+            for i, speaker in enumerate(speakers_in_timeline):
+                x_spacing = self.video_width // (len(speakers_in_timeline) + 1)
+                x_pos = x_spacing * (i + 1) - 200  # Center on position
+                positions[speaker] = (max(50, min(x_pos, self.video_width - 450)), y_pos)
+        
+        return positions
+
     def _overlay_image(self, background, overlay_img, mask, x_pos, y_pos):
         """Overlay image with transparency using mask"""
         try:
@@ -309,6 +398,34 @@ class OpenCVVideoGenerator:
             
         except Exception as e:
             logger.warning(f"⚠️ Failed to overlay image at ({x_pos}, {y_pos}): {str(e)}")
+    
+    def _overlay_image_with_alpha(self, background, overlay_img, mask, x_pos, y_pos, alpha):
+        """Overlay image with transparency using mask and alpha blending for smooth transitions"""
+        try:
+            h, w = overlay_img.shape[:2]
+            
+            # Ensure position is within bounds
+            x_pos = max(0, min(x_pos, self.video_width - w))
+            y_pos = max(0, min(y_pos, self.video_height - h))
+            
+            # Region of interest in background
+            roi = background[y_pos:y_pos+h, x_pos:x_pos+w]
+            
+            # Apply alpha to the overlay image
+            overlay_alpha = overlay_img.astype(float) * alpha
+            
+            # Create alpha mask for smooth blending
+            alpha_mask = (mask.astype(float) / 255.0) * alpha
+            alpha_mask_3ch = cv2.merge([alpha_mask, alpha_mask, alpha_mask])
+            
+            # Blend the images
+            blended = roi.astype(float) * (1 - alpha_mask_3ch) + overlay_alpha * alpha_mask_3ch
+            
+            # Convert back to uint8
+            background[y_pos:y_pos+h, x_pos:x_pos+w] = blended.astype(np.uint8)
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to overlay image with alpha at ({x_pos}, {y_pos}): {str(e)}")
     
     def _add_audio_with_ffmpeg(self, video_path, audio_path, output_path):
         """Add audio to video using FFmpeg"""
@@ -340,14 +457,16 @@ class OpenCVVideoGenerator:
 # Global instance
 video_generator = OpenCVVideoGenerator()
 
-def create_background_video_with_speaker_overlays(script_text, audio_path, background_video_path=None, output_path=None):
+def create_background_video_with_speaker_overlays(script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon"):
     """
     Main function to replace MoviePy video generation
     """
     logger.info("🎬 Using OpenCV-based video generation (MoviePy replacement)")
+    logger.info(f"🎭 WRAPPER FUNCTION - Received speaker_pair: {speaker_pair}")
     return video_generator.create_video_with_overlays(
         script_text=script_text,
         audio_path=audio_path,
         background_video_path=background_video_path,
-        output_path=output_path
+        output_path=output_path,
+        speaker_pair=speaker_pair
     )
