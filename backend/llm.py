@@ -194,6 +194,21 @@ HUMOR REQUIREMENTS:
 - Make it sound like two people actually arguing/fighting
 - Include sarcasm, insults, and playful jabs
 - Reference their Twitter beefs and public disagreements
+- HILARIOUS ROASTING: Include savage roasts and burns between them
+- CONTROVERSIAL HUMOR: Make subtle jokes about Epstein connections, private jets, and "island visits" when contextually relevant
+- AMBER HEARD REFERENCES: Include jokes about Elon's relationship with Amber Heard, courtroom drama, and "aquatic situations"
+- SCANDAL COMEDY: Reference their past controversies, legal troubles, and embarrassing moments
+- BILLIONAIRE PROBLEMS: Mock their absurd wealthy person issues and ridiculous spending
+- SOCIAL MEDIA DISASTERS: Reference their worst tweets, cringe moments, and social media fails
+- CONSPIRACY THEORIES: Let them playfully reference wild conspiracy theories about each other
+- SAVAGE COMEBACKS: Each should have brutal but hilarious comebacks and one-liners
+- CRINGE HUMOR: Include awkward moments, dad jokes, and unintentionally funny statements
+- POLITICAL ROASTS: Trump should make fun of Elon's "woke" moments, Elon should roast Trump's "stable genius" claims
+- BUSINESS FAILURES: Reference failed ventures, bad investments, and embarrassing business decisions
+- PERSONAL QUIRKS: Mock Elon's weird baby names, Trump's hair, eating habits, and bizarre behavior
+- RELATIONSHIP DRAMA: Include jokes about their dating lives, divorces, and romantic scandals
+- CELEBRITY SCANDALS: Reference Hollywood drama, legal battles, and tabloid controversies
+- MAKE IT ABSOLUTELY HILARIOUS AND SAVAGE while keeping focus on article content
 - BUT keep the focus on the article content, not personal drama
 
 EXPLANATION REQUIREMENTS:
