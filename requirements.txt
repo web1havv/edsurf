@@ -13,3 +13,5 @@ elevenlabs==0.2.26
 pydub==0.25.1
 PyPDF2>=3.0.0
 python-docx>=1.2.0
+# Additional dependencies for serverless deployment
+ffmpeg-python>=0.2.0
