@@ -824,16 +824,40 @@
                 const fromEnv = window.API_BASE_URL;
                 if (fromEnv && typeof fromEnv === 'string') return fromEnv.replace(/\/$/, '');
             } catch (e) {}
+            
             const { protocol, hostname, port } = window.location;
             const defaultPort = 8000;
-            if (protocol === 'file:') {
+            
+            // If running on Render (hostname contains 'onrender.com'), use the same hostname
+            if (hostname && hostname.includes('onrender.com')) {
+                return `${protocol}//${hostname}`;
+            }
+            
+            // If running locally (file protocol or localhost)
+            if (protocol === 'file:' || hostname === 'localhost' || hostname === '127.0.0.1') {
                 return `http://localhost:${defaultPort}`;
             }
+            
+            // For other deployments, use the current hostname
             if (hostname && port) {
                 return `${protocol}//${hostname}:${port}`;
             }
-            return `${protocol}//${hostname || 'localhost'}:${port || defaultPort}`;
+            
+            // Fallback to current hostname without port (for production deployments)
+            if (hostname) {
+                return `${protocol}//${hostname}`;
+            }
+            
+            // Last resort fallback
+            return `http://localhost:${defaultPort}`;
         })();
+
+        // Debug: Log the API_BASE being used
+        console.log('🌐 API_BASE configured as:', API_BASE);
+        console.log('🌐 Current location:', window.location.href);
+        console.log('🌐 Hostname:', window.location.hostname);
+        console.log('🌐 Protocol:', window.location.protocol);
+        console.log('🌐 Port:', window.location.port);
 
         let currentCaseStudyContent = '';
         let currentCaseStudyVideoData = null;
@@ -1260,7 +1284,16 @@
             } catch (error) {
                 console.error('❌ Case study generation error:', error);
                 console.error('❌ Error details:', error);
-                showError('Error: ' + error.message);
+                
+                // Provide more specific error messages for common issues
+                let errorMessage = error.message;
+                if (error.message.includes('Failed to fetch') || error.message.includes('ERR_CONNECTION_TIMED_OUT')) {
+                    errorMessage = `Connection failed. Please check if the server is running at ${API_BASE}. If you're using a deployed version, make sure the deployment is active.`;
+                } else if (error.message.includes('ERR_NETWORK')) {
+                    errorMessage = 'Network error. Please check your internet connection and try again.';
+                }
+                
+                showError('Error: ' + errorMessage);
             } finally {
                 console.log('🏁 Case study generation function completed');
                 hideLoading();
