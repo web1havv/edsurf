@@ -26,17 +26,18 @@ class OpenCVVideoGenerator:
     
     def __init__(self, fast_mode=True):
         if fast_mode:
-            self.fps = 20  # Even lower FPS for maximum speed
-            self.video_width = 640   # Even smaller resolution for speed
-            self.video_height = 1136 # Even smaller resolution for speed
-            logger.info(f"🎬 OpenCV Video Generator initialized (FAST MODE)")
+            self.fps = 15  # ULTRA LOW FPS for maximum speed
+            self.video_width = 480   # ULTRA SMALL resolution for speed
+            self.video_height = 854  # ULTRA SMALL resolution for speed
+            logger.info(f"🎬 OpenCV Video Generator initialized (ULTRA FAST MODE)")
         else:
-            self.fps = 24  # Reduced from 30 to 24 for faster processing
-            self.video_width = 720   # Reduced from 1080 to 720 for faster processing
-            self.video_height = 1280 # Reduced from 1920 to 1280 for faster processing
-            logger.info(f"🎬 OpenCV Video Generator initialized (STANDARD MODE)")
+            self.fps = 20  # Reduced from 30 to 20 for faster processing
+            self.video_width = 640   # Reduced from 1080 to 640 for faster processing
+            self.video_height = 1136 # Reduced from 1920 to 1136 for faster processing
+            logger.info(f"🎬 OpenCV Video Generator initialized (FAST MODE)")
         
-        logger.info(f"📐 Output format: {self.video_width}x{self.video_height} @ {self.fps}fps (OPTIMIZED FOR SPEED)")
+        logger.info(f"📐 Output format: {self.video_width}x{self.video_height} @ {self.fps}fps (ULTRA OPTIMIZED FOR SPEED)")
+        logger.info(f"🚀 ULTRA FAST MODE: Captions disabled, minimal processing, maximum speed")
     
     def load_and_resize_image(self, image_path):
         """Load and resize image using PIL and OpenCV"""
@@ -193,7 +194,7 @@ class OpenCVVideoGenerator:
     
 
 
-    def create_video_with_overlays_and_captions(self, script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_mrbeast", enable_captions=True, timing_data=None):
+    def create_video_with_overlays_and_captions(self, script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_mrbeast", enable_captions=False, timing_data=None):
 
         """
         Create video with background video and speaker overlays
@@ -226,9 +227,9 @@ class OpenCVVideoGenerator:
                 raise Exception("Could not determine audio duration")
             
             total_frames = int(audio_duration * self.fps)
-            estimated_time = total_frames * 0.05  # Rough estimate: 0.05 seconds per frame
+            estimated_time = total_frames * 0.02  # Ultra-fast estimate: 0.02 seconds per frame
             logger.info(f"🎬 [{request_id}] Creating {total_frames} frames for {audio_duration:.2f}s")
-            logger.info(f"⏱️ [{request_id}] Estimated processing time: {estimated_time:.1f} seconds")
+            logger.info(f"⏱️ [{request_id}] Estimated processing time: {estimated_time:.1f} seconds (ULTRA FAST MODE)")
 
             # Load speaker images
             elon_img = self.load_and_resize_image("assets/elon.png")
@@ -253,19 +254,21 @@ class OpenCVVideoGenerator:
             
             logger.info(f"🎬 [{request_id}] Creating video frames...")
             
-            # Generate frames
-            for frame_num in range(total_frames):
+            # Generate frames (with frame skipping for ultra-fast processing)
+            frame_skip = 1  # Process every frame for now, but can be increased for even more speed
+            for frame_num in range(0, total_frames, frame_skip):
                 current_time = frame_num / self.fps
                 
-                # Get background frame
+                # Get background frame (optimized for ultra-fast processing)
                 if bg_duration > 0:
-                    bg_frame_num = int((current_time % bg_duration) * self.fps)
+                    # Use simpler background processing for speed
+                    bg_frame_num = int((current_time % bg_duration) * 30)  # Use original FPS for background
                     background_cap.set(cv2.CAP_PROP_POS_FRAMES, bg_frame_num)
                     ret, bg_frame = background_cap.read()
                     
                     if ret:
-                        # Resize background to fit our video dimensions (optimized for speed)
-                        bg_frame = cv2.resize(bg_frame, (self.video_width, self.video_height), interpolation=cv2.INTER_LINEAR)
+                        # Use fastest interpolation for speed
+                        bg_frame = cv2.resize(bg_frame, (self.video_width, self.video_height), interpolation=cv2.INTER_NEAREST)
                     else:
                         # Create solid background if frame read fails
                         bg_frame = np.zeros((self.video_height, self.video_width, 3), dtype=np.uint8)
@@ -351,8 +354,8 @@ class OpenCVVideoGenerator:
                     self._overlay_image(bg_frame, mrbeast_img, x_pos, y_pos)
 
                 
-                # 🆕 ADD CAPTION OVERLAY (if enabled)
-                if enable_captions and captions:
+                # 🆕 ADD CAPTION OVERLAY (if enabled) - optimized for speed
+                if enable_captions and captions and frame_num % 3 == 0:  # Only process captions every 3rd frame for speed
                     current_caption = get_current_caption(current_time, captions)
                     if current_caption:
                         caption_text = current_caption['text']
@@ -363,8 +366,8 @@ class OpenCVVideoGenerator:
                 # Write frame
                 video_writer.write(bg_frame)
                 
-                # Progress logging (reduced frequency for speed)
-                if frame_num % (self.fps * 5) == 0:  # Every 5 seconds instead of 2
+                # Progress logging (ultra-reduced frequency for maximum speed)
+                if frame_num % (self.fps * 10) == 0:  # Every 10 seconds for maximum speed
                     progress = (frame_num / total_frames) * 100
                     logger.info(f"🎬 [{request_id}] Progress: {progress:.1f}% ({frame_num}/{total_frames} frames)")
             
@@ -475,8 +478,16 @@ class OpenCVVideoGenerator:
     def _add_audio_with_ffmpeg(self, video_path, audio_path, output_path):
         """Add audio to video using FFmpeg"""
         try:
-            # Use local ffmpeg binary
-            ffmpeg_path = './ffmpeg' if os.path.exists('./ffmpeg') else 'ffmpeg'
+            # Use improved FFmpeg detection (same as conversational_tts.py)
+            ffmpeg_path = 'ffmpeg'  # Use system ffmpeg first
+            if os.path.exists('./ffmpeg') and os.access('./ffmpeg', os.X_OK):
+                # Check if local ffmpeg is executable (for local development)
+                try:
+                    result = subprocess.run(['./ffmpeg', '-version'], capture_output=True, text=True, timeout=5)
+                    if result.returncode == 0:
+                        ffmpeg_path = './ffmpeg'
+                except:
+                    ffmpeg_path = 'ffmpeg'  # Fallback to system ffmpeg
             cmd = [
                 ffmpeg_path, '-y',  # Overwrite output
                 '-i', video_path,  # Input video
@@ -490,9 +501,15 @@ class OpenCVVideoGenerator:
                 output_path
             ]
             
+            logger.info(f"🎵 Running FFmpeg command: {' '.join(cmd)}")
+            logger.info(f"🔧 Using FFmpeg binary: {ffmpeg_path}")
+            
             result = subprocess.run(cmd, capture_output=True, text=True)
             if result.returncode != 0:
-                logger.error(f"❌ FFmpeg failed: {result.stderr}")
+                logger.error(f"❌ FFmpeg failed with return code: {result.returncode}")
+                logger.error(f"❌ FFmpeg stderr: {result.stderr}")
+                logger.error(f"❌ FFmpeg stdout: {result.stdout}")
+                logger.error(f"❌ Command that failed: {' '.join(cmd)}")
                 raise Exception(f"FFmpeg failed: {result.stderr}")
             
             logger.info(f"✅ Audio added successfully with FFmpeg")
@@ -504,8 +521,16 @@ class OpenCVVideoGenerator:
     def _create_silent_video(self, video_path, output_path):
         """Convert video to final format without audio using FFmpeg"""
         try:
-            # Use local ffmpeg binary
-            ffmpeg_path = './ffmpeg' if os.path.exists('./ffmpeg') else 'ffmpeg'
+            # Use improved FFmpeg detection (same as conversational_tts.py)
+            ffmpeg_path = 'ffmpeg'  # Use system ffmpeg first
+            if os.path.exists('./ffmpeg') and os.access('./ffmpeg', os.X_OK):
+                # Check if local ffmpeg is executable (for local development)
+                try:
+                    result = subprocess.run(['./ffmpeg', '-version'], capture_output=True, text=True, timeout=5)
+                    if result.returncode == 0:
+                        ffmpeg_path = './ffmpeg'
+                except:
+                    ffmpeg_path = 'ffmpeg'  # Fallback to system ffmpeg
             cmd = [
                 ffmpeg_path, '-y',      # Overwrite output
                 '-i', video_path,       # Input video only
@@ -516,9 +541,15 @@ class OpenCVVideoGenerator:
                 output_path
             ]
             
+            logger.info(f"🎵 Running FFmpeg command: {' '.join(cmd)}")
+            logger.info(f"🔧 Using FFmpeg binary: {ffmpeg_path}")
+            
             result = subprocess.run(cmd, capture_output=True, text=True)
             if result.returncode != 0:
-                logger.error(f"❌ FFmpeg failed: {result.stderr}")
+                logger.error(f"❌ FFmpeg failed with return code: {result.returncode}")
+                logger.error(f"❌ FFmpeg stderr: {result.stderr}")
+                logger.error(f"❌ FFmpeg stdout: {result.stdout}")
+                logger.error(f"❌ Command that failed: {' '.join(cmd)}")
                 raise Exception(f"FFmpeg failed: {result.stderr}")
             
             logger.info(f"✅ Silent video created successfully with FFmpeg")
@@ -544,7 +575,7 @@ def create_background_video_with_speaker_overlays(script_text, audio_path, backg
         background_video_path=background_video_path,
         output_path=output_path,
         speaker_pair=speaker_pair,
-        enable_captions=True,
+        enable_captions=False,  # Disabled for ultra-fast processing
         timing_data=timing_data
     )
 
