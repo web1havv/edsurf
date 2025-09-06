@@ -158,8 +158,8 @@ async def generate_info_reel(article: ArticleInput):
         audio_url = os.path.join(audio_dir, audio_filename)
         video_url = os.path.join(videos_dir, video_filename)
         
-        os.rename(audio_path, audio_url)
-        os.rename(video_path, video_url)
+        shutil.move(audio_path, audio_url)
+        shutil.move(video_path, video_url)
         
         # Also save to static dir for web access
         static_dir = "static"
@@ -256,8 +256,8 @@ async def generate_conversational_reel(article: ArticleInput):
         audio_url = os.path.join(audio_dir, audio_filename)
         video_url = os.path.join(videos_dir, video_filename)
         
-        os.rename(audio_path, audio_url)
-        os.rename(video_path, video_url)
+        shutil.move(audio_path, audio_url)
+        shutil.move(video_path, video_url)
         
         # Also save to static dir for web access
         static_dir = "static"
@@ -797,8 +797,8 @@ async def generate_case_study_from_file(file: UploadFile = File(...), speaker_pa
                     final_audio_path = os.path.join(audio_dir, audio_filename)
                     final_video_path = os.path.join(videos_dir, video_filename)
                     
-                    os.rename(audio_path, final_audio_path)
-                    os.rename(video_path, final_video_path)
+                    shutil.move(audio_path, final_audio_path)
+                    shutil.move(video_path, final_video_path)
                     
                     # Also save to static dir for web access
                     static_dir = "static"
@@ -938,8 +938,8 @@ async def generate_case_study_from_text(request: CaseStudyTextRequest):
                 final_audio_path = os.path.join(audio_dir, audio_filename)
                 final_video_path = os.path.join(videos_dir, video_filename)
                 
-                os.rename(audio_path, final_audio_path)
-                os.rename(video_path, final_video_path)
+                shutil.move(audio_path, final_audio_path)
+                shutil.move(video_path, final_video_path)
                 
                 # Also save to static dir for web access
                 static_dir = "static"

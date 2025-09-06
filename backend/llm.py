@@ -508,13 +508,13 @@ Generate ONLY clean, professional alternating dialogue with 4-6 short segments:
 """
 
 TRUMP_MRBEAST_SCRIPT_PROMPT = """
-Write an explosive 40-second conversation between Donald Trump and MrBeast discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
+Write an explosive 20-second conversation between Donald Trump and MrBeast discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
 
 LENGTH REQUIREMENTS:
-- Total duration: 40 seconds (NOT 60 seconds)
-- Each speaker should have 3-4 dialogue segments
-- Each dialogue segment should be 6-10 words maximum
-- Keep individual responses short and punchy
+- Total duration: 20 seconds (STRICTLY 20 seconds - NOT 40 or 60 seconds)
+- Each speaker should have 2-3 dialogue segments maximum
+- Each dialogue segment should be 4-6 words maximum
+- Keep individual responses extremely short and punchy
 
 CHARACTER PERSONALITIES:
 - Trump: ULTRA-CONFIDENT businessman. Uses signature phrases: "Tremendous!", "Incredible!", "The best deal ever!", "Nobody does it better!", "Believe me!", "We're gonna win so much!". Talks about deals, success, winning, making America great, business achievements. Direct, bombastic, always emphasizing scale and success.
@@ -528,7 +528,7 @@ CONVERSATION ENERGY LEVELS:
 - Make it SHAREABLE and MEMORABLE
 
 ENHANCED DIALOGUE REQUIREMENTS:
-- 6-8 alternating dialogue segments (40 seconds total)
+- 4-6 alternating dialogue segments (20 seconds total - STRICTLY 20 seconds)
 - Trump speaks FIRST with EXPLOSIVE energy about the article
 - Each speaker gets equal time but BUILDS ENERGY throughout
 - Include SPECIFIC article details and facts
@@ -537,15 +537,12 @@ ENHANCED DIALOGUE REQUIREMENTS:
 - Include their most ICONIC phrases and mannerisms
 - End with MASSIVE energy and collaboration
 
-CONVERSATION FLOW STRUCTURE:
+CONVERSATION FLOW STRUCTURE (20-second format):
 1. Trump EXPLODES with enthusiasm about article topic + specific facts
 2. MrBeast matches energy with philanthropic angle + viral potential
 3. Trump talks DEALS, BUSINESS SUCCESS + article applications
 4. MrBeast discusses HELPING MILLIONS + community impact
-5. Trump emphasizes SCALE, "TREMENDOUS" opportunities + article insights
-6. MrBeast focuses on CHANGING LIVES + viral content potential
-7. Both find COMMON GROUND on helping Americans + article benefits
-8. EXPLOSIVE finale about working together + article impact
+5. EXPLOSIVE finale about working together + article impact
 
 VIRAL CONTENT REQUIREMENTS:
 - Include QUOTABLE moments that would trend on social media
@@ -574,8 +571,8 @@ ADVANCED PERSONALITY DETAILS:
 CRITICAL TECHNICAL REQUIREMENTS:
 - Generate ONLY pure speech text - no formatting whatsoever
 - NO speaker labels, scene markers, or descriptions
-- Each speaking turn: 6-8 seconds when spoken aloud
-- Total duration: EXACTLY 60 seconds
+- Each speaking turn: 3-4 seconds when spoken aloud
+- Total duration: EXACTLY 20 seconds (STRICTLY 20 seconds)
 - Natural conversational flow with building energy
 - Include pauses and natural speech patterns
 - Make it sound like TWO PEOPLE actually talking
@@ -597,7 +594,7 @@ FORMATTING RULES (CRITICAL):
 
 Article Content: {article_text}
 
-Generate ONLY explosive, viral-worthy conversational dialogue with 8-12 alternating segments that will make people want to SHARE, COMMENT, and LEARN:
+Generate ONLY explosive, viral-worthy conversational dialogue with 4-6 alternating segments (STRICTLY 20 seconds total) that will make people want to SHARE, COMMENT, and LEARN:
 """
 
 def generate_conversational_script(article_text: str, speaker_pair: str = "trump_mrbeast", is_case_study: bool = False) -> str:
@@ -723,20 +720,20 @@ Generate the summary:
 """
 
 TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT = """
-Write a dynamic 40-second case study discussion between Donald Trump and MrBeast analyzing this case study content. This should be HIGHLY ANALYTICAL yet ENGAGING, showcasing their business and philanthropic expertise while breaking down the case study insights.
+Write a dynamic 20-second case study discussion between Donald Trump and MrBeast analyzing this case study content. This should be HIGHLY ANALYTICAL yet ENGAGING, showcasing their business and philanthropic expertise while breaking down the case study insights.
 
 LENGTH REQUIREMENTS:
-- Total duration: 40 seconds (NOT 60 seconds)
-- Each speaker should have 3-4 dialogue segments
-- Each dialogue segment should be 6-10 words maximum
-- Keep individual responses short and punchy
+- Total duration: 20 seconds (STRICTLY 20 seconds - NOT 40 or 60 seconds)
+- Each speaker should have 2-3 dialogue segments maximum
+- Each dialogue segment should be 4-6 words maximum
+- Keep individual responses extremely short and punchy
 
 CHARACTER PERSONALITIES FOR CASE STUDIES:
 - Trump: BUSINESS STRATEGIST and deal-maker. Uses phrases: "This is tremendous business!", "Look at these numbers!", "The best strategy!", "This is how you win!", "Incredible ROI!", "Smart business move!". Analyzes business strategy, market impact, financial success, competitive advantages, and scaling opportunities.
 - MrBeast: IMPACT ANALYST and innovation expert. Uses phrases: "This could help millions!", "The impact is insane!", "We could scale this!", "This changes everything!", "The potential is massive!", "This is revolutionary!". Focuses on social impact, scalability, innovation, community benefits, and viral potential.
 
 CASE STUDY ANALYSIS REQUIREMENTS:
-- 6-8 alternating dialogue segments (40 seconds total)
+- 4-6 alternating dialogue segments (20 seconds total - STRICTLY 20 seconds)
 - Trump analyzes BUSINESS STRATEGY, financial aspects, market positioning
 - MrBeast analyzes SOCIAL IMPACT, scalability, innovation potential
 - Both should reference SPECIFIC case study details, numbers, and outcomes
@@ -744,18 +741,15 @@ CASE STUDY ANALYSIS REQUIREMENTS:
 - Make complex business concepts ACCESSIBLE and ENGAGING
 - Create EDUCATIONAL content that teaches viewers about the case study
 
-ANALYTICAL FRAMEWORK (40-second format):
+ANALYTICAL FRAMEWORK (20-second format):
 1. Trump opens with business overview + key financial/strategic insights
 2. MrBeast responds with impact analysis + scalability potential  
 3. Trump discusses market strategy + competitive advantages
 4. MrBeast analyzes innovation + community benefits
-5. Trump examines ROI + business model effectiveness
-6. MrBeast explores viral/growth potential + broader applications
-7. Trump highlights key success factors + strategic lessons
-8. MrBeast concludes with actionable takeaways for viewers
+5. EXPLOSIVE finale about working together + case study impact
 
-CASE STUDY INTEGRATION REQUIREMENTS (40-second format):
-- Reference AT LEAST 3-4 specific details from the case study
+CASE STUDY INTEGRATION REQUIREMENTS (20-second format):
+- Reference AT LEAST 2-3 specific details from the case study
 - Cite actual numbers, percentages, outcomes, and metrics
 - Mention key players, companies, or organizations involved
 - Discuss specific strategies, tactics, or innovations used
@@ -786,8 +780,8 @@ ENERGY AND EXPERTISE:
 CRITICAL TECHNICAL REQUIREMENTS:
 - Generate ONLY pure speech text - no formatting whatsoever
 - NO speaker labels, scene markers, or descriptions
-- Each speaking turn: 7-9 seconds when spoken aloud
-- Total duration: EXACTLY 90 seconds
+- Each speaking turn: 3-4 seconds when spoken aloud
+- Total duration: EXACTLY 20 seconds (STRICTLY 20 seconds)
 - Natural analytical conversation flow
 - Include pauses for emphasis on key insights
 - Make it sound like TWO EXPERTS analyzing a case study
@@ -802,7 +796,7 @@ FORMATTING RULES (CRITICAL):
 
 Case Study Content: {article_text}
 
-Generate ONLY expert-level analytical dialogue with 10-14 alternating segments that will EDUCATE viewers about the case study while being HIGHLY ENGAGING:
+Generate ONLY expert-level analytical dialogue with 4-6 alternating segments (STRICTLY 20 seconds total) that will EDUCATE viewers about the case study while being HIGHLY ENGAGING:
 """
 
 def generate_case_study_summary(content: str) -> str:
