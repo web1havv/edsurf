@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+"""
+Railway entry point for Info Reeler
+This file is specifically designed for Railway deployment with better error handling
+"""
+import os
+import sys
+import logging
+
+# Add the backend directory to Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# Configure logging for Railway
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
+logger = logging.getLogger(__name__)
+
+# Check for required API keys
+if not os.getenv("GEMINI_API_KEY"):
+    logger.error("❌ Error: GEMINI_API_KEY environment variable is required!")
+    logger.error("Please set the GEMINI_API_KEY environment variable in Railway dashboard")
+    sys.exit(1)
+
+logger.info("✅ Environment variables loaded successfully!")
+logger.info("🚀 Starting Info Reeler backend server on Railway...")
+
+try:
+    # Import and run the FastAPI app
+    from main import app
+    import uvicorn
+    
+    # Use Railway's PORT environment variable, fallback to 8000 for local development
+    port = int(os.getenv("PORT", 8000))
+    logger.info(f"🌐 Starting server on port {port}")
+    
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+    
+except ImportError as e:
+    logger.error(f"❌ Import error: {e}")
+    logger.error("This might be due to missing dependencies. Check the build logs.")
+    sys.exit(1)
+except Exception as e:
+    logger.error(f"❌ Startup error: {e}")
+    sys.exit(1)
