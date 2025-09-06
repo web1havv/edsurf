@@ -828,8 +828,13 @@
             const { protocol, hostname, port } = window.location;
             const defaultPort = 8000;
             
-            // If running on Render (hostname contains 'onrender.com'), use the same hostname
+            // If running on Render (hostname contains 'onrender.com'), use the same hostname without port
             if (hostname && hostname.includes('onrender.com')) {
+                return `${protocol}//${hostname}`;
+            }
+            
+            // If running on Railway (hostname contains 'railway.app'), use the same hostname without port
+            if (hostname && hostname.includes('railway.app')) {
                 return `${protocol}//${hostname}`;
             }
             
@@ -838,7 +843,12 @@
                 return `http://localhost:${defaultPort}`;
             }
             
-            // For other deployments, use the current hostname
+            // For other production deployments, use the current hostname without port
+            if (hostname && (hostname.includes('.com') || hostname.includes('.app') || hostname.includes('.net'))) {
+                return `${protocol}//${hostname}`;
+            }
+            
+            // For other deployments with explicit port, use the current hostname with port
             if (hostname && port) {
                 return `${protocol}//${hostname}:${port}`;
             }
@@ -858,6 +868,27 @@
         console.log('🌐 Hostname:', window.location.hostname);
         console.log('🌐 Protocol:', window.location.protocol);
         console.log('🌐 Port:', window.location.port);
+        
+        // Test API connectivity
+        async function testAPIConnectivity() {
+            try {
+                console.log('🔍 Testing API connectivity to:', `${API_BASE}/health`);
+                const response = await fetch(`${API_BASE}/health`, {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                if (response.ok) {
+                    console.log('✅ API connectivity test passed');
+                } else {
+                    console.log('⚠️ API connectivity test failed with status:', response.status);
+                }
+            } catch (error) {
+                console.log('❌ API connectivity test failed:', error.message);
+            }
+        }
+        
+        // Run connectivity test after a short delay
+        setTimeout(testAPIConnectivity, 1000);
 
         let currentCaseStudyContent = '';
         let currentCaseStudyVideoData = null;
@@ -1207,7 +1238,8 @@
                     
                     const response = await fetch(`${API_BASE}/generate-case-study`, {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        signal: AbortSignal.timeout(120000) // 2 minute timeout
                     });
                     
                     if (!response.ok) {
@@ -1251,7 +1283,8 @@
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify(requestBody)
+                        body: JSON.stringify(requestBody),
+                        signal: AbortSignal.timeout(120000) // 2 minute timeout
                     });
                     
                     console.log('🌐 Response received:', response.status, response.statusText);
@@ -1287,10 +1320,14 @@
                 
                 // Provide more specific error messages for common issues
                 let errorMessage = error.message;
-                if (error.message.includes('Failed to fetch') || error.message.includes('ERR_CONNECTION_TIMED_OUT')) {
+                if (error.name === 'AbortError' || error.message.includes('timeout')) {
+                    errorMessage = `Request timed out after 2 minutes. The server might be overloaded or the file is too large. Please try again or use a smaller file.`;
+                } else if (error.message.includes('Failed to fetch') || error.message.includes('ERR_CONNECTION_TIMED_OUT')) {
                     errorMessage = `Connection failed. Please check if the server is running at ${API_BASE}. If you're using a deployed version, make sure the deployment is active.`;
                 } else if (error.message.includes('ERR_NETWORK')) {
                     errorMessage = 'Network error. Please check your internet connection and try again.';
+                } else if (error.message.includes('ERR_SSL')) {
+                    errorMessage = 'SSL/TLS error. Please check if the server certificate is valid.';
                 }
                 
                 showError('Error: ' + errorMessage);
