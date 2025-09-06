@@ -238,6 +238,8 @@ class OpenCVVideoGenerator:
             baburao_img = self.load_and_resize_image("assets/baburao.png")
             arpit_img = self.load_and_resize_image("assets/arpit.png")
             mrbeast_img = self.load_and_resize_image("assets/mrbeast.png")
+            ronaldo_img = self.load_and_resize_image("assets/WhatsApp Image 2025-09-07 at 01.44.46.jpeg")
+            ishowspeed_img = self.load_and_resize_image("assets/e1e58108-2c92-4e61-ade3-1d580a3614c4.jpeg")
 
 
             logger.info(f"✅ [{request_id}] Speaker images loaded and processed")
@@ -352,6 +354,18 @@ class OpenCVVideoGenerator:
                     y_pos = self.video_height - img_height  # Bottom of screen
                     x_pos = self.video_width - img_width - 50  # Right side with margin
                     self._overlay_image(bg_frame, mrbeast_img, x_pos, y_pos)
+                elif current_speaker == 'ronaldo':
+                    img_height = ronaldo_img.shape[0]
+                    img_width = ronaldo_img.shape[1]
+                    y_pos = self.video_height - img_height  # Bottom of screen
+                    x_pos = 50  # Left side with margin
+                    self._overlay_image(bg_frame, ronaldo_img, x_pos, y_pos)
+                elif current_speaker == 'ishowspeed':
+                    img_height = ishowspeed_img.shape[0]
+                    img_width = ishowspeed_img.shape[1]
+                    y_pos = self.video_height - img_height  # Bottom of screen
+                    x_pos = self.video_width - img_width - 50  # Right side with margin
+                    self._overlay_image(bg_frame, ishowspeed_img, x_pos, y_pos)
 
                 
                 # 🆕 ADD CAPTION OVERLAY (if enabled) - optimized for speed

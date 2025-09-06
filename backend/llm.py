@@ -508,13 +508,13 @@ Generate ONLY clean, professional alternating dialogue with 4-6 short segments:
 """
 
 TRUMP_MRBEAST_SCRIPT_PROMPT = """
-Write an explosive 20-second conversation between Donald Trump and MrBeast discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
+Write an explosive 40-second conversation between Donald Trump and MrBeast discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
 
 LENGTH REQUIREMENTS:
-- Total duration: 20 seconds (STRICTLY 20 seconds - NOT 40 or 60 seconds)
-- Each speaker should have 2-3 dialogue segments maximum
-- Each dialogue segment should be 4-6 words maximum
-- Keep individual responses extremely short and punchy
+- Total duration: 40 seconds (STRICTLY 40 seconds - NOT 20 or 60 seconds)
+- Each speaker should have 4-6 dialogue segments maximum
+- Each dialogue segment should be 6-10 words maximum
+- Keep individual responses short and punchy
 
 CHARACTER PERSONALITIES:
 - Trump: ULTRA-CONFIDENT businessman. Uses signature phrases: "Tremendous!", "Incredible!", "The best deal ever!", "Nobody does it better!", "Believe me!", "We're gonna win so much!". Talks about deals, success, winning, making America great, business achievements. Direct, bombastic, always emphasizing scale and success.
@@ -528,7 +528,7 @@ CONVERSATION ENERGY LEVELS:
 - Make it SHAREABLE and MEMORABLE
 
 ENHANCED DIALOGUE REQUIREMENTS:
-- 4-6 alternating dialogue segments (20 seconds total - STRICTLY 20 seconds)
+- 4-6 alternating dialogue segments (40 seconds total - STRICTLY 40 seconds)
 - Trump speaks FIRST with EXPLOSIVE energy about the article
 - Each speaker gets equal time but BUILDS ENERGY throughout
 - Include SPECIFIC article details and facts
@@ -537,7 +537,7 @@ ENHANCED DIALOGUE REQUIREMENTS:
 - Include their most ICONIC phrases and mannerisms
 - End with MASSIVE energy and collaboration
 
-CONVERSATION FLOW STRUCTURE (20-second format):
+CONVERSATION FLOW STRUCTURE (40-second format):
 1. Trump EXPLODES with enthusiasm about article topic + specific facts
 2. MrBeast matches energy with philanthropic angle + viral potential
 3. Trump talks DEALS, BUSINESS SUCCESS + article applications
@@ -571,8 +571,8 @@ ADVANCED PERSONALITY DETAILS:
 CRITICAL TECHNICAL REQUIREMENTS:
 - Generate ONLY pure speech text - no formatting whatsoever
 - NO speaker labels, scene markers, or descriptions
-- Each speaking turn: 3-4 seconds when spoken aloud
-- Total duration: EXACTLY 20 seconds (STRICTLY 20 seconds)
+- Each speaking turn: 6-8 seconds when spoken aloud
+- Total duration: EXACTLY 40 seconds (STRICTLY 40 seconds)
 - Natural conversational flow with building energy
 - Include pauses and natural speech patterns
 - Make it sound like TWO PEOPLE actually talking
@@ -594,7 +594,7 @@ FORMATTING RULES (CRITICAL):
 
 Article Content: {article_text}
 
-Generate ONLY explosive, viral-worthy conversational dialogue with 4-6 alternating segments (STRICTLY 20 seconds total) that will make people want to SHARE, COMMENT, and LEARN:
+Generate ONLY explosive, viral-worthy conversational dialogue with 4-6 alternating segments (STRICTLY 40 seconds total) that will make people want to SHARE, COMMENT, and LEARN:
 """
 
 def generate_conversational_script(article_text: str, speaker_pair: str = "trump_mrbeast", is_case_study: bool = False) -> str:
@@ -609,6 +609,9 @@ def generate_conversational_script(article_text: str, speaker_pair: str = "trump
         if speaker_pair == "trump_mrbeast" and is_case_study:
             logger.info(f"🎭 - Using TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT")
             prompt = TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT.format(article_text=article_text)
+        elif speaker_pair == "ronaldo_ishowspeed" and is_case_study:
+            logger.info(f"🎭 - Using RONALDO_ISHOWSPEED_CASE_STUDY_SCRIPT_PROMPT")
+            prompt = RONALDO_ISHOWSPEED_CASE_STUDY_SCRIPT_PROMPT.format(article_text=article_text)
         elif speaker_pair == "baburao_samay":
             logger.info(f"🎭 - Using BABURAO_SAMAY_SCRIPT_PROMPT")
             prompt = BABURAO_SAMAY_SCRIPT_PROMPT.format(article_text=article_text)
@@ -621,6 +624,9 @@ def generate_conversational_script(article_text: str, speaker_pair: str = "trump
         elif speaker_pair == "trump_mrbeast":
             logger.info(f"🎭 - Using TRUMP_MRBEAST_SCRIPT_PROMPT")
             prompt = TRUMP_MRBEAST_SCRIPT_PROMPT.format(article_text=article_text)
+        elif speaker_pair == "ronaldo_ishowspeed":
+            logger.info(f"🎭 - Using RONALDO_ISHOWSPEED_SCRIPT_PROMPT")
+            prompt = RONALDO_ISHOWSPEED_SCRIPT_PROMPT.format(article_text=article_text)
         else:
             logger.info(f"🎭 - Using default CONVERSATIONAL_SCRIPT_PROMPT for {speaker_pair}")
             prompt = CONVERSATIONAL_SCRIPT_PROMPT.format(article_text=article_text)
@@ -720,20 +726,20 @@ Generate the summary:
 """
 
 TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT = """
-Write a dynamic 20-second case study discussion between Donald Trump and MrBeast analyzing this case study content. This should be HIGHLY ANALYTICAL yet ENGAGING, showcasing their business and philanthropic expertise while breaking down the case study insights.
+Write a dynamic 40-second case study discussion between Donald Trump and MrBeast analyzing this case study content. This should be HIGHLY ANALYTICAL yet ENGAGING, showcasing their business and philanthropic expertise while breaking down the case study insights.
 
 LENGTH REQUIREMENTS:
-- Total duration: 20 seconds (STRICTLY 20 seconds - NOT 40 or 60 seconds)
-- Each speaker should have 2-3 dialogue segments maximum
-- Each dialogue segment should be 4-6 words maximum
-- Keep individual responses extremely short and punchy
+- Total duration: 40 seconds (STRICTLY 40 seconds - NOT 20 or 60 seconds)
+- Each speaker should have 4-6 dialogue segments maximum
+- Each dialogue segment should be 6-10 words maximum
+- Keep individual responses short and punchy
 
 CHARACTER PERSONALITIES FOR CASE STUDIES:
 - Trump: BUSINESS STRATEGIST and deal-maker. Uses phrases: "This is tremendous business!", "Look at these numbers!", "The best strategy!", "This is how you win!", "Incredible ROI!", "Smart business move!". Analyzes business strategy, market impact, financial success, competitive advantages, and scaling opportunities.
 - MrBeast: IMPACT ANALYST and innovation expert. Uses phrases: "This could help millions!", "The impact is insane!", "We could scale this!", "This changes everything!", "The potential is massive!", "This is revolutionary!". Focuses on social impact, scalability, innovation, community benefits, and viral potential.
 
 CASE STUDY ANALYSIS REQUIREMENTS:
-- 4-6 alternating dialogue segments (20 seconds total - STRICTLY 20 seconds)
+- 4-6 alternating dialogue segments (40 seconds total - STRICTLY 40 seconds)
 - Trump analyzes BUSINESS STRATEGY, financial aspects, market positioning
 - MrBeast analyzes SOCIAL IMPACT, scalability, innovation potential
 - Both should reference SPECIFIC case study details, numbers, and outcomes
@@ -741,14 +747,14 @@ CASE STUDY ANALYSIS REQUIREMENTS:
 - Make complex business concepts ACCESSIBLE and ENGAGING
 - Create EDUCATIONAL content that teaches viewers about the case study
 
-ANALYTICAL FRAMEWORK (20-second format):
+ANALYTICAL FRAMEWORK (40-second format):
 1. Trump opens with business overview + key financial/strategic insights
 2. MrBeast responds with impact analysis + scalability potential  
 3. Trump discusses market strategy + competitive advantages
 4. MrBeast analyzes innovation + community benefits
 5. EXPLOSIVE finale about working together + case study impact
 
-CASE STUDY INTEGRATION REQUIREMENTS (20-second format):
+CASE STUDY INTEGRATION REQUIREMENTS (40-second format):
 - Reference AT LEAST 2-3 specific details from the case study
 - Cite actual numbers, percentages, outcomes, and metrics
 - Mention key players, companies, or organizations involved
@@ -780,8 +786,8 @@ ENERGY AND EXPERTISE:
 CRITICAL TECHNICAL REQUIREMENTS:
 - Generate ONLY pure speech text - no formatting whatsoever
 - NO speaker labels, scene markers, or descriptions
-- Each speaking turn: 3-4 seconds when spoken aloud
-- Total duration: EXACTLY 20 seconds (STRICTLY 20 seconds)
+- Each speaking turn: 6-8 seconds when spoken aloud
+- Total duration: EXACTLY 40 seconds (STRICTLY 40 seconds)
 - Natural analytical conversation flow
 - Include pauses for emphasis on key insights
 - Make it sound like TWO EXPERTS analyzing a case study
@@ -796,7 +802,172 @@ FORMATTING RULES (CRITICAL):
 
 Case Study Content: {article_text}
 
-Generate ONLY expert-level analytical dialogue with 4-6 alternating segments (STRICTLY 20 seconds total) that will EDUCATE viewers about the case study while being HIGHLY ENGAGING:
+Generate ONLY expert-level analytical dialogue with 4-6 alternating segments (STRICTLY 40 seconds total) that will EDUCATE viewers about the case study while being HIGHLY ENGAGING:
+"""
+
+RONALDO_ISHOWSPEED_SCRIPT_PROMPT = """
+Write an explosive 40-second conversation between Cristiano Ronaldo (football legend) and iShowSpeed (gaming streamer) discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
+
+LENGTH REQUIREMENTS:
+- Total duration: 40 seconds (STRICTLY 40 seconds - NOT 20 or 60 seconds)
+- Each speaker should have 4-6 dialogue segments maximum
+- Each dialogue segment should be 6-10 words maximum
+- Keep individual responses short and punchy
+
+CHARACTER PERSONALITIES:
+- Ronaldo: CONFIDENT football legend and businessman. Uses signature phrases: "Siuuu!", "CR7!", "I am the best!", "Hard work pays off!", "Believe in yourself!", "Never give up!", "This is incredible!", "Amazing!", "Perfect!", "Vamos!", "Hala Madrid!", "I am Cristiano Ronaldo!", "The GOAT!", "Number one!", "Champion!". Talks about success, dedication, winning mentality, business ventures, and inspiring others. Direct, motivational, always emphasizing excellence and achievement. References his football career, records, and business empire.
+- iShowSpeed: HYPER-ENERGETIC gaming streamer and entertainer. Uses phrases: "Let's gooo!", "This is crazy!", "Oh my God!", "No way!", "This is insane!", "We're going viral!", "This is fire!", "Bro, this is amazing!", "Speed!", "What's good chat!", "We lit!", "This is bussin!", "No cap!", "Facts!", "On God!", "Deadass!", "This is wild!", "Chat, we're winning!". Focuses on entertainment, gaming, viral content, reactions, and connecting with fans. References his streaming career, gaming achievements, and community.
+
+ENERGY AND STYLE:
+- Ronaldo: Confident, motivational, business-focused, inspirational
+- iShowSpeed: Explosive reactions, gaming energy, viral content focus, fan engagement
+- Both: Building momentum throughout, getting MORE excited as conversation progresses
+- Create VIRAL MOMENTS and quotable lines
+- Make it SHAREABLE and MEMORABLE
+
+ENHANCED DIALOGUE REQUIREMENTS:
+- 4-6 alternating dialogue segments (40 seconds total - STRICTLY 40 seconds)
+- Ronaldo speaks FIRST with CONFIDENT energy about the article
+- Each speaker gets equal time but BUILDS ENERGY throughout
+- Include SPECIFIC article details and facts
+- Make it EDUCATIONAL while being ENTERTAINING
+- Create moments that would go VIRAL on social media
+- Include their most ICONIC phrases and mannerisms
+- End with MASSIVE energy and collaboration
+
+CONVERSATION FLOW STRUCTURE (40-second format):
+1. Ronaldo opens with CONFIDENT analysis of article topic + specific insights
+2. iShowSpeed responds with EXPLOSIVE reactions + gaming/entertainment perspective
+3. Ronaldo discusses SUCCESS STRATEGIES + business applications
+4. iShowSpeed explores VIRAL POTENTIAL + fan engagement opportunities
+5. Ronaldo concludes with MOTIVATIONAL message + collaboration proposal
+6. iShowSpeed ends with MASSIVE entertainment value + community impact
+
+VIRAL CONTENT REQUIREMENTS:
+- Include QUOTABLE moments that would trend on social media
+- Reference current events and trending topics when relevant
+- Make it EDUCATIONAL - people should learn from the article
+- Create SHAREABLE sound bites
+- Include their most FAMOUS catchphrases naturally
+- Build to a CLIMACTIC ending
+- Make viewers want to SHARE and COMMENT
+
+ARTICLE INTEGRATION:
+- Reference AT LEAST 3 specific facts/points from the article
+- Explain HOW the article content applies to their expertise
+- Connect article insights to Ronaldo's success mindset
+- Connect article insights to iShowSpeed's entertainment approach
+- Make complex topics ACCESSIBLE and ENGAGING
+- Include ACTIONABLE insights and lessons
+
+PERSONALITY AUTHENTICITY:
+- Ronaldo: Emphasize his work ethic, winning mentality, business acumen, motivational leadership. Include his football achievements (5 Ballon d'Or, Champions League records), business ventures (CR7 brand, hotels), and signature celebrations. Reference his dedication, training regime, and "never give up" attitude.
+- iShowSpeed: Emphasize his reactions, gaming passion, viral content creation, fan connection. Include his streaming achievements, gaming skills, community building, and signature catchphrases. Reference his energy, authenticity, and connection with his audience.
+- Both: Show mutual respect while maintaining their distinct personalities
+- Include references to their actual achievements and projects
+- Make it feel like a REAL conversation between these two icons
+- Ronaldo should be confident and motivational, iShowSpeed should be energetic and entertaining
+
+CRITICAL TECHNICAL REQUIREMENTS:
+- Generate ONLY pure speech text - no formatting whatsoever
+- NO speaker labels, scene markers, or descriptions
+- Each speaking turn: 6-8 seconds when spoken aloud
+- Total duration: EXACTLY 40 seconds (STRICTLY 40 seconds)
+- Natural conversational flow with building energy
+- Include pauses and natural speech patterns
+- Make it sound like TWO PEOPLE actually talking
+
+ENERGY AND PACING:
+- Start HIGH ENERGY and build to EXPLOSIVE
+- Each speaker should MATCH and RAISE the other's energy
+- Include natural excitement, enthusiasm, and passion
+- Create moments of genuine surprise and amazement
+- Build to a CLIMACTIC, memorable ending
+
+FORMATTING RULES (CRITICAL):
+- Use ONLY normal punctuation: periods, commas, question marks, exclamation points
+- NO asterisks, parentheses, brackets, quotation marks around speech
+- NO stage directions, descriptions, or formatting
+- NO speaker labels like "Ronaldo:" or "iShowSpeed:"
+- NO annotations, scene markers, or special formatting
+- Just pure, clean conversational speech
+- Separate each speaker's turn with double line breaks
+
+Article Content: {article_text}
+
+Generate ONLY explosive, viral-worthy conversational dialogue with 4-6 alternating segments (STRICTLY 40 seconds total) that will make people want to SHARE, COMMENT, and LEARN:
+"""
+
+RONALDO_ISHOWSPEED_CASE_STUDY_SCRIPT_PROMPT = """
+Write a dynamic 40-second case study discussion between Cristiano Ronaldo (football legend) and iShowSpeed (gaming streamer) analyzing this case study content. This should be HIGHLY ANALYTICAL yet ENGAGING, showcasing their business and entertainment expertise while breaking down the case study insights.
+
+LENGTH REQUIREMENTS:
+- Total duration: 40 seconds (STRICTLY 40 seconds - NOT 20 or 60 seconds)
+- Each speaker should have 4-6 dialogue segments maximum
+- Each dialogue segment should be 6-10 words maximum
+- Keep individual responses short and punchy
+
+CHARACTER PERSONALITIES FOR CASE STUDIES:
+- Ronaldo: BUSINESS STRATEGIST and success coach. Uses phrases: "Siuuu! This is tremendous strategy!", "CR7! Look at this success!", "The best approach!", "This is how you win!", "Incredible results!", "Smart business move!", "Vamos! This is amazing!", "I am the best at this!", "Champion strategy!", "Perfect execution!". Analyzes business strategy, success principles, market impact, competitive advantages, and scaling opportunities. References his business empire and winning mentality.
+- iShowSpeed: ENTERTAINMENT ANALYST and viral content expert. Uses phrases: "Let's gooo! This could go viral!", "The engagement is insane!", "We could make this huge!", "This changes everything!", "The potential is massive!", "This is revolutionary!", "Speed! This is bussin!", "Chat, we're winning!", "No cap, this is fire!", "Deadass, this is wild!", "On God, this is amazing!". Focuses on viral potential, audience engagement, entertainment value, community building, and content creation. References his streaming success and community building.
+
+CASE STUDY ANALYSIS REQUIREMENTS:
+- 4-6 alternating dialogue segments (40 seconds total - STRICTLY 40 seconds)
+- Ronaldo analyzes BUSINESS STRATEGY, success principles, market positioning
+- iShowSpeed analyzes VIRAL POTENTIAL, audience engagement, entertainment value
+- Both should reference SPECIFIC case study details, numbers, and outcomes
+- Include ACTIONABLE insights and lessons learned
+- Make complex business concepts ACCESSIBLE and ENGAGING
+- Create EDUCATIONAL content that teaches viewers about the case study
+
+ANALYTICAL FRAMEWORK (40-second format):
+1. Ronaldo opens with business overview + key success/strategic insights
+2. iShowSpeed responds with viral potential analysis + entertainment value
+3. Ronaldo discusses competitive advantages + market positioning
+4. iShowSpeed explores audience engagement + community building
+5. Ronaldo concludes with scaling strategy + success principles
+6. iShowSpeed ends with massive viral potential + collaboration
+
+CASE STUDY INTEGRATION REQUIREMENTS (40-second format):
+- Reference AT LEAST 2-3 specific details from the case study
+- Cite actual numbers, percentages, outcomes, and metrics
+- Mention key players, companies, or organizations involved
+- Discuss specific strategies, tactics, or innovations used
+- Analyze what worked and why
+- Connect case study lessons to broader business/entertainment principles
+- Make the analysis EDUCATIONAL and ACTIONABLE
+
+BUSINESS AND ENTERTAINMENT FOCUS:
+- Ronaldo: Focus on business strategy, success principles, competitive advantages, market analysis. Reference his CR7 brand, hotel empire, and business ventures. Use his signature confidence and motivational style.
+- iShowSpeed: Focus on viral potential, audience engagement, content creation, community building. Reference his streaming empire, gaming achievements, and community connection. Use his signature energy and authenticity.
+- Both: Show genuine business and entertainment expertise
+- Include moments of "Ah-ha!" insights and breakthrough thinking
+- Create QUOTABLE business wisdom and strategic insights
+- End with ACTIONABLE advice and clear takeaways
+- Ronaldo should bring his "champion mentality" to business analysis
+- iShowSpeed should bring his "viral content expertise" to engagement strategies
+
+CRITICAL TECHNICAL REQUIREMENTS:
+- Generate ONLY pure speech text - no formatting whatsoever
+- NO speaker labels, scene markers, or descriptions
+- Each speaking turn: 6-8 seconds when spoken aloud
+- Total duration: EXACTLY 40 seconds (STRICTLY 40 seconds)
+- Natural analytical conversation flow
+- Include pauses for emphasis on key insights
+- Make it sound like TWO EXPERTS analyzing a case study
+
+FORMATTING RULES (CRITICAL):
+- Use ONLY normal punctuation: periods, commas, question marks, exclamation points
+- NO asterisks, parentheses, brackets, quotation marks around speech
+- NO stage directions, descriptions, or formatting
+- NO speaker labels like "Ronaldo:" or "iShowSpeed:"
+- NO annotations, scene markers, or special formatting
+- Just pure, clean analytical conversation
+- Separate each speaker's turn with double line breaks
+
+Case Study Content: {article_text}
+
+Generate ONLY expert-level analytical dialogue with 4-6 alternating segments (STRICTLY 40 seconds total) that will EDUCATE viewers about the case study while being HIGHLY ENGAGING:
 """
 
 def generate_case_study_summary(content: str) -> str:

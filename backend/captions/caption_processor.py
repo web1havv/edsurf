@@ -264,7 +264,9 @@ class CaptionProcessor:
                 "samay": {"duration": 0, "words": 0},
                 "arpit": {"duration": 0, "words": 0},
                 "modi": {"duration": 0, "words": 0},
-                "mrbeast": {"duration": 0, "words": 0}
+                "mrbeast": {"duration": 0, "words": 0},
+                "ronaldo": {"duration": 0, "words": 0},
+                "ishowspeed": {"duration": 0, "words": 0}
             }
             
             for i, segment in enumerate(timeline):
@@ -342,6 +344,8 @@ class CaptionProcessor:
             logger.info(f"   🗣️ Arpit: {speaker_stats['arpit']['duration']:.1f}s ({speaker_stats['arpit']['words']} words)")
             logger.info(f"   🗣️ Modi: {speaker_stats['modi']['duration']:.1f}s ({speaker_stats['modi']['words']} words)")
             logger.info(f"   🗣️ MrBeast: {speaker_stats['mrbeast']['duration']:.1f}s ({speaker_stats['mrbeast']['words']} words)")
+            logger.info(f"   🗣️ Ronaldo: {speaker_stats['ronaldo']['duration']:.1f}s ({speaker_stats['ronaldo']['words']} words)")
+            logger.info(f"   🗣️ iShowSpeed: {speaker_stats['ishowspeed']['duration']:.1f}s ({speaker_stats['ishowspeed']['words']} words)")
             
             return enhanced_timeline
             

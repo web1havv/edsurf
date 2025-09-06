@@ -81,6 +81,18 @@ class CaptionRenderer:
                 'background': (100, 200, 0),  # Green background (MrBeast brand color)
                 'accent': (150, 255, 50)     # Light green accent
             },
+            'ronaldo': {
+                'text': (255, 255, 255),
+                'stroke': (0, 255, 0),
+                'background': (0, 100, 200),  # Blue background (Portugal/Real Madrid colors)
+                'accent': (50, 150, 255)     # Light blue accent
+            },
+            'ishowspeed': {
+                'text': (255, 255, 255),
+                'stroke': (0, 255, 0),
+                'background': (200, 0, 200),  # Purple background (gaming/streaming theme)
+                'accent': (255, 50, 255)     # Light purple accent
+            },
             'default': {
                 'text': (255, 255, 255),  
                 'stroke': (0, 255, 0),    # White text

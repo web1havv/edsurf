@@ -98,6 +98,16 @@ SPEAKER_CONFIG = {
         "voice_id": "frBOG9T06d0Zw1PEvoZN",  # MrBeast voice ID
         "api_key_env": "ELEVENLABS_API_KEY_TRUMP_MRBEAST",  # API key for Trump & MrBeast
         "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
+    },
+    "ronaldo": {
+        "voice_id": "saj3NKNl6uUhwbijws3Z",  # Ronaldo voice ID
+        "api_key_env": "ELEVENLABS_API_KEY_RONALDO_ISHOWSPEED",  # API key for Ronaldo & iShowSpeed
+        "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
+    },
+    "ishowspeed": {
+        "voice_id": "8EgKofoWF5eeuXTDDliF",  # iShowSpeed voice ID
+        "api_key_env": "ELEVENLABS_API_KEY_RONALDO_ISHOWSPEED",  # API key for Ronaldo & iShowSpeed
+        "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
     }
 }
 
@@ -122,6 +132,11 @@ SPEAKER_PAIRS = {
         "name": "Trump & MrBeast",
         "speakers": ["trump", "mrbeast"],
         "description": "Political discussions with philanthropy and entertainment"
+    },
+    "ronaldo_ishowspeed": {
+        "name": "Ronaldo & iShowSpeed",
+        "speakers": ["ronaldo", "ishowspeed"],
+        "description": "Football legend meets gaming streamer for sports and entertainment"
     }
 }
 
@@ -266,6 +281,13 @@ def get_api_key_for_speaker(speaker_name):
             trump_mrbeast_api_key = "sk_94096d8a0eef902dccfb2c9e5c371ee0b30730f49e7bae63"
             logger.info(f"🔑 Using Trump & MrBeast ElevenLabs API key for {speaker_name}")
             return trump_mrbeast_api_key
+        
+        # Special handling for Ronaldo & iShowSpeed with specific API key
+        if speaker_name in ["ronaldo", "ishowspeed"]:
+            # Use the provided API key for Ronaldo & iShowSpeed
+            ronaldo_ishowspeed_api_key = "sk_94096d8a0eef902dccfb2c9e5c371ee0b30730f49e7bae63"  # Same key for now
+            logger.info(f"🔑 Using Ronaldo & iShowSpeed ElevenLabs API key for {speaker_name}")
+            return ronaldo_ishowspeed_api_key
         
         if speaker_name in SPEAKER_CONFIG:
             config = SPEAKER_CONFIG[speaker_name]
