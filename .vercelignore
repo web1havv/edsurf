@@ -1,0 +1,34 @@
+# Ignore output files
+backend/outputs/
+backend/static/case_study_*.wav
+backend/static/case_study_*.mp4
+backend/opencv_video_req_*.mp4
+
+# Ignore test files
+test_*.py
+backend/tests/
+
+# Ignore logs
+backend/app.log
+*.log
+
+# Ignore cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore environment files
+.env
+.env.local
+
+# Ignore git
+.git/
+.gitignore
+
+# Ignore documentation
+*.md
+!README.md
+
+# Ignore assets that are too large
+backend/assets/*.mp4
+backend/fonts/

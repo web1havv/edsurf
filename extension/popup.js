@@ -18,7 +18,7 @@ generateBtn.onclick = async () => {
         }
         setStatus("Sending to backend...");
         // Send to backend
-        const resp = await fetch("http://localhost:8000/generate-reel", {
+        const resp = await fetch(getApiUrl("/generate-reel"), {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -46,7 +46,7 @@ generateBtn.onclick = async () => {
         // Audio download
         if (data.audio_url) {
             const a = document.createElement("a");
-            a.href = "http://localhost:8000" + data.audio_url;
+            a.href = getApiUrl(data.audio_url);
             a.textContent = "Download Audio";
             a.className = "download-btn";
             a.download = "reel_audio.wav";
@@ -55,7 +55,7 @@ generateBtn.onclick = async () => {
         // Video download
         if (data.video_url) {
             const a = document.createElement("a");
-            a.href = "http://localhost:8000" + data.video_url;
+            a.href = getApiUrl(data.video_url);
             a.textContent = "Download Video";
             a.className = "download-btn";
             a.download = "reel_video.mp4";
