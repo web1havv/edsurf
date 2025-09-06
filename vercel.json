@@ -5,7 +5,8 @@
       "src": "backend/vercel_entry.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "50mb"
+        "maxLambdaSize": "50mb",
+        "maxDuration": 60
       }
     }
   ],
@@ -17,10 +18,5 @@
   ],
   "env": {
     "GEMINI_API_KEY": "@gemini_api_key"
-  },
-  "functions": {
-    "backend/vercel_entry.py": {
-      "maxDuration": 60
-    }
   }
 }
