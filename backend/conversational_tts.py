@@ -6,6 +6,7 @@ import logging
 import re
 import requests
 import subprocess
+import shutil
 from datetime import datetime
 import json, base64
 
@@ -698,7 +699,6 @@ def generate_conversational_voiceover(script_text, output_path=None, speaker_pai
             
             # Clean up temporary directory
             try:
-                import shutil
                 shutil.rmtree(temp_dir)
                 logger.debug(f"🗑️ [{request_id}] Removed temporary directory: {temp_dir}")
             except Exception as e:

@@ -7,6 +7,7 @@ import os
 import tempfile
 import logging
 import sys
+import shutil
 from datetime import datetime
 
 from opencv_video_generator import test_video_overlay
@@ -168,7 +169,6 @@ async def generate_info_reel(article: ArticleInput):
         static_video_url = os.path.join(static_dir, video_filename)
         
         # Copy files to static directory for web access
-        import shutil
         shutil.copy2(audio_url, static_audio_url)
         shutil.copy2(video_url, static_video_url)
         
@@ -266,7 +266,6 @@ async def generate_conversational_reel(article: ArticleInput):
         static_video_url = os.path.join(static_dir, video_filename)
         
         # Copy files to static directory for web access
-        import shutil
         shutil.copy2(audio_url, static_audio_url)
         shutil.copy2(video_url, static_video_url)
         
@@ -380,7 +379,6 @@ async def generate_article_reel(article: ArticleInput):
         # Copy audio to outputs
         audio_filename = f"article_audio_{timestamp}.wav"
         audio_output_path = os.path.join("outputs", audio_filename)
-        import shutil
         shutil.copy2(audio_path, audio_output_path)
         logger.info(f"🎵 [{request_id}] Audio saved: {audio_output_path}")
         
@@ -506,7 +504,6 @@ async def generate_topic_reel(topic_input: TopicInput):
         # Copy audio to outputs
         audio_filename = f"topic_audio_{timestamp}.wav"
         audio_output_path = os.path.join("outputs", audio_filename)
-        import shutil
         shutil.copy2(audio_path, audio_output_path)
         logger.info(f"🎵 [{request_id}] Audio saved: {audio_output_path}")
         
@@ -807,7 +804,6 @@ async def generate_case_study_from_file(file: UploadFile = File(...), speaker_pa
                     static_video_path = os.path.join(static_dir, video_filename)
                     
                     # Copy files to static directory for web access
-                    import shutil
                     shutil.copy2(final_audio_path, static_audio_path)
                     shutil.copy2(final_video_path, static_video_path)
                     
@@ -948,7 +944,6 @@ async def generate_case_study_from_text(request: CaseStudyTextRequest):
                 static_video_path = os.path.join(static_dir, video_filename)
                 
                 # Copy files to static directory for web access
-                import shutil
                 shutil.copy2(final_audio_path, static_audio_path)
                 shutil.copy2(final_video_path, static_video_path)
                 
