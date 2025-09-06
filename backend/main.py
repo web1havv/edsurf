@@ -133,8 +133,9 @@ async def generate_info_reel(article: ArticleInput):
         # Save all content to organized folder structure
         logger.info(f"💾 [{request_id}] Step 5: Saving files to organized folder structure")
         
-        # Create organized output directories
-        output_base = os.path.expanduser("~/Downloads/info_reeler_outputs")
+        # Create organized output directories (Render-compatible)
+        # Use relative paths that persist on Render
+        output_base = "outputs"
         scripts_dir = os.path.join(output_base, "scripts")
         audio_dir = os.path.join(output_base, "audio")
         videos_dir = os.path.join(output_base, "videos")
@@ -231,8 +232,9 @@ async def generate_conversational_reel(article: ArticleInput):
         # Save all content to organized folder structure
         logger.info(f"💾 [{request_id}] Step 5: Saving files to organized folder structure")
         
-        # Create organized output directories
-        output_base = os.path.expanduser("~/Downloads/info_reeler_outputs")
+        # Create organized output directories (Render-compatible)
+        # Use relative paths that persist on Render
+        output_base = "outputs"
         scripts_dir = os.path.join(output_base, "scripts")
         audio_dir = os.path.join(output_base, "audio")
         videos_dir = os.path.join(output_base, "videos")
@@ -772,8 +774,8 @@ async def generate_case_study_from_file(file: UploadFile = File(...), speaker_pa
                 if audio_path and video_path:
                     logger.info(f"💾 [{request_id}] Saving case study files to organized folders")
                     
-                    # Create organized output directories
-                    output_base = os.path.expanduser("~/Downloads/info_reeler_outputs")
+                    # Create organized output directories (Render-compatible)
+                    output_base = "outputs"
                     scripts_dir = os.path.join(output_base, "case_studies", "scripts")
                     audio_dir = os.path.join(output_base, "case_studies", "audio")
                     videos_dir = os.path.join(output_base, "case_studies", "videos")
@@ -915,8 +917,8 @@ async def generate_case_study_from_text(request: CaseStudyTextRequest):
             if audio_path and video_path:
                 logger.info(f"💾 [{request_id}] Saving case study files to organized folders")
                 
-                # Create organized output directories
-                output_base = os.path.expanduser("~/Downloads/info_reeler_outputs")
+                # Create organized output directories (Render-compatible)
+                output_base = "outputs"
                 scripts_dir = os.path.join(output_base, "case_studies", "scripts")
                 audio_dir = os.path.join(output_base, "case_studies", "audio")
                 videos_dir = os.path.join(output_base, "case_studies", "videos")
