@@ -25,6 +25,18 @@ if not os.getenv("GEMINI_API_KEY"):
     sys.exit(1)
 
 logger.info("✅ Environment variables loaded successfully!")
+
+# Check FFmpeg availability
+try:
+    from conversational_tts import check_ffmpeg_availability
+    ffmpeg_status = check_ffmpeg_availability()
+    if ffmpeg_status:
+        logger.info(f"✅ FFmpeg check completed: {ffmpeg_status}")
+    else:
+        logger.warning("⚠️ FFmpeg not available - audio processing will fail")
+except Exception as e:
+    logger.warning(f"⚠️ Could not check FFmpeg availability: {str(e)}")
+
 logger.info("🚀 Starting Info Reeler backend server on Render...")
 
 try:

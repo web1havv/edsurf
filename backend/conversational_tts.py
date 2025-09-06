@@ -5,10 +5,37 @@ import tempfile
 import logging
 import re
 import requests
+import subprocess
 from datetime import datetime
 import json, base64
 
 logger = logging.getLogger(__name__)
+
+def check_ffmpeg_availability():
+    """Check if FFmpeg is available and log the version"""
+    try:
+        # Try system ffmpeg first
+        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, text=True, timeout=10)
+        if result.returncode == 0:
+            version_line = result.stdout.split('\n')[0]
+            logger.info(f"✅ System FFmpeg available: {version_line}")
+            return 'ffmpeg'
+    except Exception as e:
+        logger.warning(f"⚠️ System FFmpeg not available: {str(e)}")
+    
+    try:
+        # Try local ffmpeg binary
+        if os.path.exists('./ffmpeg') and os.access('./ffmpeg', os.X_OK):
+            result = subprocess.run(['./ffmpeg', '-version'], capture_output=True, text=True, timeout=10)
+            if result.returncode == 0:
+                version_line = result.stdout.split('\n')[0]
+                logger.info(f"✅ Local FFmpeg available: {version_line}")
+                return './ffmpeg'
+    except Exception as e:
+        logger.warning(f"⚠️ Local FFmpeg not available: {str(e)}")
+    
+    logger.error("❌ No FFmpeg binary found! Audio processing will fail.")
+    return None
 
 # ————————————————————————————————————————————————————————————————
 # Hindi → English-phonetic preprocessor for better TTS pronunciation
@@ -562,8 +589,13 @@ def combine_audio_segments(segments, output_path):
         # Use ffmpeg to concatenate all audio files
         import subprocess
         
+        # Use FFmpeg availability check
+        ffmpeg_cmd = check_ffmpeg_availability()
+        if ffmpeg_cmd is None:
+            raise Exception("FFmpeg is not available on this system")
+        
         cmd = [
-            './ffmpeg',
+            ffmpeg_cmd,
             '-f', 'concat',
             '-safe', '0',
             '-i', file_list_path,
@@ -573,6 +605,7 @@ def combine_audio_segments(segments, output_path):
         ]
         
         logger.info(f"🎵 Running ffmpeg command: {' '.join(cmd)}")
+        logger.info(f"🔧 Using FFmpeg binary: {ffmpeg_cmd}")
         
         result = subprocess.run(cmd, capture_output=True, text=True)
         
@@ -589,7 +622,10 @@ def combine_audio_segments(segments, output_path):
                 
             return True
         else:
-            logger.error(f"❌ ffmpeg failed: {result.stderr}")
+            logger.error(f"❌ ffmpeg failed with return code: {result.returncode}")
+            logger.error(f"❌ ffmpeg stderr: {result.stderr}")
+            logger.error(f"❌ ffmpeg stdout: {result.stdout}")
+            logger.error(f"❌ Command that failed: {' '.join(cmd)}")
             return False
             
     except Exception as e:

@@ -573,7 +573,7 @@ Absolutely tremendous! The American people deserve the best platforms, the most 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         video_output_path = f"outputs/test_fresh_video_{timestamp}.mp4"
         
-        # Ensure outputs directory exists (Render-compatible)
+        # Ensure outputs directory exists
         os.makedirs("outputs", exist_ok=True)
         
         video_path = create_background_video_with_speaker_overlays(

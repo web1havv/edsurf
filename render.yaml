@@ -2,7 +2,9 @@ services:
   - type: web
     name: info-reeler
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      apt-get update && apt-get install -y ffmpeg
+      pip install -r requirements.txt
     startCommand: cd backend && python3 render_entry.py
     envVars:
       - key: GEMINI_API_KEY
