@@ -508,12 +508,12 @@ Generate ONLY clean, professional alternating dialogue with 4-6 short segments:
 """
 
 TRUMP_MRBEAST_SCRIPT_PROMPT = """
-Write an explosive 1-minute conversation between Donald Trump and MrBeast discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
+Write an explosive 40-second conversation between Donald Trump and MrBeast discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
 
 LENGTH REQUIREMENTS:
-- Total duration: 1 minute (60 seconds)
-- Each speaker should have 4-6 dialogue segments
-- Each dialogue segment should be 8-12 words maximum
+- Total duration: 40 seconds (NOT 60 seconds)
+- Each speaker should have 3-4 dialogue segments
+- Each dialogue segment should be 6-10 words maximum
 - Keep individual responses short and punchy
 
 CHARACTER PERSONALITIES:
@@ -528,7 +528,7 @@ CONVERSATION ENERGY LEVELS:
 - Make it SHAREABLE and MEMORABLE
 
 ENHANCED DIALOGUE REQUIREMENTS:
-- 8-12 alternating dialogue segments (60 seconds total)
+- 6-8 alternating dialogue segments (40 seconds total)
 - Trump speaks FIRST with EXPLOSIVE energy about the article
 - Each speaker gets equal time but BUILDS ENERGY throughout
 - Include SPECIFIC article details and facts
@@ -723,12 +723,12 @@ Generate the summary:
 """
 
 TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT = """
-Write a dynamic 1-minute case study discussion between Donald Trump and MrBeast analyzing this case study content. This should be HIGHLY ANALYTICAL yet ENGAGING, showcasing their business and philanthropic expertise while breaking down the case study insights.
+Write a dynamic 40-second case study discussion between Donald Trump and MrBeast analyzing this case study content. This should be HIGHLY ANALYTICAL yet ENGAGING, showcasing their business and philanthropic expertise while breaking down the case study insights.
 
 LENGTH REQUIREMENTS:
-- Total duration: 1 minute (60 seconds)
-- Each speaker should have 4-6 dialogue segments
-- Each dialogue segment should be 8-12 words maximum
+- Total duration: 40 seconds (NOT 60 seconds)
+- Each speaker should have 3-4 dialogue segments
+- Each dialogue segment should be 6-10 words maximum
 - Keep individual responses short and punchy
 
 CHARACTER PERSONALITIES FOR CASE STUDIES:
@@ -736,7 +736,7 @@ CHARACTER PERSONALITIES FOR CASE STUDIES:
 - MrBeast: IMPACT ANALYST and innovation expert. Uses phrases: "This could help millions!", "The impact is insane!", "We could scale this!", "This changes everything!", "The potential is massive!", "This is revolutionary!". Focuses on social impact, scalability, innovation, community benefits, and viral potential.
 
 CASE STUDY ANALYSIS REQUIREMENTS:
-- 8-12 alternating dialogue segments (60 seconds total)
+- 6-8 alternating dialogue segments (40 seconds total)
 - Trump analyzes BUSINESS STRATEGY, financial aspects, market positioning
 - MrBeast analyzes SOCIAL IMPACT, scalability, innovation potential
 - Both should reference SPECIFIC case study details, numbers, and outcomes
@@ -744,7 +744,7 @@ CASE STUDY ANALYSIS REQUIREMENTS:
 - Make complex business concepts ACCESSIBLE and ENGAGING
 - Create EDUCATIONAL content that teaches viewers about the case study
 
-ANALYTICAL FRAMEWORK:
+ANALYTICAL FRAMEWORK (40-second format):
 1. Trump opens with business overview + key financial/strategic insights
 2. MrBeast responds with impact analysis + scalability potential  
 3. Trump discusses market strategy + competitive advantages
@@ -752,16 +752,14 @@ ANALYTICAL FRAMEWORK:
 5. Trump examines ROI + business model effectiveness
 6. MrBeast explores viral/growth potential + broader applications
 7. Trump highlights key success factors + strategic lessons
-8. MrBeast discusses implementation + scaling opportunities
-9. Both analyze what made this case study successful
-10. Conclude with actionable takeaways for viewers
+8. MrBeast concludes with actionable takeaways for viewers
 
-CASE STUDY INTEGRATION REQUIREMENTS:
-- Reference AT LEAST 5 specific details from the case study
+CASE STUDY INTEGRATION REQUIREMENTS (40-second format):
+- Reference AT LEAST 3-4 specific details from the case study
 - Cite actual numbers, percentages, outcomes, and metrics
 - Mention key players, companies, or organizations involved
 - Discuss specific strategies, tactics, or innovations used
-- Analyze what worked, what didn't, and why
+- Analyze what worked and why
 - Connect case study lessons to broader business/social principles
 - Make the analysis EDUCATIONAL and ACTIONABLE
 

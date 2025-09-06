@@ -24,12 +24,19 @@ class OpenCVVideoGenerator:
     Much more stable than MoviePy
     """
     
-    def __init__(self):
-        self.fps = 30
-        self.video_width = 1080
-        self.video_height = 1920  # Vertical format
-        logger.info(f"🎬 OpenCV Video Generator initialized")
-        logger.info(f"📐 Output format: {self.video_width}x{self.video_height} @ {self.fps}fps")
+    def __init__(self, fast_mode=True):
+        if fast_mode:
+            self.fps = 20  # Even lower FPS for maximum speed
+            self.video_width = 640   # Even smaller resolution for speed
+            self.video_height = 1136 # Even smaller resolution for speed
+            logger.info(f"🎬 OpenCV Video Generator initialized (FAST MODE)")
+        else:
+            self.fps = 24  # Reduced from 30 to 24 for faster processing
+            self.video_width = 720   # Reduced from 1080 to 720 for faster processing
+            self.video_height = 1280 # Reduced from 1920 to 1280 for faster processing
+            logger.info(f"🎬 OpenCV Video Generator initialized (STANDARD MODE)")
+        
+        logger.info(f"📐 Output format: {self.video_width}x{self.video_height} @ {self.fps}fps (OPTIMIZED FOR SPEED)")
     
     def load_and_resize_image(self, image_path):
         """Load and resize image using PIL and OpenCV"""
@@ -45,7 +52,7 @@ class OpenCVVideoGenerator:
                 pil_img = pil_img.convert('RGB')
 
             # Calculate target height as 40% of screen height
-            target_height = int(self.video_height * 0.4)  # 40% of 1920 = 768 pixels
+            target_height = int(self.video_height * 0.4)  # 40% of 1280 = 512 pixels
 
             # Calculate proportional width based on target height
             original_width, original_height = pil_img.size
@@ -219,7 +226,9 @@ class OpenCVVideoGenerator:
                 raise Exception("Could not determine audio duration")
             
             total_frames = int(audio_duration * self.fps)
+            estimated_time = total_frames * 0.05  # Rough estimate: 0.05 seconds per frame
             logger.info(f"🎬 [{request_id}] Creating {total_frames} frames for {audio_duration:.2f}s")
+            logger.info(f"⏱️ [{request_id}] Estimated processing time: {estimated_time:.1f} seconds")
 
             # Load speaker images
             elon_img = self.load_and_resize_image("assets/elon.png")
@@ -237,9 +246,9 @@ class OpenCVVideoGenerator:
             if background_cap is None:
                 raise Exception("Could not load background video")
             
-            # Create video writer
+            # Create video writer (optimized for speed)
             temp_video_path = f"temp_video_{request_id}.mp4"
-            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+            fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Faster encoding than mp4v
             video_writer = cv2.VideoWriter(temp_video_path, fourcc, self.fps, (self.video_width, self.video_height))
             
             logger.info(f"🎬 [{request_id}] Creating video frames...")
@@ -255,8 +264,8 @@ class OpenCVVideoGenerator:
                     ret, bg_frame = background_cap.read()
                     
                     if ret:
-                        # Resize background to fit our video dimensions
-                        bg_frame = cv2.resize(bg_frame, (self.video_width, self.video_height))
+                        # Resize background to fit our video dimensions (optimized for speed)
+                        bg_frame = cv2.resize(bg_frame, (self.video_width, self.video_height), interpolation=cv2.INTER_LINEAR)
                     else:
                         # Create solid background if frame read fails
                         bg_frame = np.zeros((self.video_height, self.video_width, 3), dtype=np.uint8)
@@ -354,8 +363,8 @@ class OpenCVVideoGenerator:
                 # Write frame
                 video_writer.write(bg_frame)
                 
-                # Progress logging
-                if frame_num % (self.fps * 2) == 0:  # Every 2 seconds
+                # Progress logging (reduced frequency for speed)
+                if frame_num % (self.fps * 5) == 0:  # Every 5 seconds instead of 2
                     progress = (frame_num / total_frames) * 100
                     logger.info(f"🎬 [{request_id}] Progress: {progress:.1f}% ({frame_num}/{total_frames} frames)")
             
@@ -473,6 +482,8 @@ class OpenCVVideoGenerator:
                 '-i', video_path,  # Input video
                 '-i', audio_path,  # Input audio
                 '-c:v', 'libx264',  # Video codec
+                '-preset', 'ultrafast',  # Fastest encoding preset
+                '-crf', '28',  # Higher CRF for faster encoding (lower quality but much faster)
                 '-c:a', 'aac',  # Audio codec
                 '-strict', 'experimental',
                 '-shortest',  # Stop when shortest stream ends
@@ -499,6 +510,8 @@ class OpenCVVideoGenerator:
                 ffmpeg_path, '-y',      # Overwrite output
                 '-i', video_path,       # Input video only
                 '-c:v', 'libx264',      # Video codec (same as audio version)
+                '-preset', 'ultrafast', # Fastest encoding preset
+                '-crf', '28',           # Higher CRF for faster encoding
                 '-an',                  # No audio stream
                 output_path
             ]
@@ -514,8 +527,8 @@ class OpenCVVideoGenerator:
             logger.error(f"❌ Failed to create silent video: {str(e)}")
             raise
 
-# Global instance
-video_generator = OpenCVVideoGenerator()
+# Global instance (using fast mode for 40-second reels)
+video_generator = OpenCVVideoGenerator(fast_mode=True)
 
 def create_background_video_with_speaker_overlays(script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_mrbeast", timing_data=None):
     """
