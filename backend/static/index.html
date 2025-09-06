@@ -875,20 +875,47 @@
                 console.log('🔍 Testing API connectivity to:', `${API_BASE}/health`);
                 const response = await fetch(`${API_BASE}/health`, {
                     method: 'GET',
-                    timeout: 5000
+                    signal: AbortSignal.timeout(10000) // 10 second timeout
                 });
                 if (response.ok) {
-                    console.log('✅ API connectivity test passed');
+                    const data = await response.json();
+                    console.log('✅ API connectivity test passed:', data);
                 } else {
                     console.log('⚠️ API connectivity test failed with status:', response.status);
+                    console.log('⚠️ Response text:', await response.text());
                 }
             } catch (error) {
                 console.log('❌ API connectivity test failed:', error.message);
+                if (error.message.includes('502')) {
+                    console.log('❌ Server is returning 502 Bad Gateway - backend may be down');
+                }
             }
         }
         
-        // Run connectivity test after a short delay
-        setTimeout(testAPIConnectivity, 1000);
+        // Test server status
+        async function testServerStatus() {
+            try {
+                console.log('🔍 Testing server status at:', `${API_BASE}/test`);
+                const response = await fetch(`${API_BASE}/test`, {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(10000)
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Server status test passed:', data);
+                } else {
+                    console.log('⚠️ Server status test failed with status:', response.status);
+                }
+            } catch (error) {
+                console.log('❌ Server status test failed:', error.message);
+            }
+        }
+        
+        // Run connectivity tests after a short delay
+        setTimeout(() => {
+            testAPIConnectivity();
+            testServerStatus();
+        }, 1000);
 
         let currentCaseStudyContent = '';
         let currentCaseStudyVideoData = null;
@@ -1328,6 +1355,10 @@
                     errorMessage = 'Network error. Please check your internet connection and try again.';
                 } else if (error.message.includes('ERR_SSL')) {
                     errorMessage = 'SSL/TLS error. Please check if the server certificate is valid.';
+                } else if (error.message.includes('502') || error.message.includes('Bad Gateway')) {
+                    errorMessage = `Server error (502 Bad Gateway). The backend server at ${API_BASE} is not responding properly. Please check if the deployment is active and try again in a few minutes.`;
+                } else if (error.message.includes('Unexpected token') && error.message.includes('<!DOCTYPE')) {
+                    errorMessage = `Server returned an HTML error page instead of JSON. This usually means the server is down or misconfigured. Please check the deployment status.`;
                 }
                 
                 showError('Error: ' + errorMessage);

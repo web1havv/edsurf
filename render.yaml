@@ -3,7 +3,7 @@ services:
     name: info-reeler
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: cd backend && python3 run.py
+    startCommand: cd backend && python3 render_entry.py
     envVars:
       - key: GEMINI_API_KEY
         sync: false

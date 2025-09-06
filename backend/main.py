@@ -50,6 +50,15 @@ async def health_check():
         "service": "Info Reeler API"
     }
 
+# Simple test endpoint
+@app.get("/test")
+async def test_endpoint():
+    """Simple test endpoint to verify server is working"""
+    return {
+        "message": "Server is working!",
+        "timestamp": datetime.now().isoformat()
+    }
+
 class ArticleInput(BaseModel):
     url: str = None
     text: str = None
@@ -699,10 +708,16 @@ async def generate_case_study_from_file(file: UploadFile = File(...), speaker_pa
     """Generate case study summary, script, and FULL VIDEO from uploaded file"""
     request_id = f"casestudy_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     logger.info(f"🔄 [{request_id}] Starting case study processing from file: {file.filename}")
+    logger.info(f"🔄 [{request_id}] Speaker pair: {speaker_pair}")
     
     try:
         if not file:
+            logger.error(f"❌ [{request_id}] No file uploaded")
             raise HTTPException(status_code=400, detail="No file uploaded")
+        
+        if not file.filename:
+            logger.error(f"❌ [{request_id}] File has no filename")
+            raise HTTPException(status_code=400, detail="File has no filename")
         
         # Save uploaded file temporarily
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as temp_file:
