@@ -830,16 +830,14 @@ async def generate_case_study_from_file(file: UploadFile = File(...), speaker_pa
                 "summary": case_study_data["summary"],
                 "script": case_study_data["script"],
                 "speaker_pair": speaker_pair,
-                "processed_at": case_study_data["processed_at"]
+                "processed_at": case_study_data["processed_at"],
+                "video_url": video_url,
+                "audio_url": audio_url,
+                "status": "success" if video_url and audio_url else "partial_success"
             }
             
-            # Add video URLs if generated
-            if video_url and audio_url:
-                response_data.update({
-                    "video_url": video_url,
-                    "audio_url": audio_url,
-                    "status": "success"
-                })
+            logger.info(f"📤 [{request_id}] Returning response with status: {response_data['status']}")
+            logger.info(f"📤 [{request_id}] Response keys: {list(response_data.keys())}")
             
             return response_data
             
@@ -973,16 +971,14 @@ async def generate_case_study_from_text(request: CaseStudyTextRequest):
             "summary": case_study_data["summary"],
             "script": case_study_data["script"],
             "speaker_pair": speaker_pair,
-            "processed_at": case_study_data["processed_at"]
+            "processed_at": case_study_data["processed_at"],
+            "video_url": video_url,
+            "audio_url": audio_url,
+            "status": "success" if video_url and audio_url else "partial_success"
         }
         
-        # Add video URLs if generated
-        if video_url and audio_url:
-            response_data.update({
-                "video_url": video_url,
-                "audio_url": audio_url,
-                "status": "success"
-            })
+        logger.info(f"📤 [{request_id}] Returning response with status: {response_data['status']}")
+        logger.info(f"📤 [{request_id}] Response keys: {list(response_data.keys())}")
         
         return response_data
         
