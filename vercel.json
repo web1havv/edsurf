@@ -15,8 +15,5 @@
       "src": "/(.*)",
       "dest": "backend/vercel_entry.py"
     }
-  ],
-  "env": {
-    "GEMINI_API_KEY": "@gemini_api_key"
-  }
+  ]
 }
