@@ -654,6 +654,11 @@ async def clear_all_files():
         raise HTTPException(status_code=500, detail=f"Failed to clear files: {str(e)}")
 
 @app.get("/")
+async def root():
+    """Root endpoint - serve the frontend"""
+    return FileResponse("static/index.html")
+
+@app.get("/frontend")
 async def serve_frontend():
     """Serve the main frontend"""
     return FileResponse("static/index.html")
@@ -662,6 +667,11 @@ async def serve_frontend():
 async def health_check():
     logger.info("🏥 Health check requested")
     return {"status": "healthy", "models_loaded": True}
+
+@app.get("/test")
+async def test_endpoint():
+    """Test endpoint to verify app is working"""
+    return {"message": "FastAPI app is working!", "timestamp": datetime.now().isoformat()}
 
 @app.get("/speaker-pairs")
 async def get_speaker_pairs():
