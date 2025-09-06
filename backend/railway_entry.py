@@ -28,9 +28,13 @@ logger.info("✅ Environment variables loaded successfully!")
 logger.info("🚀 Starting Info Reeler backend server on Railway...")
 
 try:
-    # Import and run the FastAPI app
-    from main import app
+    # Import uvicorn first
     import uvicorn
+    
+    # Try to import the app with better error handling
+    logger.info("📦 Importing FastAPI app...")
+    from main import app
+    logger.info("✅ FastAPI app imported successfully")
     
     # Use Railway's PORT environment variable, fallback to 8000 for local development
     port = int(os.getenv("PORT", 8000))
@@ -41,7 +45,9 @@ try:
 except ImportError as e:
     logger.error(f"❌ Import error: {e}")
     logger.error("This might be due to missing dependencies. Check the build logs.")
+    logger.error("Make sure all packages in requirements.txt are installed.")
     sys.exit(1)
 except Exception as e:
     logger.error(f"❌ Startup error: {e}")
+    logger.error("Check the logs above for more details.")
     sys.exit(1)

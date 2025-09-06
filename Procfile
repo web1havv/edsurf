@@ -1,1 +1,1 @@
-web: cd backend && python3 simple_app.py
+web: cd backend && python3 railway_entry.py
