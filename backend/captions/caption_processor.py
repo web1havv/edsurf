@@ -258,10 +258,13 @@ class CaptionProcessor:
             all_captions = []
             total_duration = 0
             speaker_stats = {
-                "elon": {"duration": 0, "words": 0}, 
+                "elon": {"duration": 0, "words": 0},
                 "trump": {"duration": 0, "words": 0},
                 "baburao": {"duration": 0, "words": 0},
-                "samay": {"duration": 0, "words": 0}
+                "samay": {"duration": 0, "words": 0},
+                "arpit": {"duration": 0, "words": 0},
+                "modi": {"duration": 0, "words": 0},
+                "mrbeast": {"duration": 0, "words": 0}
             }
             
             for i, segment in enumerate(timeline):
@@ -334,6 +337,11 @@ class CaptionProcessor:
             logger.info(f"   ⏱️ {total_duration:.1f}s total duration")
             logger.info(f"   🗣️ Elon: {speaker_stats['elon']['duration']:.1f}s ({speaker_stats['elon']['words']} words)")
             logger.info(f"   🗣️ Trump: {speaker_stats['trump']['duration']:.1f}s ({speaker_stats['trump']['words']} words)")
+            logger.info(f"   🗣️ Baburao: {speaker_stats['baburao']['duration']:.1f}s ({speaker_stats['baburao']['words']} words)")
+            logger.info(f"   🗣️ Samay: {speaker_stats['samay']['duration']:.1f}s ({speaker_stats['samay']['words']} words)")
+            logger.info(f"   🗣️ Arpit: {speaker_stats['arpit']['duration']:.1f}s ({speaker_stats['arpit']['words']} words)")
+            logger.info(f"   🗣️ Modi: {speaker_stats['modi']['duration']:.1f}s ({speaker_stats['modi']['words']} words)")
+            logger.info(f"   🗣️ MrBeast: {speaker_stats['mrbeast']['duration']:.1f}s ({speaker_stats['mrbeast']['words']} words)")
             
             return enhanced_timeline
             

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Info Reeler - Article to Video Converter</title>
+    <title>Info Reeler - AI-Powered Case Study Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,411 +14,858 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'JetBrains Mono', 'Source Code Pro', monospace;
+            background: #000000;
+            color: #00ff00;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .terminal-header {
+            background: #111111;
+            border-bottom: 2px solid #ffd700;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .terminal-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .terminal-subtitle {
+            color: #00ff00;
+            font-size: 1.1rem;
+            opacity: 0.8;
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            max-width: 600px;
-            width: 100%;
-            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        .logo {
-            font-size: 2.5em;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+        .terminal-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
         }
 
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
+        .terminal-tab {
+            background: #111111;
+            border: 2px solid #333333;
+            color: #00ff00;
+            padding: 15px 30px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .input-group {
-            margin-bottom: 30px;
+        .terminal-tab:hover {
+            border-color: #ffd700;
+            color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
-        .input-group label {
+        .terminal-tab.active {
+            background: #ffd700;
+            color: #000000;
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .terminal-content {
+            display: none;
+            background: #111111;
+            border: 2px solid #333333;
+            border-radius: 0;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+
+        .terminal-content.active {
+            display: block;
+            animation: terminalFadeIn 0.5s ease-out;
+        }
+
+        .terminal-form-group {
+            margin-bottom: 25px;
+        }
+
+        .terminal-label {
             display: block;
             margin-bottom: 10px;
+            color: #ffd700;
             font-weight: 600;
-            color: #333;
-            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
         }
 
-        .input-group input, .input-group textarea {
+        .terminal-input {
             width: 100%;
+            background: #000000;
+            border: 2px solid #333333;
+            color: #00ff00;
             padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
-        .input-group input:focus, .input-group textarea:focus {
+        .terminal-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
-        .input-group textarea {
-            height: 120px;
+        .terminal-textarea {
+            min-height: 120px;
             resize: vertical;
         }
 
-        .button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
+        .terminal-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffd700' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .terminal-btn {
+            background: #000000;
+            border: 2px solid #ffd700;
+            color: #ffd700;
             padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
+            font-family: 'JetBrains Mono', monospace;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s ease;
-            margin: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .button:hover {
-            transform: translateY(-2px);
+        .terminal-btn:hover {
+            background: #ffd700;
+            color: #000000;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
         }
 
-        .button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+        .terminal-btn:active {
+            transform: translateY(1px);
         }
 
-        .loading {
+        .terminal-btn-secondary {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .terminal-btn-secondary:hover {
+            background: #00ff00;
+            color: #000000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .terminal-btn-success {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+
+        .terminal-btn-success:hover {
+            background: #00ff00;
+            color: #000000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .terminal-loading {
             display: none;
+            text-align: center;
+            padding: 40px;
+            background: #111111;
+            border: 2px solid #333333;
             margin: 20px 0;
         }
 
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
+        .terminal-spinner {
             width: 40px;
             height: 40px;
-            animation: spin 1s linear infinite;
+            border: 3px solid #333333;
+            border-top: 3px solid #ffd700;
+            border-radius: 50%;
+            animation: terminalSpin 1s linear infinite;
             margin: 0 auto 20px;
         }
 
-        @keyframes spin {
+        .terminal-error {
+            display: none;
+            background: #000000;
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-result {
+            display: none;
+            background: #111111;
+            border: 2px solid #333333;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .terminal-result h3 {
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .terminal-summary {
+            background: #000000;
+            border: 1px solid #333333;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .terminal-script {
+            background: #000000;
+            border: 1px solid #333333;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #00ff00;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.6;
+        }
+
+        .terminal-quiz-section {
+            display: none;
+            background: #111111;
+            border: 2px solid #333333;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .terminal-quiz-progress {
+            background: #000000;
+            border: 1px solid #333333;
+            height: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .terminal-quiz-progress-bar {
+            background: linear-gradient(90deg, #ffd700, #00ff00);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .terminal-quiz-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #ffd700;
+        }
+
+        .terminal-quiz-options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .terminal-quiz-option {
+            background: #000000;
+            border: 2px solid #333333;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .terminal-quiz-option:hover {
+            border-color: #ffd700;
+            background: #111111;
+        }
+
+        .terminal-quiz-option.selected {
+            border-color: #ffd700;
+            background: #1a1a00;
+        }
+
+        .terminal-quiz-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #ffd700;
+        }
+
+        .terminal-quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .terminal-quiz-nav-btn {
+            padding: 12px 25px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .terminal-quiz-container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 8px 32px rgba(0, 255, 0, 0.3);
+        }
+
+        .terminal-quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .terminal-quiz-header h3 {
+            color: #00ff00;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .terminal-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #555;
+        }
+
+        .terminal-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffd700);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .terminal-quiz-question {
+            background: #2a2a2a;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .terminal-quiz-options {
+            margin-bottom: 30px;
+        }
+
+        .terminal-quiz-option {
+            background: #2a2a2a;
+            border: 2px solid #555;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .terminal-quiz-option:hover {
+            border-color: #00ff00;
+            background: #333;
+        }
+
+        .terminal-quiz-option.selected {
+            border-color: #ffd700;
+            background: #3a3a3a;
+        }
+
+        .terminal-quiz-option input[type="radio"] {
+            accent-color: #ffd700;
+        }
+
+        .terminal-quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .terminal-quiz-nav-btn {
+            min-width: 120px;
+        }
+
+        .terminal-scorecard {
+            display: none;
+            background: #111111;
+            border: 2px solid #333333;
+            padding: 40px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .terminal-score-display {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .terminal-score-excellent {
+            color: #00ff00;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .terminal-score-good {
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .terminal-score-average {
+            color: #ffaa00;
+            text-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+        }
+
+        .terminal-score-poor {
+            color: #ff0000;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .terminal-score-percentage {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #cccccc;
+        }
+
+        .terminal-score-details {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .terminal-score-item {
+            background: #000000;
+            border: 1px solid #333333;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-score-item.correct {
+            border-left: 4px solid #00ff00;
+            background: #001a00;
+        }
+
+        .terminal-score-item.incorrect {
+            border-left: 4px solid #ff0000;
+            background: #1a0000;
+        }
+
+        .terminal-features {
+            background: #111111;
+            border: 2px solid #333333;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .terminal-features h3 {
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .terminal-features ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .terminal-features li {
+            color: #00ff00;
+            padding: 10px 0;
+            border-left: 3px solid #333333;
+            padding-left: 15px;
+        }
+
+        .terminal-file-upload {
+            border: 2px dashed #ffd700;
+            padding: 40px;
+            text-align: center;
+            background: #000000;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .terminal-file-upload:hover {
+            border-color: #00ff00;
+            background: #001100;
+        }
+
+        .terminal-file-upload.dragover {
+            border-color: #00ff00;
+            background: #001100;
+            transform: scale(1.02);
+        }
+
+        @keyframes terminalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes terminalSpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .result {
-            margin-top: 30px;
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .terminal-title {
+                font-size: 2rem;
+            }
+            
+            .terminal-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .terminal-content {
+                padding: 20px;
+            }
+            
+            .terminal-quiz-navigation {
+                flex-direction: column;
+            }
+        }
+
+        .terminal-info {
+            background: #000000;
+            border: 1px solid #333333;
             padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            display: none;
+            margin-top: 20px;
+            border-left: 4px solid #ffd700;
         }
 
-        .result h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .result video, .result audio {
-            width: 100%;
-            margin: 10px 0;
-            border-radius: 10px;
-        }
-
-        .result a {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin: 5px;
-        }
-
-        .error {
-            background: #ffe6e6;
-            color: #d63031;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            display: none;
-        }
-
-        .speaker-selection {
-            margin-bottom: 25px;
-            padding: 20px;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 15px;
-            border: 2px solid #dee2e6;
-        }
-
-        .speaker-selection label {
-            display: block;
-            font-weight: bold;
+        .terminal-info h4 {
+            color: #ffd700;
             margin-bottom: 10px;
-            color: #495057;
-            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .speaker-selection select {
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border: 2px solid #ced4da;
-            border-radius: 8px;
-            font-size: 16px;
-            background: white;
-            transition: border-color 0.3s ease;
-        }
-
-        .speaker-selection select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .speaker-description {
-            font-size: 14px;
-            color: #6c757d;
-            font-style: italic;
-            text-align: center;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 6px;
-        }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid #e1e5e9;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 15px;
-            background: #f8f9fa;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s ease;
-        }
-
-        .tab.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .features {
-            margin-top: 30px;
-            text-align: left;
-        }
-
-        .features h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .features ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .features li {
-            padding: 8px 0;
-            color: #666;
-            position: relative;
-            padding-left: 25px;
-        }
-
-        .features li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #667eea;
-            font-weight: bold;
+        .terminal-info p {
+            color: #cccccc;
+            line-height: 1.6;
         }
     </style>
 </head>
 <body>
+    <div class="terminal-header">
+        <h1 class="terminal-title">INFO REELER</h1>
+        <p class="terminal-subtitle">AI-Powered Case Study Platform</p>
+    </div>
+
     <div class="container">
-        <div class="logo">Info Reeler</div>
-        <div class="subtitle">Transform articles into hilarious conversations OR search any topic and we'll find & explain it!</div>
-
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('url')">Article URL</button>
-            <button class="tab" onclick="switchTab('text')">Paste Text</button>
-            <button class="tab" onclick="switchTab('topic')">🔍 Topic Search</button>
+        <div class="terminal-tabs">
+            <button class="terminal-tab active" onclick="showTab('url-tab')">
+                <i class="fas fa-link"></i> URL REEL
+            </button>
+            <button class="terminal-tab" onclick="showTab('casestudy-tab')">
+                <i class="fas fa-graduation-cap"></i> CASE STUDY
+            </button>
         </div>
 
-        <div id="url-tab" class="tab-content active">
-            <div class="input-group">
-                <label for="articleUrl">Article URL:</label>
-                <input type="url" id="articleUrl" placeholder="https://example.com/article" />
+        <!-- URL Tab -->
+        <div id="url-tab" class="terminal-content active">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">
+                <i class="fas fa-video"></i> CREATE VIDEO FROM URL
+            </h2>
+            
+            <div class="terminal-form-group">
+                <label class="terminal-label" for="articleUrl">ARTICLE URL:</label>
+                <input type="url" id="articleUrl" class="terminal-input" placeholder="https://example.com/article">
             </div>
             
-            <!-- Speaker Pair Selection -->
-            <div class="speaker-selection">
-                <label for="speakerPairUrl">🎭 Choose Speaker Pair:</label>
-                <select id="speakerPairUrl" onchange="updateSpeakerDescription('speakerPairUrl', 'speakerDescriptionUrl')">
-                    <option value="trump_elon">Trump & Elon</option>
-                    <option value="baburao_samay">Baburao & Samay</option>
+            <div class="terminal-form-group">
+                <label class="terminal-label" for="speakerPairUrl">SPEAKER PAIR:</label>
+                <select id="speakerPairUrl" class="terminal-input terminal-select">
+                    <option value="trump_mrbeast">Trump & MrBeast</option>
                 </select>
-                <div class="speaker-description" id="speakerDescriptionUrl">
-                    Political discussions with tech innovation
+            </div>
+            
+            <button class="terminal-btn" onclick="generateFromUrl()">
+                <i class="fas fa-magic"></i> GENERATE VIDEO
+            </button>
+        </div>
+
+        <!-- Case Study Tab -->
+        <div id="casestudy-tab" class="terminal-content">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">
+                <i class="fas fa-graduation-cap"></i> CASE STUDY PLATFORM
+            </h2>
+            
+            <div class="terminal-form-group">
+                <label class="terminal-label">UPLOAD CASE STUDY FILE:</label>
+                <div class="terminal-file-upload" onclick="document.getElementById('caseStudyFile').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #ffd700; margin-bottom: 15px;"></i>
+                    <p style="font-size: 1.2rem; color: #00ff00; margin-bottom: 10px; font-weight: 600;">CLICK TO UPLOAD OR DRAG & DROP</p>
+                    <p style="color: #cccccc;">Supports PDF, DOCX, and text files</p>
+                    <input type="file" id="caseStudyFile" accept=".pdf,.docx,.txt" style="display: none;" onchange="handleFileUpload(event)">
                 </div>
             </div>
             
-            <button class="button" onclick="generateFromUrl()">Generate Video from URL</button>
-        </div>
-
-        <div id="text-tab" class="tab-content">
-            <div class="input-group">
-                <label for="articleText">Article Text:</label>
-                <textarea id="articleText" placeholder="Paste your article content here..."></textarea>
+            <div style="text-align: center; margin: 20px 0; color: #ffd700; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">OR</div>
+            
+            <div class="terminal-form-group">
+                <label class="terminal-label" for="caseStudyText">PASTE CASE STUDY TEXT:</label>
+                <textarea id="caseStudyText" class="terminal-input terminal-textarea" placeholder="Paste your case study content here..."></textarea>
             </div>
             
-            <!-- Speaker Pair Selection -->
-            <div class="speaker-selection">
-                <label for="speakerPairText">🎭 Choose Speaker Pair:</label>
-                <select id="speakerPairText" onchange="updateSpeakerDescription('speakerPairText', 'speakerDescriptionText')">
-                    <option value="trump_elon">Trump & Elon</option>
-                    <option value="baburao_samay">Baburao & Samay</option>
+            <div class="terminal-form-group">
+                <label class="terminal-label" for="speakerPairCaseStudy">SPEAKER PAIR (OPTIONAL - FOR SCRIPT GENERATION):</label>
+                <select id="speakerPairCaseStudy" class="terminal-input terminal-select">
+                    <option value="">None (Summary Only)</option>
+                    <option value="trump_mrbeast">Trump & MrBeast</option>
                 </select>
-                <div class="speaker-description" id="speakerDescriptionText">
-                    Political discussions with tech innovation
+            </div>
+            
+            <div class="terminal-form-group">
+                <label class="terminal-label" for="summaryLanguage">SUMMARY LANGUAGE:</label>
+                <select id="summaryLanguage" class="terminal-input terminal-select">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi (हिंदी)</option>
+                    <option value="Bengali">Bengali (বাংলা)</option>
+                    <option value="Telugu">Telugu (తెలుగు)</option>
+                    <option value="Marathi">Marathi (मराठी)</option>
+                    <option value="Tamil">Tamil (தமிழ்)</option>
+                    <option value="Gujarati">Gujarati (ગુજરાતી)</option>
+                    <option value="Kannada">Kannada (ಕನ್ನಡ)</option>
+                    <option value="Malayalam">Malayalam (മലയാളം)</option>
+                    <option value="Punjabi">Punjabi (ਪੰਜਾਬੀ)</option>
+                    <option value="Odia">Odia (ଓଡ଼ିଆ)</option>
+                    <option value="Assamese">Assamese (অসমীয়া)</option>
+                </select>
+            </div>
+            
+            <div class="terminal-actions" style="text-align: center; margin: 40px 0; padding: 20px; border: 2px solid #333; border-radius: 10px; background: rgba(0, 255, 0, 0.05);">
+                <h4 style="color: #ffd700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-cogs"></i> CASE STUDY ACTIONS
+                </h4>
+                
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                    <button class="terminal-btn" onclick="generateCaseStudySummary()" id="generateBtn" style="min-width: 250px;">
+                        <i class="fas fa-brain"></i> GENERATE SUMMARY
+                    </button>
+                    
+                    <button class="terminal-btn terminal-btn-success" onclick="generateCaseStudyVideo()" id="generateVideoBtn" style="min-width: 250px;">
+                        <i class="fas fa-video"></i> GENERATE VIDEO
+                    </button>
+                </div>
+                
+                <p style="color: #cccccc; font-size: 0.9em; margin: 0;">
+                    <i class="fas fa-info-circle"></i> 
+                    <strong>Summary:</strong> AI analysis only | 
+                    <strong>Video:</strong> Requires speaker pair selection for full video generation
+                </p>
+            </div>
+            
+            <div id="caseStudySummary" style="display: none; margin-top: 30px;">
+                <h3 style="color: #ffd700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-lightbulb"></i> AI-GENERATED SUMMARY
+                </h3>
+                <div id="summaryContent" class="terminal-summary"></div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="terminal-btn terminal-btn-secondary" onclick="translateSummary()" id="translateSummaryBtn">
+                        <i class="fas fa-language"></i> TRANSLATE SUMMARY
+                    </button>
                 </div>
             </div>
             
-            <button class="button" onclick="generateFromText()">Generate Video from Text</button>
-        </div>
-
-        <div id="topic-tab" class="tab-content">
-            <div class="input-group">
-                <label for="topicInput">🔍 Enter any topic:</label>
-                <input type="text" id="topicInput" placeholder="e.g., artificial intelligence, climate change, quantum computing..." />
-            </div>
-            
-            <!-- Speaker Pair Selection -->
-            <div class="speaker-selection">
-                <label for="speakerPairTopic">🎭 Choose Speaker Pair:</label>
-                <select id="speakerPairTopic" onchange="updateSpeakerDescription('speakerPairTopic', 'speakerDescriptionTopic')">
-                    <option value="trump_elon">Trump & Elon</option>
-                    <option value="baburao_samay">Baburao & Samay</option>
-                </select>
-                <div class="speaker-description" id="speakerDescriptionTopic">
-                    Political discussions with tech innovation
+            <div id="quizSection" class="terminal-quiz-section" style="margin-top: 40px; padding: 20px; border: 2px solid #333; border-radius: 10px; background: rgba(255, 215, 0, 0.05);">
+                <h3 style="text-align: center; margin-bottom: 30px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-brain"></i> TEST YOUR KNOWLEDGE
+                </h3>
+                <p style="text-align: center; color: #cccccc; margin-bottom: 20px;">
+                    Ready to test your understanding? Choose your preferred language and start the quiz!
+                </p>
+                
+                <div class="terminal-form-group" style="max-width: 400px; margin: 0 auto 30px;">
+                    <label class="terminal-label" for="quizLanguage">QUIZ LANGUAGE:</label>
+                    <select id="quizLanguage" class="terminal-input terminal-select">
+                        <option value="English">English</option>
+                        <option value="Hindi">Hindi (हिंदी)</option>
+                        <option value="Bengali">Bengali (বাংলা)</option>
+                        <option value="Telugu">Telugu (తెలుగు)</option>
+                        <option value="Marathi">Marathi (मराठी)</option>
+                        <option value="Tamil">Tamil (தமிழ்)</option>
+                        <option value="Gujarati">Gujarati (ગુજરાતી)</option>
+                        <option value="Kannada">Kannada (ಕನ್ನಡ)</option>
+                        <option value="Malayalam">Malayalam (മലയാളം)</option>
+                        <option value="Punjabi">Punjabi (ਪੰਜਾਬੀ)</option>
+                        <option value="Odia">Odia (ଓଡ଼ିଆ)</option>
+                        <option value="Assamese">Assamese (অসমীয়া)</option>
+                    </select>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="terminal-btn terminal-btn-success" onclick="startQuiz()" style="min-width: 200px;">
+                        <i class="fas fa-play"></i> GENERATE & START QUIZ
+                    </button>
                 </div>
             </div>
             
-            <button class="button" onclick="generateFromTopic()">🎯 Search & Generate Reel</button>
-            
-            <div class="topic-info" style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 10px; font-size: 14px; color: #666;">
-                <p><strong>How it works:</strong></p>
-                <ul style="text-align: left; padding-left: 20px;">
-                    <li>🔍 Search the web for quality articles about your topic</li>
-                    <li>📖 Extract and analyze the best article found</li>
-                    <li>🎭 Create an engaging conversation between your chosen speakers</li>
-                    <li>🎬 Generate a professional video reel</li>
-                </ul>
+            <div class="terminal-info">
+                <h4>
+                    <i class="fas fa-info-circle"></i> ABOUT CASE STUDY PLATFORM
+                </h4>
+                <p>
+                    <strong>Current Features:</strong> Upload case studies, generate AI summaries, create conversational scripts, generate FULL VIDEOS with speaker pairs, and take interactive quizzes.<br>
+                    <strong>Video Generation:</strong> Select a speaker pair to generate complete videos with audio and visual overlays from your case study content!
+                </p>
             </div>
         </div>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Generating your hilarious video... This may take a minute!</p>
+        <div class="terminal-loading" id="loading">
+            <div class="terminal-spinner"></div>
+            <p id="loadingText">Processing your request... This may take a minute!</p>
         </div>
 
-        <div class="error" id="error"></div>
+        <div class="terminal-error" id="error"></div>
 
-        <div class="result" id="result">
-            <h3>🎉 Your Video is Ready!</h3>
-            <video id="videoPlayer" controls>
-                Your browser does not support the video tag.
-            </video>
-            <audio id="audioPlayer" controls>
-                Your browser does not support the audio tag.
-            </audio>
-            <div>
-                <a id="downloadVideo" href="#" download>Download Video</a>
-                <a id="downloadAudio" href="#" download>Download Audio</a>
+        <div class="terminal-result" id="result">
+            <h3>YOUR CASE STUDY IS READY!</h3>
+            <div id="caseStudyResult">
+                <!-- Case study results will be displayed here -->
             </div>
         </div>
 
-        <div class="features">
-            <h3>✨ Features:</h3>
+        <!-- Quiz Container -->
+        <div class="terminal-quiz-container" id="quizContainer" style="display: none;">
+            <div class="terminal-quiz-header">
+                <h3 id="quizTitle">QUIZ</h3>
+                <div class="terminal-progress-bar">
+                    <div class="terminal-progress-fill" id="progressBar"></div>
+                </div>
+            </div>
+            <div id="quizContent">
+                <!-- Quiz questions will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Scorecard Container -->
+        <div class="terminal-scorecard" id="scorecard" style="display: none;">
+            <h3>QUIZ COMPLETED!</h3>
+            <div id="scorecardContent">
+                <!-- Scorecard will be displayed here -->
+            </div>
+        </div>
+
+        <div class="terminal-features">
+            <h3>FEATURES:</h3>
             <ul>
                 <li>🎯 <strong>Topic Search:</strong> Enter any topic and we'll find & explain it</li>
-                <li>Extract content from any article URL</li>
-                <li>🎭 Choose from multiple speaker pairs:</li>
-                <li style="margin-left: 20px;">• Trump & Elon (Political + Tech)</li>
-                <li style="margin-left: 20px;">• Baburao & Samay (Comedy + Chess)</li>
-                <li>Deep explanations of complex topics</li>
-                <li>Professional voice synthesis</li>
-                <li>Dynamic speaker switching with smooth transitions</li>
-                <li>Optimized for social media</li>
+                <li>🎭 <strong>Speaker Selection:</strong> Choose from Trump, Elon, Samay, Arpit, or Baburao</li>
+                <li>🎬 <strong>Video Generation:</strong> Create engaging videos with speaker overlays</li>
+                <li>📚 <strong>Case Study Platform:</strong> Upload PDFs and generate summaries</li>
+                <li>🧠 <strong>Interactive Quizzes:</strong> Test your knowledge with AI-generated questions</li>
+                <li>🌍 <strong>Multi-Language Support:</strong> Summaries and quizzes in 12+ Indian languages</li>
+                <li>🎵 <strong>Voice Generation:</strong> Natural-sounding voiceovers</li>
+                <li>📱 <strong>Responsive Design:</strong> Works on all devices</li>
             </ul>
         </div>
     </div>
 
     <script>
-        // Speaker pair descriptions
-        const speakerDescriptions = {
-            "trump_elon": "Political discussions with tech innovation",
-            "baburao_samay": "Comedy legend meets chess master insights"
-        };
+        const API_BASE = (() => {
+            try {
+                const fromEnv = window.API_BASE_URL;
+                if (fromEnv && typeof fromEnv === 'string') return fromEnv.replace(/\/$/, '');
+            } catch (e) {}
+            const { protocol, hostname, port } = window.location;
+            const defaultPort = 8000;
+            if (protocol === 'file:') {
+                return `http://localhost:${defaultPort}`;
+            }
+            if (hostname && port) {
+                return `${protocol}//${hostname}:${port}`;
+            }
+            return `${protocol}//${hostname || 'localhost'}:${port || defaultPort}`;
+        })();
 
-        function updateSpeakerDescription(selectId, descriptionId) {
-            const selectedPair = document.getElementById(selectId).value;
-            const descriptionElement = document.getElementById(descriptionId);
-            descriptionElement.textContent = speakerDescriptions[selectedPair] || "";
-        }
+        let currentCaseStudyContent = '';
+        let currentCaseStudyVideoData = null;
+        let currentQuiz = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let currentSummaryText = '';
+        let currentSummaryLanguage = 'English';
+        let droppedFiles = null; // holds files added via drag & drop
+        let selectedFile = null; // holds file chosen via input change
 
-        function switchTab(tabName) {
+        function showTab(tabId) {
             // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
+            document.querySelectorAll('.terminal-content').forEach(tab => {
                 tab.classList.remove('active');
             });
             
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.terminal-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
             // Show selected tab content
-            document.getElementById(tabName + '-tab').classList.add('active');
+            document.getElementById(tabId).classList.add('active');
             
             // Add active class to clicked tab
             event.target.classList.add('active');
         }
 
-        function showLoading() {
+        function showLoading(message = "Processing your request... This may take a minute!") {
             document.getElementById('loading').style.display = 'block';
+            document.getElementById('loadingText').textContent = message;
             document.getElementById('result').style.display = 'none';
             document.getElementById('error').style.display = 'none';
         }
@@ -435,21 +884,113 @@
         function showResult(data) {
             hideLoading();
             const resultDiv = document.getElementById('result');
-            const videoPlayer = document.getElementById('videoPlayer');
-            const audioPlayer = document.getElementById('audioPlayer');
-            const downloadVideo = document.getElementById('downloadVideo');
-            const downloadAudio = document.getElementById('downloadAudio');
-
+            const caseStudyResult = document.getElementById('caseStudyResult');
+            
+            console.log('🎬 Debug - showResult called with data:', data);
+            console.log('🎬 Debug - video_url:', data.video_url);
+            console.log('🎬 Debug - audio_url:', data.audio_url);
+            console.log('🎬 Debug - summary:', data.summary ? 'Present' : 'Not present');
+            console.log('🎬 Debug - script:', data.script ? 'Present' : 'Not present');
+            
+            let resultHTML = '';
+            
+            // Always show video first if available
             if (data.video_url) {
-                videoPlayer.src = data.video_url;
-                downloadVideo.href = data.video_url;
+                console.log('🎬 Debug - Adding video to result HTML');
+                resultHTML += `
+                    <div class="terminal-video">
+                        <h4 style="color: #ffd700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
+                            <i class="fas fa-video"></i> GENERATED VIDEO
+                        </h4>
+                        <div style="position: relative; display: inline-block;">
+                            <video controls style="width: 100%; max-width: 600px; border: 2px solid #00ff00; border-radius: 8px;" 
+                                   onloadstart="console.log('🎬 Video loading started'); showVideoLoading('${data.video_url}')"
+                                   oncanplay="console.log('🎬 Video can play'); hideVideoLoading('${data.video_url}')"
+                                   onerror="console.error('❌ Video loading error:', event); hideVideoLoading('${data.video_url}'); showVideoError('${data.video_url}')"
+                                   onloadeddata="console.log('🎬 Video data loaded')">
+                                <source src="${data.video_url}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div id="video-loading-${Date.now()}" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: #ffd700; padding: 20px; border-radius: 8px; text-align: center;">
+                                <div class="terminal-spinner" style="margin: 0 auto 10px;"></div>
+                                <p>Loading video...</p>
+                            </div>
+                        </div>
+                        <div id="video-status-${Date.now()}" style="color: #cccccc; margin-top: 10px; font-size: 0.9em;">
+                            <i class="fas fa-info-circle"></i> Video URL: ${data.video_url}
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <button class="terminal-btn terminal-btn-secondary" onclick="downloadVideo('${data.video_url}')" style="margin-right: 10px;">
+                                <i class="fas fa-download"></i> DOWNLOAD VIDEO
+                            </button>
+                            <button class="terminal-btn terminal-btn-secondary" onclick="openVideoInNewTab('${data.video_url}')">
+                                <i class="fas fa-external-link-alt"></i> OPEN IN NEW TAB
+                            </button>
+                        </div>
+                    </div>
+                `;
             }
-
+            
+            // Show audio if available
             if (data.audio_url) {
-                audioPlayer.src = data.audio_url;
-                downloadAudio.href = data.audio_url;
+                console.log('🎵 Debug - Adding audio to result HTML');
+                resultHTML += `
+                    <div class="terminal-audio">
+                        <h4 style="color: #ff9500; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
+                            <i class="fas fa-volume-up"></i> AUDIO TRACK
+                        </h4>
+                        <audio controls style="width: 100%; max-width: 600px;">
+                            <source src="${data.audio_url}" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <p style="color: #cccccc; margin-top: 10px; font-size: 0.9em;">
+                            <i class="fas fa-info-circle"></i> Audio URL: ${data.audio_url}
+                        </p>
+                    </div>
+                `;
             }
-
+            
+            // Show summary if available
+            if (data.summary) {
+                console.log('📝 Debug - Adding summary to result HTML');
+                resultHTML += `
+                    <div class="terminal-summary">
+                        <h4 style="color: #ffd700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
+                            <i class="fas fa-lightbulb"></i> AI SUMMARY
+                        </h4>
+                        <div style="line-height: 1.6; color: #cccccc;">
+                            ${data.summary}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Show script if available
+            if (data.script && data.script.trim()) {
+                console.log('📜 Debug - Adding script to result HTML');
+                resultHTML += `
+                    <div class="terminal-script">
+                        <h4 style="color: #00ff00; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
+                            <i class="fas fa-scroll"></i> GENERATED SCRIPT
+                        </h4>
+                        <div style="line-height: 1.6; color: #cccccc;">
+                            ${data.script}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // If no content was added, show fallback message
+            if (!resultHTML) {
+                console.log('⚠️ Debug - No content to display, showing fallback');
+                resultHTML = `
+                    <p>✅ Processing completed successfully!</p>
+                    <p>Check the summary and quiz sections above.</p>
+                `;
+            }
+            
+            console.log('🎬 Debug - Final result HTML length:', resultHTML.length);
+            caseStudyResult.innerHTML = resultHTML;
             resultDiv.style.display = 'block';
             document.getElementById('error').style.display = 'none';
         }
@@ -459,14 +1000,14 @@
             const speakerPair = document.getElementById('speakerPairUrl').value;
             
             if (!url) {
-                showError('Please enter a valid article URL');
+                showError('Please enter a valid URL');
                 return;
             }
 
-            showLoading();
-
+            showLoading("🎬 Generating your video... This may take a few minutes!");
+            
             try {
-                const response = await fetch('/generate-article-reel', {
+                const response = await fetch(`${API_BASE}/generate-reel`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -484,80 +1025,645 @@
 
                 const data = await response.json();
                 showResult(data);
+                
             } catch (error) {
                 showError('Error: ' + error.message);
             }
         }
 
-        async function generateFromText() {
-            const text = document.getElementById('articleText').value.trim();
-            const speakerPair = document.getElementById('speakerPairText').value;
+        function handleFileUpload(event) {
+            const filesList = event && event.target && event.target.files;
+            const file = filesList && filesList[0];
+            if (file) {
+                selectedFile = file;
+                const uploadArea = document.querySelector('.terminal-file-upload');
+                uploadArea.innerHTML = `
+                    <i class="fas fa-check-circle" style="font-size: 3rem; color: #00ff00; margin-bottom: 15px;"></i>
+                    <p style="font-size: 1.2rem; color: #ffd700; margin-bottom: 10px; font-weight: 600;">FILE SELECTED!</p>
+                    <p style="color: #cccccc;">${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</p>
+                `;
+            }
+        }
+
+        async function generateCaseStudyVideo() {
+            console.log('🔍 Debug - Case Study Video Generation Started');
             
-            if (!text) {
-                showError('Please enter article text');
+            const fileInputEl = document.getElementById('caseStudyFile');
+            const textInput = document.getElementById('caseStudyText').value.trim();
+            const speakerPair = document.getElementById('speakerPairCaseStudy').value;
+            
+            const inputFile = (fileInputEl && fileInputEl.files && fileInputEl.files[0]) || null;
+            const dropFile = (droppedFiles && droppedFiles[0]) || null;
+            const fileToUse = selectedFile || dropFile || inputFile;
+            const hasFile = !!fileToUse;
+            
+            console.log('📁 File input:', fileToUse ? fileToUse.name : 'No file or input missing');
+            console.log('📝 Text input length:', textInput.length);
+            console.log('🎭 Speaker pair:', speakerPair);
+            
+            if (!hasFile && !textInput) {
+                console.log('❌ No file or text input provided');
+                showError('Please upload a file or paste case study text');
+                return;
+            }
+            
+            if (!speakerPair) {
+                console.log('❌ No speaker pair selected');
+                showError('Please select a speaker pair to generate video');
                 return;
             }
 
-            showLoading();
+            console.log('✅ Input validation passed, showing loading...');
+            showLoading("🎬 Generating FULL CASE STUDY VIDEO... This may take 2-3 minutes!");
+            console.log('✅ Loading shown, starting video generation...');
 
             try {
-                const response = await fetch('/generate-conversational-reel', {
+                let content = '';
+                
+                if (hasFile) {
+                    console.log('📁 Processing file upload for video...');
+                    // Handle file upload
+                    const formData = new FormData();
+                    formData.append('file', fileToUse);
+                    formData.append('speaker_pair', speakerPair);
+                    
+                    const response = await fetch(`${API_BASE}/generate-case-study`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Failed to process case study file');
+                    }
+                    
+                    const data = await response.json();
+                    console.log('✅ File upload video response received:', data);
+                    
+                    currentCaseStudyContent = data.content;
+                    currentCaseStudyVideoData = data;
+                    
+                    // Show result with video
+                    showResult(data);
+                    
+                } else {
+                    console.log('📝 Processing text input for video...');
+                    // Handle text input
+                    const requestBody = {
+                        text: textInput,
+                        speaker_pair: speakerPair
+                    };
+                    
+                    const response = await fetch(`${API_BASE}/generate-case-study-text`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Failed to process case study text');
+                    }
+                    
+                    const data = await response.json();
+                    console.log('✅ Text input video response received:', data);
+                    
+                    currentCaseStudyContent = data.content;
+                    currentCaseStudyVideoData = data;
+                    
+                    // Show result with video
+                    showResult(data);
+                }
+                
+                console.log('✅ Case study video generation completed successfully!');
+                
+            } catch (error) {
+                console.error('❌ Error during case study video generation:', error);
+                showError('Error generating case study video: ' + error.message);
+            }
+        }
+
+        async function generateCaseStudySummary() {
+            console.log('🔍 Debug - Case Study Generation Started');
+            
+            const fileInputEl = document.getElementById('caseStudyFile');
+            const textInput = document.getElementById('caseStudyText').value.trim();
+            const speakerPair = document.getElementById('speakerPairCaseStudy').value;
+            
+            const inputFile = (fileInputEl && fileInputEl.files && fileInputEl.files[0]) || null;
+            const dropFile = (droppedFiles && droppedFiles[0]) || null;
+            const fileToUse = selectedFile || dropFile || inputFile;
+            const hasFile = !!fileToUse;
+            console.log('📁 File input:', fileToUse ? fileToUse.name : 'No file or input missing');
+            console.log('📝 Text input length:', textInput.length);
+            console.log('📝 Text input value:', textInput);
+            console.log('🎭 Speaker pair:', speakerPair);
+            
+            if (!hasFile && !textInput) {
+                console.log('❌ No file or text input provided');
+                showError('Please upload a file or paste case study text');
+                return;
+            }
+
+            console.log('✅ Input validation passed, showing loading...');
+            showLoading("📚 Processing case study and generating summary... This may take a minute!");
+            console.log('✅ Loading shown, starting try block...');
+
+            try {
+                let content = '';
+                
+                if (hasFile) {
+                    console.log('📁 Processing file upload...');
+                    // Handle file upload (summary only - no speaker pair)
+                    const formData = new FormData();
+                    formData.append('file', fileToUse);
+                    // Don't include speaker_pair for summary-only generation
+                    
+                    const response = await fetch(`${API_BASE}/generate-case-study`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Failed to process case study file');
+                    }
+                    
+                    const data = await response.json();
+                    console.log('✅ File upload response received:', data);
+                    
+                    currentCaseStudyContent = data.content;
+                    currentCaseStudyVideoData = data;
+                    
+                    // Show summary
+                    currentSummaryText = data.summary;
+                    currentSummaryLanguage = 'English';
+                    document.getElementById('summaryContent').innerHTML = data.summary;
+                    document.getElementById('caseStudySummary').style.display = 'block';
+                    
+                    // Show result with summary and script
+                    showResult(data);
+                    
+                    // Show quiz section
+                    document.getElementById('quizSection').style.display = 'block';
+                    
+                } else if (textInput) {
+                    console.log('📝 Processing text input...');
+                    console.log('📝 Text content:', textInput.substring(0, 100) + '...');
+                    
+                    // Handle text input (summary only - no speaker pair)
+                    const requestBody = {
+                        text: textInput
+                        // Don't include speaker_pair for summary-only generation
+                    };
+                    
+                    console.log('🌐 Making API call to /generate-case-study-text...');
+                    console.log('🌐 Request payload:', JSON.stringify(requestBody));
+                    
+                    const response = await fetch(`${API_BASE}/generate-case-study-text`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+                    
+                    console.log('🌐 Response received:', response.status, response.statusText);
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('❌ Response error:', errorData);
+                        throw new Error(errorData.detail || 'Failed to process case study text');
+                    }
+                    
+                    const data = await response.json();
+                    console.log('✅ Text input response received:', data);
+                    
+                    currentCaseStudyContent = textInput;
+                    currentCaseStudyVideoData = data;
+                    
+                    // Show summary
+                    currentSummaryText = data.summary;
+                    currentSummaryLanguage = 'English';
+                    document.getElementById('summaryContent').innerHTML = data.summary;
+                    document.getElementById('caseStudySummary').style.display = 'block';
+                    
+                    // Show result with summary and script
+                    showResult(data);
+                    
+                    // Show quiz section
+                    document.getElementById('quizSection').style.display = 'block';
+                }
+                
+            } catch (error) {
+                console.error('❌ Case study generation error:', error);
+                console.error('❌ Error details:', error);
+                showError('Error: ' + error.message);
+            } finally {
+                console.log('🏁 Case study generation function completed');
+                hideLoading();
+            }
+        }
+
+        async function translateSummary() {
+            if (!currentSummaryText) {
+                showError('No summary available for translation');
+                return;
+            }
+
+            const targetLanguage = document.getElementById('summaryLanguage').value;
+            if (targetLanguage === currentSummaryLanguage) {
+                showError('Summary is already in the selected language');
+                return;
+            }
+
+            showLoading(`🌍 Translating summary to ${targetLanguage}...`);
+
+            try {
+                const response = await fetch(`${API_BASE}/translate`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        text: text,
-                        speaker_pair: speakerPair
+                        text: currentSummaryText,
+                        target_language: targetLanguage
                     })
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Failed to generate video');
+                    throw new Error(errorData.detail || 'Failed to translate summary');
                 }
 
                 const data = await response.json();
-                showResult(data);
+                currentSummaryText = data.translated_text;
+                currentSummaryLanguage = targetLanguage;
+                
+                document.getElementById('summaryContent').innerHTML = data.translated_text;
+                document.getElementById('translateSummaryBtn').innerHTML = `<i class="fas fa-language"></i> TRANSLATE SUMMARY (CURRENTLY: ${targetLanguage})`;
+                
+                hideLoading();
+                
             } catch (error) {
                 showError('Error: ' + error.message);
             }
         }
 
-        async function generateFromTopic() {
-            const topic = document.getElementById('topicInput').value.trim();
-            const speakerPair = document.getElementById('speakerPairTopic').value;
-            
-            if (!topic) {
-                showError('Please enter a topic to search for');
+        async function startQuiz() {
+            if (!currentCaseStudyContent) {
+                showError('No case study content available for quiz generation');
                 return;
             }
 
-            showLoading();
-
+            const quizLanguage = document.getElementById('quizLanguage').value;
+            showLoading(`🧠 Generating quiz questions in ${quizLanguage}... This may take a moment!`);
+            
             try {
-                const response = await fetch('/generate-topic-reel', {
+                const response = await fetch(`${API_BASE}/generate-quiz`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        topic: topic,
-                        speaker_pair: speakerPair
+                        content: currentCaseStudyContent,
+                        video_data: {}
                     })
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Failed to generate video from topic');
+                    throw new Error(errorData.detail || 'Failed to generate quiz');
                 }
 
-                const data = await response.json();
-                showResult(data);
+                const quizData = await response.json();
+                currentQuiz = quizData;
+                currentQuestionIndex = 0;
+                userAnswers = {};
+                
+                // If language is not English, translate the quiz
+                if (quizLanguage !== 'English') {
+                    showLoading(`🌍 Translating quiz to ${quizLanguage}...`);
+                    
+                    const translateResponse = await fetch(`${API_BASE}/translate-quiz`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            quiz_id: quizData.quiz_id,
+                            target_language: quizLanguage
+                        })
+                    });
+
+                    if (translateResponse.ok) {
+                        const translatedQuiz = await translateResponse.json();
+                        currentQuiz = translatedQuiz;
+                    }
+                }
+                
+                hideLoading();
+                showQuiz(currentQuiz);
+                
             } catch (error) {
                 showError('Error: ' + error.message);
             }
+        }
+
+        function showQuiz(quizData) {
+            const quizSection = document.getElementById('quizSection');
+            quizSection.innerHTML = `
+                <h3 style="text-align: center; margin-bottom: 20px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-brain"></i> ${quizData.title}
+                </h3>
+                <div class="terminal-quiz-progress">
+                    <div class="terminal-quiz-progress-bar" id="progressBar"></div>
+                </div>
+                <div id="quizContent">
+                    <!-- Quiz content will be loaded here -->
+                </div>
+            `;
+            
+            loadQuestion(0);
+        }
+
+        function loadQuestion(index) {
+            if (!currentQuiz || !currentQuiz.questions) return;
+            
+            const question = currentQuiz.questions[index];
+            const progress = ((index + 1) / currentQuiz.questions.length) * 100;
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            const quizContent = document.getElementById('quizContent');
+            quizContent.innerHTML = `
+                <div class="terminal-quiz-question">
+                    Question ${index + 1} of ${currentQuiz.questions.length}: ${question.question}
+                </div>
+                <div class="terminal-quiz-options">
+                    ${question.options.map((option, optionIndex) => `
+                        <div class="terminal-quiz-option ${userAnswers[index] === optionIndex ? 'selected' : ''}" 
+                             onclick="selectOption(${index}, ${optionIndex})">
+                            <input type="radio" name="question_${index}" value="${optionIndex}" 
+                                   ${userAnswers[index] === optionIndex ? 'checked' : ''}>
+                            <span>${option}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="terminal-quiz-navigation">
+                    <button class="terminal-btn terminal-btn-secondary terminal-quiz-nav-btn" 
+                            onclick="previousQuestion()" 
+                            ${index === 0 ? 'disabled' : ''}>
+                        <i class="fas fa-arrow-left"></i> PREVIOUS
+                    </button>
+                    <span style="font-weight: 600; color: #ffd700;">
+                        ${index + 1} / ${currentQuiz.questions.length}
+                    </span>
+                    ${index === currentQuiz.questions.length - 1 ? 
+                        `<button class="terminal-btn terminal-btn-success terminal-quiz-nav-btn" onclick="submitQuiz()">
+                            <i class="fas fa-check"></i> SUBMIT QUIZ
+                        </button>` :
+                        `<button class="terminal-btn terminal-quiz-nav-btn" onclick="nextQuestion()">
+                            NEXT <i class="fas fa-arrow-right"></i>
+                        </button>`
+                    }
+                </div>
+            `;
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            userAnswers[questionIndex] = optionIndex;
+            loadQuestion(currentQuestionIndex);
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion(currentQuestionIndex);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion(currentQuestionIndex);
+            }
+        }
+
+        async function submitQuiz() {
+            if (!currentQuiz) return;
+            
+            showLoading("📊 Calculating your score...");
+            
+            try {
+                // Convert userAnswers object to ordered array expected by backend
+                const orderedAnswers = Array.from({ length: currentQuiz.questions.length }, (_, i) => (
+                    Object.prototype.hasOwnProperty.call(userAnswers, i) ? userAnswers[i] : -1
+                ));
+
+                const response = await fetch(`${API_BASE}/submit-quiz`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        quiz_id: currentQuiz.quiz_id,
+                        answers: orderedAnswers
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to submit quiz');
+                }
+
+                const results = await response.json();
+                hideLoading();
+                showScorecard(results);
+                
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+
+        function showScorecard(results) {
+            console.log('🎯 Debug - showScorecard called with results:', results);
+            console.log('🎯 Debug - results.question_results:', results.question_results);
+            console.log('🎯 Debug - results.details:', results.details);
+            
+            const quizSection = document.getElementById('quizSection');
+            const score = results.score;
+            const percentage = results.percentage;
+            
+            let scoreClass = 'terminal-score-poor';
+            let scoreMessage = 'Keep learning!';
+            
+            if (percentage >= 80) {
+                scoreClass = 'terminal-score-excellent';
+                scoreMessage = 'Excellent work!';
+            } else if (percentage >= 60) {
+                scoreClass = 'terminal-score-good';
+                scoreMessage = 'Good job!';
+            } else if (percentage >= 40) {
+                scoreClass = 'terminal-score-average';
+                scoreMessage = 'Not bad!';
+            }
+            
+            quizSection.innerHTML = `
+                <div class="terminal-scorecard">
+                    <h3 style="color: #ffd700; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px;">
+                        <i class="fas fa-trophy"></i> QUIZ RESULTS
+                    </h3>
+                    <div class="terminal-score-display ${scoreClass}">
+                        ${score}/${results.total_questions}
+                    </div>
+                    <div class="terminal-score-percentage">
+                        ${percentage}%
+                    </div>
+                    <h4 style="color: #cccccc; margin-bottom: 30px;">${scoreMessage}</h4>
+                    
+                    <div class="terminal-score-details">
+                        ${(results.question_results || results.details || []).map((detail, index) => `
+                            <div class="terminal-score-item ${detail.correct ? 'correct' : 'incorrect'}">
+                                <div>
+                                    <strong>Question ${index + 1}:</strong> ${detail.question}
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-weight: 600; color: ${detail.correct ? '#00ff00' : '#ff0000'};">
+                                        ${detail.correct ? '✓ CORRECT' : '✗ INCORRECT'}
+                                    </div>
+                                    ${!detail.correct ? `<div style="font-size: 0.9rem; color: #cccccc;">
+                                        Correct: ${detail.correct_answer}
+                                    </div>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <button class="terminal-btn terminal-btn-secondary" onclick="startQuiz()">
+                            <i class="fas fa-redo"></i> RETAKE QUIZ
+                        </button>
+                        <button class="terminal-btn" onclick="downloadScorecard()">
+                            <i class="fas fa-download"></i> DOWNLOAD RESULTS
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function downloadScorecard() {
+            // Placeholder for download functionality
+            alert('Download functionality will be implemented soon!');
+        }
+
+        function showVideoError(videoUrl) {
+            console.error('❌ Video loading failed for URL:', videoUrl);
+            const errorMessage = `
+                <div style="background: #1a0000; border: 2px solid #ff0000; padding: 15px; margin-top: 10px; border-radius: 5px;">
+                    <h4 style="color: #ff0000; margin-bottom: 10px;">
+                        <i class="fas fa-exclamation-triangle"></i> VIDEO LOADING ERROR
+                    </h4>
+                    <p style="color: #cccccc; margin-bottom: 10px;">
+                        The video could not be loaded. This might be due to:
+                    </p>
+                    <ul style="color: #cccccc; margin-left: 20px; margin-bottom: 15px;">
+                        <li>File not found on server</li>
+                        <li>Network connectivity issues</li>
+                        <li>Browser compatibility issues</li>
+                    </ul>
+                    <div style="margin-top: 15px;">
+                        <button class="terminal-btn terminal-btn-secondary" onclick="downloadVideo('${videoUrl}')" style="margin-right: 10px;">
+                            <i class="fas fa-download"></i> TRY DOWNLOAD
+                        </button>
+                        <button class="terminal-btn terminal-btn-secondary" onclick="openVideoInNewTab('${videoUrl}')">
+                            <i class="fas fa-external-link-alt"></i> OPEN DIRECTLY
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Find the video status div and add error message
+            const statusDivs = document.querySelectorAll('[id^="video-status-"]');
+            if (statusDivs.length > 0) {
+                statusDivs[statusDivs.length - 1].innerHTML += errorMessage;
+            }
+        }
+
+        function downloadVideo(videoUrl) {
+            console.log('📥 Downloading video:', videoUrl);
+            const link = document.createElement('a');
+            link.href = videoUrl;
+            link.download = videoUrl.split('/').pop() || 'generated_video.mp4';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function openVideoInNewTab(videoUrl) {
+            console.log('🔗 Opening video in new tab:', videoUrl);
+            window.open(videoUrl, '_blank');
+        }
+
+        function showVideoLoading(videoUrl) {
+            console.log('⏳ Showing video loading indicator for:', videoUrl);
+            const loadingDivs = document.querySelectorAll('[id^="video-loading-"]');
+            if (loadingDivs.length > 0) {
+                loadingDivs[loadingDivs.length - 1].style.display = 'block';
+            }
+        }
+
+        function hideVideoLoading(videoUrl) {
+            console.log('✅ Hiding video loading indicator for:', videoUrl);
+            const loadingDivs = document.querySelectorAll('[id^="video-loading-"]');
+            if (loadingDivs.length > 0) {
+                loadingDivs[loadingDivs.length - 1].style.display = 'none';
+            }
+        }
+
+
+        // File drag and drop functionality
+        const fileUploadArea = document.querySelector('.terminal-file-upload');
+        
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+        
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.classList.remove('dragover');
+        });
+        
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                // Cannot programmatically set input.files in most browsers; store separately
+                droppedFiles = files;
+                handleFileUpload({ target: { files: files } });
+            }
+        });
+
+        // Initialize the page
+        console.log('🚀 Info Reeler Terminal Interface Loaded');
+        console.log('🔧 All functions initialized successfully');
+        
+        // Add event listener as backup for the button (immediate execution)
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', function(e) {
+                console.log('🔘 Button clicked via event listener');
+                e.preventDefault();
+                generateCaseStudySummary();
+            });
+            console.log('✅ Event listener added to generate button');
+        } else {
+            console.error('❌ Generate button not found!');
         }
     </script>
 </body>
-</html> 
+</html>

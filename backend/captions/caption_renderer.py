@@ -51,6 +51,36 @@ class CaptionRenderer:
                 'background': (50, 50, 200),  # Red background
                 'accent': (100, 100, 255)     # Light red accent
             },
+            'baburao': {
+                'text': (255, 255, 255),
+                'stroke': (0, 255, 0),
+                'background': (50, 200, 50),  # Green background
+                'accent': (100, 255, 100)     # Light green accent
+            },
+            'samay': {
+                'text': (255, 255, 255),
+                'stroke': (0, 255, 0),
+                'background': (200, 100, 50),  # Orange background
+                'accent': (255, 150, 100)     # Light orange accent
+            },
+            'arpit': {
+                'text': (255, 255, 255),
+                'stroke': (0, 255, 0),
+                'background': (150, 50, 150),  # Purple background
+                'accent': (200, 100, 200)     # Light purple accent
+            },
+            'modi': {
+                'text': (255, 255, 255),
+                'stroke': (0, 255, 0),
+                'background': (0, 100, 200),  # Saffron background (Indian flag colors)
+                'accent': (50, 150, 255)     # Light saffron accent
+            },
+            'mrbeast': {
+                'text': (255, 255, 255),
+                'stroke': (0, 255, 0),
+                'background': (100, 200, 0),  # Green background (MrBeast brand color)
+                'accent': (150, 255, 50)     # Light green accent
+            },
             'default': {
                 'text': (255, 255, 255),  
                 'stroke': (0, 255, 0),    # White text

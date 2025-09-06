@@ -186,7 +186,7 @@ class OpenCVVideoGenerator:
     
 
 
-    def create_video_with_overlays_and_captions(self, script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon", enable_captions=True, timing_data=None):
+    def create_video_with_overlays_and_captions(self, script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_mrbeast", enable_captions=True, timing_data=None):
 
         """
         Create video with background video and speaker overlays
@@ -226,6 +226,8 @@ class OpenCVVideoGenerator:
             trump_img = self.load_and_resize_image("assets/trump.png")
             samay_img = self.load_and_resize_image("assets/samay.png")
             baburao_img = self.load_and_resize_image("assets/baburao.png")
+            arpit_img = self.load_and_resize_image("assets/arpit.png")
+            mrbeast_img = self.load_and_resize_image("assets/mrbeast.png")
 
 
             logger.info(f"✅ [{request_id}] Speaker images loaded and processed")
@@ -326,6 +328,18 @@ class OpenCVVideoGenerator:
                     y_pos = self.video_height - img_height  # Bottom of screen
                     x_pos = 50  # Left side with margin
                     self._overlay_image(bg_frame, baburao_img, x_pos, y_pos)
+                elif current_speaker == 'arpit':
+                    img_height = arpit_img.shape[0]
+                    img_width = arpit_img.shape[1]
+                    y_pos = self.video_height - img_height  # Bottom of screen
+                    x_pos = 50  # Left side with margin
+                    self._overlay_image(bg_frame, arpit_img, x_pos, y_pos)
+                elif current_speaker == 'mrbeast':
+                    img_height = mrbeast_img.shape[0]
+                    img_width = mrbeast_img.shape[1]
+                    y_pos = self.video_height - img_height  # Bottom of screen
+                    x_pos = self.video_width - img_width - 50  # Right side with margin
+                    self._overlay_image(bg_frame, mrbeast_img, x_pos, y_pos)
 
                 
                 # 🆕 ADD CAPTION OVERLAY (if enabled)
@@ -503,7 +517,7 @@ class OpenCVVideoGenerator:
 # Global instance
 video_generator = OpenCVVideoGenerator()
 
-def create_background_video_with_speaker_overlays(script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_elon", timing_data=None):
+def create_background_video_with_speaker_overlays(script_text, audio_path, background_video_path=None, output_path=None, speaker_pair="trump_mrbeast", timing_data=None):
     """
     Main function to replace MoviePy video generation
     """

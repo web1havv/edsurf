@@ -10,10 +10,39 @@ import json, base64
 
 logger = logging.getLogger(__name__)
 
+# ————————————————————————————————————————————————————————————————
+# Hindi → English-phonetic preprocessor for better TTS pronunciation
+# Applies only to Samay/Arpit content where Hindi words must sound authentic
+# Keeps English words intact; rewrites common Hindi words to phonetic spellings
+# Add/adjust mappings as needed based on listening tests
+def apply_hindi_phonetics(raw_text: str) -> str:
+    try:
+        text = raw_text
+        # Minimal, high-signal rules. Keep English words intact. Nudge Hindi words.
+        rules = {
+            r"\bye\b": "yeh",
+            r"\bmain\b": "mein",
+            r"\bnahi\b": "nahee",
+            r"\bnahin\b": "naheen",
+            r"\bdimag\b": "dimaag",
+            r"\bbhai\b": "bhaai",
+            r"\bmadarchod\b": "maadarchod",
+            r"\bgandu\b": "gaandu",
+            r"\bbhosdike\b": "bhosdike",
+            r"\bchutiya\b": "chutiya",
+            r"\blund\b": "lund",
+            r"\bchut\b": "chut",
+        }
+        for pattern, repl in rules.items():
+            text = re.sub(pattern, repl, text, flags=re.IGNORECASE)
+        return text
+    except Exception:
+        return raw_text
+
 # Speaker Configuration with Multiple API Keys and Voice IDs
 SPEAKER_CONFIG = {
     "trump": {
-        "voice_id": "ANHNqAseXGR3gBQps4vo",  # Trump voice from ElevenLabs
+        "voice_id": "QiOhBK5MwP4D5C5CJeuJ",  # Trump voice from ElevenLabs
         "api_key_env": "ELEVENLABS_API_KEY_TRUMP",  # Separate API key for Trump
         "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
     },
@@ -23,13 +52,23 @@ SPEAKER_CONFIG = {
         "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
     },
     "samay": {
-        "voice_id": "QhMdw7peUi09bf5eDE34",  # Samay Raina voice ID
-        "api_key_env": "ELEVENLABS_API_KEY_BABURAO_SAMAY",  # New API key for Baburao & Samay
+        "voice_id": "RMR2Ot6xWMuSGGQU6bbx",  # Correct Samay Raina voice ID
+        "api_key_env": "ELEVENLABS_API_KEY_SAMAY_ARPIT",  # API key for Samay & Arpit
         "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
     },
     "baburao": {
         "voice_id": "o76izsJbtLZKHDxpMquz",  # Baburao voice ID
         "api_key_env": "ELEVENLABS_API_KEY_BABURAO_SAMAY",  # New API key for Baburao & Samay
+        "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
+    },
+    "arpit": {
+        "voice_id": "rz6PPOBEqHlbITNfwIgo",  # Arpit Bala voice ID
+        "api_key_env": "ELEVENLABS_API_KEY_SAMAY_ARPIT",  # New API key for Samay & Arpit
+        "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
+    },
+    "mrbeast": {
+        "voice_id": "frBOG9T06d0Zw1PEvoZN",  # MrBeast voice ID
+        "api_key_env": "ELEVENLABS_API_KEY_TRUMP_MRBEAST",  # API key for Trump & MrBeast
         "fallback_api_key_env": "ELEVENLABS_API_KEY"  # Fallback to main key
     }
 }
@@ -45,6 +84,16 @@ SPEAKER_PAIRS = {
         "name": "Baburao & Samay",
         "speakers": ["baburao", "samay"], 
         "description": "Comedy legend meets chess master insights"
+    },
+    "samay_arpit": {
+        "name": "Samay & Arpit",
+        "speakers": ["samay", "arpit"],
+        "description": "Chess master meets comedy king with adult humor"
+    },
+    "trump_mrbeast": {
+        "name": "Trump & MrBeast",
+        "speakers": ["trump", "mrbeast"],
+        "description": "Political discussions with philanthropy and entertainment"
     }
 }
 
@@ -52,14 +101,14 @@ SPEAKER_PAIRS = {
 TRUMP_VOICE_ID = SPEAKER_CONFIG["trump"]["voice_id"]
 ELON_VOICE_ID = SPEAKER_CONFIG["elon"]["voice_id"]
 
-def parse_conversational_script(script_text, speaker_pair="trump_elon"):
+def parse_conversational_script(script_text, speaker_pair="trump_mrbeast"):
     """
     Parse a conversational script and separate it into speakers
     Supports both explicit speaker format (**Speaker:** text) and auto-alternating
     
     Args:
         script_text: The text to parse
-        speaker_pair: Key from SPEAKER_PAIRS (e.g., "trump_elon", "modi_elon", "tanmay_samay")
+        speaker_pair: Key from SPEAKER_PAIRS (e.g., "trump_elon", "baburao_samay", "samay_arpit")
     
     Returns a list of tuples: [(speaker, text), (speaker, text), ...]
     """
@@ -169,12 +218,26 @@ def parse_conversational_script(script_text, speaker_pair="trump_elon"):
 def get_api_key_for_speaker(speaker_name):
     """Get the appropriate API key for a specific speaker"""
     try:
-        # Special handling for Baburao & Samay with new API key
-        if speaker_name in ["baburao", "samay"]:
-            # Use the new API key for Baburao & Samay
+        # Special handling for Baburao with specific API key
+        if speaker_name == "baburao":
+            # Use the specific API key for Baburao
             new_api_key = "sk_f800d01dcf584b4a637e0363c12430d7c5f32a6289b0785f"
-            logger.info(f"🔑 Using new ElevenLabs API key for {speaker_name}")
+            logger.info(f"🔑 Using Baburao ElevenLabs API key for {speaker_name}")
             return new_api_key
+        
+        # Special handling for Samay & Arpit with correct API key
+        if speaker_name in ["samay", "arpit"]:
+            # Use the correct API key for Samay & Arpit
+            new_api_key = "sk_bb59a7b4c0fd35a30feb318885007b58558e2c366a64d687"
+            logger.info(f"🔑 Using correct ElevenLabs API key for {speaker_name}")
+            return new_api_key
+        
+        # Special handling for Trump & MrBeast with specific API key
+        if speaker_name in ["trump", "mrbeast"]:
+            # Use the provided API key for Trump & MrBeast
+            trump_mrbeast_api_key = "sk_94096d8a0eef902dccfb2c9e5c371ee0b30730f49e7bae63"
+            logger.info(f"🔑 Using Trump & MrBeast ElevenLabs API key for {speaker_name}")
+            return trump_mrbeast_api_key
         
         if speaker_name in SPEAKER_CONFIG:
             config = SPEAKER_CONFIG[speaker_name]
@@ -190,8 +253,8 @@ def get_api_key_for_speaker(speaker_name):
                 logger.info(f"🔑 Using fallback API key for {speaker_name}")
                 return fallback_key
         
-        # Default fallback
-        default_key = os.getenv("ELEVENLABS_API_KEY", "")
+        # Default fallback - use the new general API key
+        default_key = "sk_94096d8a0eef902dccfb2c9e5c371ee0b30730f49e7bae63"
         if default_key:
             logger.info(f"🔑 Using default API key for {speaker_name}")
             return default_key
@@ -201,7 +264,20 @@ def get_api_key_for_speaker(speaker_name):
         
     except Exception as e:
         logger.error(f"❌ Error getting API key for {speaker_name}: {str(e)}")
-        return os.getenv("ELEVENLABS_API_KEY", "")
+        return "sk_94096d8a0eef902dccfb2c9e5c371ee0b30730f49e7bae63"
+
+
+
+def generate_voice_segment(text, voice_id, output_path, speaker_name=None):
+    """Generate voice segment using ElevenLabs API"""
+    try:
+        # Use ElevenLabs for all speakers
+        logger.info(f"🎤 Using ElevenLabs for speaker: {speaker_name}")
+        return generate_elevenlabs_voice_segment(text, voice_id, output_path, speaker_name)
+        
+    except Exception as e:
+        logger.error(f"❌ Error generating voice segment for {speaker_name}: {str(e)}")
+        return False
 
 def generate_elevenlabs_voice_segment(text, voice_id, output_path, speaker_name=None):
     """Generate voice segment using ElevenLabs API with speaker-specific API key"""
@@ -213,7 +289,7 @@ def generate_elevenlabs_voice_segment(text, voice_id, output_path, speaker_name=
         url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps"
         
         # Get appropriate API key for this speaker
-        api_key = get_api_key_for_speaker(speaker_name) if speaker_name else os.getenv("ELEVENLABS_API_KEY", "")
+        api_key = get_api_key_for_speaker(speaker_name) if speaker_name else "sk_94096d8a0eef902dccfb2c9e5c371ee0b30730f49e7bae63"
         
         headers = {
             "Accept": "audio/mpeg",
@@ -221,8 +297,18 @@ def generate_elevenlabs_voice_segment(text, voice_id, output_path, speaker_name=
             "xi-api-key": api_key
         }
         
+        # Apply Hindi phonetic preprocessing for Samay/Arpit to improve TTS
+        processed_text = text
+        if speaker_name in ["samay", "arpit"]:
+            try:
+                before = text
+                processed_text = apply_hindi_phonetics(text)
+                logger.info(f"🗣️ Applied Hindi phonetics for {speaker_name}: before='{before[:80]}...' after='{processed_text[:80]}...'")
+            except Exception as e:
+                logger.warning(f"⚠️ Failed to apply phonetics for {speaker_name}: {e}")
+
         data = {
-            "text": text,
+            "text": processed_text,
             "model_id": "eleven_monolingual_v1",
             "voice_settings": {
                 "stability": 0.5,
@@ -255,6 +341,63 @@ def generate_elevenlabs_voice_segment(text, voice_id, output_path, speaker_name=
     except Exception as e:
         logger.error(f"❌ ElevenLabs error: {str(e)}")
         return False
+
+def batch_generate_voice_segments(segments_data, output_dir):
+    """
+    Batch generate multiple voice segments using ElevenLabs
+    """
+    try:
+        logger.info(f"🎤 Starting batch voice generation for {len(segments_data)} segments")
+        
+        successful_segments = []
+        timing_data_collection = []
+        
+        for segment_index, (text, voice_id, filename, speaker_name) in enumerate(segments_data):
+            try:
+                logger.info(f"🎤 Processing segment {segment_index + 1}/{len(segments_data)} for {speaker_name}")
+                
+                output_path = os.path.join(output_dir, filename)
+                
+                # Apply Hindi phonetics for Samay/Arpit before sending
+                processed_text = text
+                if speaker_name in ["samay", "arpit"]:
+                    try:
+                        processed_text = apply_hindi_phonetics(text)
+                        logger.info(f"🔤 Applied Hindi phonetics for {speaker_name}")
+                    except Exception as e:
+                        logger.warning(f"⚠️ Batch phonetics failed for {speaker_name}: {e}")
+                
+                # Use the unified voice generation function
+                success = generate_voice_segment(processed_text, voice_id, output_path, speaker_name)
+                
+                if success:
+                    # Extract speaker from filename
+                    speaker = speaker_name  # Use the actual speaker name passed in
+                    successful_segments.append((speaker, output_path))
+                    
+                    # For ElevenLabs speakers, we'll get real timing data from the response
+                    timing_data_collection.append({
+                        'speaker': speaker,
+                        'text': text,
+                        'timing_data': None,  # Will be filled by ElevenLabs response
+                        'segment_index': segment_index
+                    })
+                    
+                    logger.info(f"✅ Voice segment generated successfully for {speaker}")
+                else:
+                    logger.warning(f"⚠️ Failed to generate segment {segment_index + 1} for {speaker_name}")
+                    continue
+                    
+            except Exception as e:
+                logger.warning(f"⚠️ Failed to generate segment {segment_index + 1}: {str(e)}")
+                continue
+        
+        logger.info(f"✅ Batch generation completed: {len(successful_segments)}/{len(segments_data)} segments successful")
+        return successful_segments, timing_data_collection
+        
+    except Exception as e:
+        logger.error(f"❌ Batch voice generation failed: {str(e)}")
+        return [], []
 
 def batch_generate_elevenlabs_voice_segments(segments_data, output_dir):
     """
@@ -291,8 +434,18 @@ def batch_generate_elevenlabs_voice_segments(segments_data, output_dir):
                 # Make API request with speaker-specific API key
                 url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps"
                 
+                # Apply Hindi phonetics for Samay/Arpit before sending
+                processed_text = text
+                if speaker_name in ["samay", "arpit"]:
+                    try:
+                        before = text
+                        processed_text = apply_hindi_phonetics(text)
+                        logger.info(f"🗣️ Batch phonetics for {speaker_name}: before='{before[:80]}...' after='{processed_text[:80]}...'")
+                    except Exception as e:
+                        logger.warning(f"⚠️ Batch phonetics failed for {speaker_name}: {e}")
+
                 # Get appropriate API key for this speaker
-                api_key = get_api_key_for_speaker(speaker_name) if speaker_name else os.getenv("ELEVENLABS_API_KEY", "")
+                api_key = get_api_key_for_speaker(speaker_name) if speaker_name else "sk_94096d8a0eef902dccfb2c9e5c371ee0b30730f49e7bae63"
                 
                 headers = {
                     "Accept": "audio/mpeg",
@@ -301,7 +454,7 @@ def batch_generate_elevenlabs_voice_segments(segments_data, output_dir):
                 }
                 
                 data = {
-                    "text": text,
+                    "text": processed_text,
                     "model_id": "eleven_monolingual_v1",
                     "voice_settings": {
                         "stability": 0.5,
@@ -443,14 +596,14 @@ def combine_audio_segments(segments, output_path):
         logger.error(f"❌ Failed to combine audio segments: {str(e)}")
         return False
 
-def generate_conversational_voiceover(script_text, output_path=None, speaker_pair="trump_elon"):
+def generate_conversational_voiceover(script_text, output_path=None, speaker_pair="trump_mrbeast"):
     """
     Generate conversational audio with alternating speakers (optimized version)
     
     Args:
         script_text: The script to convert to audio
         output_path: Where to save the audio file
-        speaker_pair: Which speaker pair to use (trump_elon, modi_elon, tanmay_samay)
+        speaker_pair: Which speaker pair to use (trump_elon, baburao_samay, samay_arpit)
     """
     try:
         request_id = f"req_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -487,8 +640,8 @@ def generate_conversational_voiceover(script_text, output_path=None, speaker_pai
         temp_dir = tempfile.mkdtemp()
         logger.info(f"📁 [{request_id}] Using temporary directory: {temp_dir}")
         
-        # Batch generate all voice segments
-        audio_segments, timing_data = batch_generate_elevenlabs_voice_segments(batch_data, temp_dir)
+        # Batch generate all voice segments using unified voice generation
+        audio_segments, timing_data = batch_generate_voice_segments(batch_data, temp_dir)
         
         if not audio_segments:
             logger.error(f"❌ [{request_id}] No audio segments were generated successfully")
@@ -524,9 +677,9 @@ def generate_conversational_voiceover(script_text, output_path=None, speaker_pai
         logger.error(f"❌ [{request_id}] Error type: {type(e).__name__}")
         raise Exception(f"Failed to generate conversational voiceover: {str(e)}")
 
-def create_speaker_timeline_with_timing_data(script_text, speaker_pair="trump_elon", timing_data=None):
+def create_speaker_timeline_with_timing_data(script_text, speaker_pair="trump_mrbeast", timing_data=None):
     """
-    Create a timeline using real timing data from ElevenLabs
+    Create a timeline using real timing data from ElevenLabs or fallback to estimated timing
     """
     try:
         logger.info("⏰ Creating speaker timeline with real timing data")
@@ -534,25 +687,55 @@ def create_speaker_timeline_with_timing_data(script_text, speaker_pair="trump_el
         timeline = []
         current_time = 0.0
         
+        # Handle case where timing_data is None or empty
+        if not timing_data:
+            logger.warning("⚠️ No timing data provided, creating timeline from script text")
+            # Fallback: parse script and create timeline with estimated timing
+            speaker_segments = parse_conversational_script(script_text, speaker_pair)
+            for speaker, text in speaker_segments:
+                # Estimate duration based on word count (roughly 2 words per second)
+                word_count = len(text.split())
+                estimated_duration = max(word_count * 0.5, 1.0)  # Minimum 1 second
+                
+                timeline.append({
+                    'speaker': speaker,
+                    'start_time': current_time,
+                    'end_time': current_time + estimated_duration,
+                    'text': text,
+                    'real_timing_data': None  # No real timing data available
+                })
+                
+                current_time += estimated_duration + 0.2  # Add pause between speakers
+            
+            logger.info(f"✅ Created fallback timeline: {len(timeline)} segments")
+            return timeline
+        
+        # Process timing data if available
         for timing_info in timing_data:
             speaker = timing_info['speaker']
             text = timing_info['text']
             alignment = timing_info['timing_data']
             
-            # Calculate duration using documented ElevenLabs format
-            duration = calculate_duration_from_documented_format(alignment, text)
+            # Calculate duration using documented ElevenLabs format or fallback
+            if alignment is not None:
+                duration = calculate_duration_from_documented_format(alignment, text)
+            else:
+                # Fallback: estimate duration based on word count
+                word_count = len(text.split())
+                duration = max(word_count * 0.5, 1.0)  # Minimum 1 second
+                logger.debug(f"📊 Using estimated duration for {speaker}: {duration}s")
 
             timeline.append({
                 'speaker': speaker,
                 'start_time': current_time,
                 'end_time': current_time + duration,
                 'text': text,
-                'real_timing_data': alignment  # Include raw timing data
+                'real_timing_data': alignment  # Include raw timing data (may be None)
             })
             
             current_time += duration + 0.2  # Add pause between speakers
         
-        logger.info(f"✅ Created timeline with real timing data: {len(timeline)} segments")
+        logger.info(f"✅ Created timeline with timing data: {len(timeline)} segments")
         return timeline
         
     except Exception as e:
