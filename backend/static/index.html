@@ -1114,7 +1114,7 @@
             showLoading("🎬 Generating your video... This may take a few minutes!");
             
             try {
-                const response = await fetch(`${API_BASE}/generate-reel`, {
+                const response = await fetch(`${API_BASE}/generate-conversational-reel`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

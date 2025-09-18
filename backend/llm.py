@@ -606,10 +606,10 @@ def generate_conversational_script(article_text: str, speaker_pair: str = "trump
         logger.info(f"🎭 - Is case study: {is_case_study}")
 
         # Choose appropriate prompt based on speaker pair and content type
-        if speaker_pair == "trump_mrbeast" and is_case_study:
+        if speaker_pair == "trump_mrbeast":
             logger.info(f"🎭 - Using TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT")
             prompt = TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT.format(article_text=article_text)
-        elif speaker_pair == "ronaldo_ishowspeed" and is_case_study:
+        elif speaker_pair == "ronaldo_ishowspeed":
             logger.info(f"🎭 - Using RONALDO_ISHOWSPEED_CASE_STUDY_SCRIPT_PROMPT")
             prompt = RONALDO_ISHOWSPEED_CASE_STUDY_SCRIPT_PROMPT.format(article_text=article_text)
         elif speaker_pair == "baburao_samay":
@@ -726,88 +726,115 @@ Generate the summary:
 """
 
 TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT = """
-Write a dynamic 40-second case study discussion between Donald Trump and MrBeast analyzing this case study content. This should be HIGHLY ANALYTICAL yet ENGAGING, showcasing their business and philanthropic expertise while breaking down the case study insights.
-
+""""""
+Write a 1-minute comedy skit featuring MrBeast as a patient teacher and Donald Trump as a loud and curious student discussing this article.
+NEVER SAY ARTICLE, OR CASE STUDY WORDS IN THE SUMMARY. ONLY USE THE CONTENT OF THE ARTICLE. ALSO DONT SAY ANY PUNCTUATION WORD IN THE SUMMARY LIKE ASTERISKS, PARENTHESES, BRACKETS, ETC.
 LENGTH REQUIREMENTS:
-- Total duration: 40 seconds (STRICTLY 40 seconds - NOT 20 or 60 seconds)
-- Each speaker should have 4-6 dialogue segments maximum
-- Each dialogue segment should be 6-10 words maximum
+- Total duration: 1 minute (60 seconds)
+- Each speaker should have 4-6 dialogue segments
+- Each dialogue segment should be 8-12 words maximum
 - Keep individual responses short and punchy
 
-CHARACTER PERSONALITIES FOR CASE STUDIES:
-- Trump: BUSINESS STRATEGIST and deal-maker. Uses phrases: "This is tremendous business!", "Look at these numbers!", "The best strategy!", "This is how you win!", "Incredible ROI!", "Smart business move!". Analyzes business strategy, market impact, financial success, competitive advantages, and scaling opportunities.
-- MrBeast: IMPACT ANALYST and innovation expert. Uses phrases: "This could help millions!", "The impact is insane!", "We could scale this!", "This changes everything!", "The potential is massive!", "This is revolutionary!". Focuses on social impact, scalability, innovation, community benefits, and viral potential.
+Follow this structure:
+1. Trump opens the scene with an exaggerated, overly simplified, and bold question about the article topic (using his trademark phrases like “tremendous,” “believe me,” “the best,” “fake news,” etc.).
+2. MrBeast jumps in next, using his famous energetic slang (“What’s up guys, it’s MrBeast!” “I’m giving away…” “This is insane!”) and explains the concept in detail with a real-life analogy, often involving giveaways, stunts, or money challenges.
+3. Trump reacts with short follow-up questions or comments, keeping them exaggerated and simplified.
+4. MrBeast closes by tying it back to the article topic with a fun challenge-style question to the class.
 
-CASE STUDY ANALYSIS REQUIREMENTS:
-- 4-6 alternating dialogue segments (40 seconds total - STRICTLY 40 seconds)
-- Trump analyzes BUSINESS STRATEGY, financial aspects, market positioning
-- MrBeast analyzes SOCIAL IMPACT, scalability, innovation potential
-- Both should reference SPECIFIC case study details, numbers, and outcomes
-- Include ACTIONABLE insights and lessons learned
-- Make complex business concepts ACCESSIBLE and ENGAGING
-- Create EDUCATIONAL content that teaches viewers about the case study
+Tone:
+- Fast-paced, sharp, and character-driven.
+- If adding them makes the conversation better, Trump and MrBeast should use their famous catchphrases.
 
-ANALYTICAL FRAMEWORK (40-second format):
-1. Trump opens with business overview + key financial/strategic insights
-2. MrBeast responds with impact analysis + scalability potential  
-3. Trump discusses market strategy + competitive advantages
-4. MrBeast analyzes innovation + community benefits
-5. EXPLOSIVE finale about working together + case study impact
+CRITICAL REQUIREMENTS:
+- Dialogue only. No narration.
+- Skit must fit within 1 minute (60 seconds) of spoken conversation.
+- Create ONLY natural dialogue between Trump and MrBeast
+- NO annotations, scene markers, or formatting
+- NO speaker labels like "Trump:" or "MrBeast:"
+- NO asterisks, parentheses, or special formatting
+- NO stage directions
+- Just pure conversational dialogue that flows naturally
+- Make it EXTREMELY FUNNY and capture their real-world dynamics
+- Include their actual speaking styles, mannerisms, and famous catchphrases
+- Reference their real controversies, internet moments, and public personalities
+- Make it sound like two people having a real, heated but funny conversation
+- Each speaker should have distinct personality and speaking style
+- Keep it engaging, informative, and HILARIOUS
+- Target length: 30 seconds when spoken
+- Make it suitable for social media (TikTok/Instagram Reels)
 
-CASE STUDY INTEGRATION REQUIREMENTS (40-second format):
-- Reference AT LEAST 2-3 specific details from the case study
-- Cite actual numbers, percentages, outcomes, and metrics
-- Mention key players, companies, or organizations involved
-- Discuss specific strategies, tactics, or innovations used
-- Analyze what worked and why
-- Connect case study lessons to broader business/social principles
-- Make the analysis EDUCATIONAL and ACTIONABLE
+CRITICAL FOCUS REQUIREMENT:
+- STAY FOCUSED ON THE ACTUAL ARTICLE CONTENT
+- Discuss the specific topics, facts, and details from the article
+- Don't get distracted by unrelated topics or personal drama
+- Make the conversation ABOUT the article content, not about their relationship
+- Reference specific points, data, or claims from the article
+- Keep the humor and personality but centered on the article topic
+- EXPLAIN THE CONCEPT IN DEPTH while being funny
+- Make complex topics accessible and entertaining
 
-BUSINESS & IMPACT ANALYSIS:
-- Trump focuses on: Revenue models, market penetration, competitive strategy, financial performance, business scalability, deal structures
-- MrBeast focuses on: Social impact metrics, community engagement, viral growth potential, innovation applications, helping more people, positive change
-- Both should: Provide expert insights, cite specific examples, offer actionable advice, make complex concepts simple
+CONVERSATION STRUCTURE:
+- Create ONLY 4-6 total segments (2-3 exchanges)
+- Each speaker should have 2-3 speaking turns
+- Make each response concise but impactful
+- Natural back-and-forth conversation about the article
+- Include reactions, questions, and responses about the article content
+- End with a natural conclusion about the article topic
 
-EDUCATIONAL CONTENT REQUIREMENTS:
-- Explain WHY certain strategies worked or failed
-- Break down complex business concepts into simple terms
-- Provide specific examples and case study evidence
-- Offer actionable insights viewers can apply
-- Make it LEARNING-FOCUSED while staying entertaining
-- Include "lessons learned" and "key takeaways"
+REAL-WORLD DYNAMICS TO CAPTURE:
+- MrBeast’s excitable, over-the-top, giveaway-driven style
+- Trump’s bombastic, “bigly” speaking style
+- Their YouTube vs politics contrast
+- Their different approaches to fame, money, and influence
+- Include their actual catchphrases and mannerisms
 
-ENERGY AND EXPERTISE:
-- Start with ANALYTICAL ENERGY and build to STRATEGIC EXCITEMENT
-- Show genuine business and philanthropic expertise
-- Include moments of "Ah-ha!" insights and breakthrough thinking
-- Create QUOTABLE business wisdom and strategic insights
-- End with ACTIONABLE advice and clear takeaways
+SEGMENT LENGTH:
+- Each speaking turn should be 5-8 seconds when spoken
+- Make responses concise and punchy
+- Keep total duration to 30 seconds maximum
+- Aim for 4-6 total segments (2-3 exchanges)
 
-CRITICAL TECHNICAL REQUIREMENTS:
-- Generate ONLY pure speech text - no formatting whatsoever
-- NO speaker labels, scene markers, or descriptions
-- Each speaking turn: 6-8 seconds when spoken aloud
-- Total duration: EXACTLY 40 seconds (STRICTLY 40 seconds)
-- Natural analytical conversation flow
-- Include pauses for emphasis on key insights
-- Make it sound like TWO EXPERTS analyzing a case study
+HUMOR REQUIREMENTS:
+- Make it EXTREMELY FUNNY with real-world nuances
+- Capture their actual speaking patterns and mannerisms
+- Use their famous catchphrases and expressions
+- Include references to their real controversies and scandals
+- Make it sound like two people actually arguing/fighting
+- Include sarcasm, insults, and playful jabs
+- Reference their viral YouTube or political moments
+- HILARIOUS ROASTING: Include savage roasts and burns between them
+- BILLIONAIRE PROBLEMS: Mock absurd wealthy person issues and ridiculous spending
+- SOCIAL MEDIA DISASTERS: Reference their worst tweets, cringe moments, or awkward collabs
+- CONSPIRACY THEORIES: Let Trump blurt out wild theories, MrBeast roast them
+- SAVAGE COMEBACKS: Each should have brutal but hilarious comebacks and one-liners
+- CRINGE HUMOR: Include awkward “YouTube energy” vs “political rally energy”
+- CELEBRITY SCANDALS: Reference internet clout-chasing, money stunts, and Trump’s lawsuits
+- MAKE IT ABSOLUTELY HILARIOUS AND SAVAGE while keeping focus on article content
 
-FORMATTING RULES (CRITICAL):
-- Use ONLY normal punctuation: periods, commas, question marks, exclamation points
-- NO asterisks, parentheses, brackets, quotation marks around speech
-- NO stage directions, descriptions, or formatting
-- NO emphasis markers like **bold** or *italics*
-- Just pure, clean analytical conversation
-- Separate each speaker's turn with double line breaks
+EXPLANATION REQUIREMENTS:
+- Break down complex concepts in simple terms
+- Use analogies with money, challenges, or giveaways
+- Make technical topics accessible to everyone
+- Explain the "why" and "how" behind concepts
+- Connect concepts to real-world applications
+- Make it educational AND entertaining
 
-Case Study Content: {article_text}
+FORMATTING RULES:
+- Use only normal punctuation
+- NO asterisks, parentheses, brackets, or special characters
+- NO stage directions or descriptions
+- Just clean, natural speech
 
-Generate ONLY expert-level analytical dialogue with 4-6 alternating segments (STRICTLY 40 seconds total) that will EDUCATE viewers about the case study while being HIGHLY ENGAGING:
+Article: {article_text}
+
+Generate ONLY clean, natural conversational dialogue with 4-6 short segments:
+
 """
+
 
 RONALDO_ISHOWSPEED_SCRIPT_PROMPT = """
 Write an explosive 40-second conversation between Cristiano Ronaldo (football legend) and iShowSpeed (gaming streamer) discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
-
+NEVER SAY ARTICLE, OR CASE STUDY WORDS IN THE SUMMARY. ONLY USE THE CONTENT OF THE ARTICLE. ALSO DONT SAY ANY PUNCTUATION WORD IN THE SUMMARY LIKE ASTERISKS, PARENTHESES, BRACKETS, ETC.
 LENGTH REQUIREMENTS:
 - Total duration: 40 seconds (STRICTLY 40 seconds - NOT 20 or 60 seconds)
 - Each speaker should have 4-6 dialogue segments maximum
@@ -899,75 +926,99 @@ Generate ONLY explosive, viral-worthy conversational dialogue with 4-6 alternati
 """
 
 RONALDO_ISHOWSPEED_CASE_STUDY_SCRIPT_PROMPT = """
-Write a dynamic 40-second case study discussion between Cristiano Ronaldo (football legend) and iShowSpeed (gaming streamer) analyzing this case study content. This should be HIGHLY ANALYTICAL yet ENGAGING, showcasing their business and entertainment expertise while breaking down the case study insights.
+Write a 1-minute comedy skit featuring Cristiano Ronaldo as a patient teacher and IShowSpeed as a loud and chaotic student discussing this article.
 
 LENGTH REQUIREMENTS:
-- Total duration: 40 seconds (STRICTLY 40 seconds - NOT 20 or 60 seconds)
-- Each speaker should have 4-6 dialogue segments maximum
-- Each dialogue segment should be 6-10 words maximum
+- Total duration: 1 minute (60 seconds)
+- Each speaker should have 4-6 dialogue segments
+- Each dialogue segment should be 8-12 words maximum
 - Keep individual responses short and punchy
 
-CHARACTER PERSONALITIES FOR CASE STUDIES:
-- Ronaldo: BUSINESS STRATEGIST and success coach. Uses phrases: "Siuuu! This is tremendous strategy!", "CR7! Look at this success!", "The best approach!", "This is how you win!", "Incredible results!", "Smart business move!", "Vamos! This is amazing!", "I am the best at this!", "Champion strategy!", "Perfect execution!". Analyzes business strategy, success principles, market impact, competitive advantages, and scaling opportunities. References his business empire and winning mentality.
-- iShowSpeed: ENTERTAINMENT ANALYST and viral content expert. Uses phrases: "Let's gooo! This could go viral!", "The engagement is insane!", "We could make this huge!", "This changes everything!", "The potential is massive!", "This is revolutionary!", "Speed! This is bussin!", "Chat, we're winning!", "No cap, this is fire!", "Deadass, this is wild!", "On God, this is amazing!". Focuses on viral potential, audience engagement, entertainment value, community building, and content creation. References his streaming success and community building.
+Follow this structure:
+1. Ronaldo opens the scene by calmly asking a football or discipline-related question to the class about the article topic.
+2. Speed eagerly asks short follow-up questions—but his ideas are exaggerated, chaotic, and overly simplified.
+3. Ronaldo patiently explains the concept in detail using football or training analogies.
 
-CASE STUDY ANALYSIS REQUIREMENTS:
-- 4-6 alternating dialogue segments (40 seconds total - STRICTLY 40 seconds)
-- Ronaldo analyzes BUSINESS STRATEGY, success principles, market positioning
-- iShowSpeed analyzes VIRAL POTENTIAL, audience engagement, entertainment value
-- Both should reference SPECIFIC case study details, numbers, and outcomes
-- Include ACTIONABLE insights and lessons learned
-- Make complex business concepts ACCESSIBLE and ENGAGING
-- Create EDUCATIONAL content that teaches viewers about the case study
+Tone:
+- Fast-paced, sharp, and character-driven.
+- If adding them makes the conversation better, Ronaldo and Speed should use their famous catchphrases.
 
-ANALYTICAL FRAMEWORK (40-second format):
-1. Ronaldo opens with business overview + key success/strategic insights
-2. iShowSpeed responds with viral potential analysis + entertainment value
-3. Ronaldo discusses competitive advantages + market positioning
-4. iShowSpeed explores audience engagement + community building
-5. Ronaldo concludes with scaling strategy + success principles
-6. iShowSpeed ends with massive viral potential + collaboration
+CRITICAL REQUIREMENTS:
+- Dialogue only. No narration.
+- Skit must fit within 1 minute (60 seconds) of spoken conversation.
+- Create ONLY natural dialogue between Ronaldo and Speed
+- NO annotations, scene markers, or formatting
+- NO speaker labels like "Ronaldo:" or "Speed:"
+- NO asterisks, parentheses, or special formatting
+- NO stage directions
+- Just pure conversational dialogue that flows naturally
+- Make it EXTREMELY FUNNY and capture their real-world dynamics
+- Include their actual speaking styles, mannerisms, and famous catchphrases
+- Reference their real interactions, viral moments, and public personalities
+- Make it sound like two people having a real, funny conversation
+- Each speaker should have distinct personality and speaking style
+- Keep it engaging, informative, and HILARIOUS
+- Target length: 30 seconds when spoken
+- Make it suitable for social media (TikTok/YouTube Shorts)
 
-CASE STUDY INTEGRATION REQUIREMENTS (40-second format):
-- Reference AT LEAST 2-3 specific details from the case study
-- Cite actual numbers, percentages, outcomes, and metrics
-- Mention key players, companies, or organizations involved
-- Discuss specific strategies, tactics, or innovations used
-- Analyze what worked and why
-- Connect case study lessons to broader business/entertainment principles
-- Make the analysis EDUCATIONAL and ACTIONABLE
+CRITICAL FOCUS REQUIREMENT:
+- STAY FOCUSED ON THE ACTUAL ARTICLE CONTENT
+- Discuss the specific topics, facts, and details from the article
+- Don't get distracted by unrelated topics
+- Make the conversation ABOUT the article content, not random chaos
+- Reference specific points, data, or claims from the article
+- Keep the humor and personality but centered on the article topic
+- EXPLAIN THE CONCEPT IN DEPTH while being funny
+- Make complex topics accessible and entertaining
 
-BUSINESS AND ENTERTAINMENT FOCUS:
-- Ronaldo: Focus on business strategy, success principles, competitive advantages, market analysis. Reference his CR7 brand, hotel empire, and business ventures. Use his signature confidence and motivational style.
-- iShowSpeed: Focus on viral potential, audience engagement, content creation, community building. Reference his streaming empire, gaming achievements, and community connection. Use his signature energy and authenticity.
-- Both: Show genuine business and entertainment expertise
-- Include moments of "Ah-ha!" insights and breakthrough thinking
-- Create QUOTABLE business wisdom and strategic insights
-- End with ACTIONABLE advice and clear takeaways
-- Ronaldo should bring his "champion mentality" to business analysis
-- iShowSpeed should bring his "viral content expertise" to engagement strategies
+CONVERSATION STRUCTURE:
+- Create ONLY 4-6 total segments (2-3 exchanges)
+- Each speaker should have 2-3 speaking turns
+- Make each response concise but impactful
+- Natural back-and-forth conversation about the article
+- End with a natural conclusion about the article topic
 
-CRITICAL TECHNICAL REQUIREMENTS:
-- Generate ONLY pure speech text - no formatting whatsoever
-- NO speaker labels, scene markers, or descriptions
-- Each speaking turn: 6-8 seconds when spoken aloud
-- Total duration: EXACTLY 40 seconds (STRICTLY 40 seconds)
-- Natural analytical conversation flow
-- Include pauses for emphasis on key insights
-- Make it sound like TWO EXPERTS analyzing a case study
+REAL-WORLD DYNAMICS TO CAPTURE:
+- Ronaldo’s calm, serious, disciplined, slightly cocky style
+- Speed’s chaotic, over-the-top, meme-like shouting style
+- Their fan-idol dynamic (Speed obsessing, Ronaldo calmly explaining)
+- Include their famous catchphrases and mannerisms (“Siuuuu”, “Suiii”, “Calma”, Speed’s barking/screaming)
+- Contrast Ronaldo’s focus with Speed’s chaos
 
-FORMATTING RULES (CRITICAL):
-- Use ONLY normal punctuation: periods, commas, question marks, exclamation points
-- NO asterisks, parentheses, brackets, quotation marks around speech
-- NO stage directions, descriptions, or formatting
-- NO speaker labels like "Ronaldo:" or "iShowSpeed:"
-- NO annotations, scene markers, or special formatting
-- Just pure, clean analytical conversation
-- Separate each speaker's turn with double line breaks
+SEGMENT LENGTH:
+- Each speaking turn should be 5-8 seconds when spoken
+- Make responses concise and punchy
+- Keep total duration to 30 seconds maximum
+- Aim for 4-6 total segments (2-3 exchanges)
 
-Case Study Content: {article_text}
+HUMOR REQUIREMENTS:
+- Make it EXTREMELY FUNNY with real-world nuances
+- Capture their actual speaking patterns and catchphrases
+- Reference Speed’s obsession with Ronaldo and football
+- Ronaldo should roast Speed’s lack of discipline or chaos
+- Include sarcasm, playful roasting, and exaggerated reactions
+- HILARIOUS ROASTING: Ronaldo calmly shutting down Speed’s crazy questions
+- MEME REFERENCES: Speed’s barking, screaming “Siuuu,” chaotic energy
+- CELEBRITY DYNAMICS: Reference football fame, YouTube clout, internet memes
+- MAKE IT ABSOLUTELY HILARIOUS while keeping focus on article content
 
-Generate ONLY expert-level analytical dialogue with 4-6 alternating segments (STRICTLY 40 seconds total) that will EDUCATE viewers about the case study while being HIGHLY ENGAGING:
+EXPLANATION REQUIREMENTS:
+- Break down complex concepts in simple terms
+- Ronaldo uses football, training, and discipline analogies
+- Make technical topics accessible to everyone
+- Explain the "why" and "how" behind concepts
+- Connect concepts to real-world applications
+- Make it educational AND entertaining
+
+FORMATTING RULES:
+- Use only normal punctuation
+- NO asterisks, parentheses, brackets, or special characters
+- NO stage directions or descriptions
+- Just clean, natural speech
+
+Article: {article_text}
+
+Generate ONLY clean, natural conversational dialogue with 4-6 short segments:
 """
 
 def generate_case_study_summary(content: str) -> str:

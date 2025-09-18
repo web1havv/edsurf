@@ -116,7 +116,7 @@ async def generate_info_reel(article: ArticleInput):
         # Step 2: Generate script (async)
         logger.info(f"🤖 [{request_id}] Step 2: Generating script with Gemini AI")
         loop = asyncio.get_event_loop()
-        script = await loop.run_in_executor(None, generate_script, content)
+        script = await loop.run_in_executor(None, generate_conversational_reel, content, article.speaker_pair,False)
         logger.info(f"📜 [{request_id}] Script generated successfully")
         logger.info(f"📜 [{request_id}] Script length: {len(script)} characters")
         logger.debug(f"📜 [{request_id}] Script preview: {script[:200]}...")
@@ -208,16 +208,19 @@ async def generate_conversational_reel(article: ArticleInput):
             content = article.text
             logger.info(f"📄 [{request_id}] Content length: {len(content)} characters")
         
+        # Get speaker pair first
+        speaker_pair = getattr(article, 'speaker_pair', 'trump_mrbeast')  # Default to Trump & MrBeast
+        
         # Step 2: Generate conversational script (async)
         logger.info(f"🤖 [{request_id}] Step 2: Generating conversational script with Gemini AI")
+        logger.info(f"🎭 [{request_id}] Using speaker pair for script generation: {speaker_pair}")
         loop = asyncio.get_event_loop()
-        script = await loop.run_in_executor(None, generate_conversational_script, content)
+        script = await loop.run_in_executor(None, generate_conversational_script, content, speaker_pair)
         logger.info(f"📜 [{request_id}] Conversational script generated successfully")
         logger.info(f"📜 [{request_id}] Script length: {len(script)} characters")
         logger.debug(f"📜 [{request_id}] Script preview: {script[:200]}...")
         
         # Step 3: Generate conversational audio with speaker pair
-        speaker_pair = getattr(article, 'speaker_pair', 'trump_mrbeast')  # Default to Trump & MrBeast
         logger.info(f"🎵 [{request_id}] Step 3: Generating conversational audio with speaker pair: {speaker_pair}")
         audio_path, timing_data = await loop.run_in_executor(None, generate_conversational_voiceover, script, None, speaker_pair)
         logger.info(f"🎵 [{request_id}] Conversational audio generated: {audio_path}")

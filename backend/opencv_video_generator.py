@@ -210,6 +210,13 @@ class OpenCVVideoGenerator:
             # Create speaker timeline first (needed for duration detection)
             from conversational_tts import create_speaker_timeline_with_timing_data
             logger.info(f"🎭 [{request_id}] TIMELINE CREATION - Using speaker_pair: {speaker_pair}")
+            logger.info(f"🔍 [{request_id}] TIMING DATA DEBUG: type={type(timing_data)}, content={timing_data}")
+            if timing_data:
+                logger.info(f"🔍 [{request_id}] TIMING DATA: {len(timing_data)} segments available")
+                for i, td in enumerate(timing_data[:2]):  # Show first 2
+                    logger.info(f"🔍 [{request_id}] Timing segment {i}: {td}")
+            else:
+                logger.warning(f"⚠️ [{request_id}] NO TIMING DATA - will use fallback estimation")
             timeline = create_speaker_timeline_with_timing_data(script_text, speaker_pair, timing_data)
             logger.info(f"⏰ [{request_id}] Created timeline with {len(timeline)} segments")
             
@@ -217,9 +224,23 @@ class OpenCVVideoGenerator:
             enhanced_timeline = None
             captions = []
             if enable_captions:
-                enhanced_timeline = enhance_timeline_with_captions(timeline)
-                captions = enhanced_timeline['captions']
-                logger.info(f"💬 [{request_id}] Enhanced timeline with {len(captions)} caption chunks")
+                logger.info(f"💬 [{request_id}] Caption enhancement enabled - processing timeline...")
+                logger.info(f"💬 [{request_id}] Timeline segments: {len(timeline)}")
+                if timeline and len(timeline) > 0:
+                    logger.info(f"💬 [{request_id}] First timeline segment: {timeline[0]}")
+                try:
+                    enhanced_timeline = enhance_timeline_with_captions(timeline)
+                    captions = enhanced_timeline['captions']
+                    logger.info(f"💬 [{request_id}] Enhanced timeline with {len(captions)} caption chunks")
+                    if captions and len(captions) > 0:
+                        logger.info(f"💬 [{request_id}] First caption: {captions[0]}")
+                    else:
+                        logger.warning(f"⚠️ [{request_id}] No captions were generated!")
+                except Exception as e:
+                    logger.error(f"❌ [{request_id}] Caption enhancement failed: {str(e)}")
+                    captions = []
+            else:
+                logger.info(f"💬 [{request_id}] Captions disabled")
         
             # Get audio duration (using timeline as primary source)
             audio_duration = self.get_audio_duration(audio_path, timeline)
@@ -368,13 +389,18 @@ class OpenCVVideoGenerator:
                     self._overlay_image(bg_frame, ishowspeed_img, x_pos, y_pos)
 
                 
-                # 🆕 ADD CAPTION OVERLAY (if enabled) - optimized for speed
-                if enable_captions and captions and frame_num % 3 == 0:  # Only process captions every 3rd frame for speed
+                # 🆕 ADD CAPTION OVERLAY (if enabled) - with debug logging
+                if enable_captions and captions:  # Show captions on every frame for better consistency
                     current_caption = get_current_caption(current_time, captions)
                     if current_caption:
                         caption_text = current_caption['text']
                         caption_speaker = current_caption['speaker']
+                        # Debug log first few captions
+                        if frame_num < 10:
+                            logger.info(f"💬 [{request_id}] Frame {frame_num}: Rendering caption '{caption_text[:30]}...' for {caption_speaker}")
                         bg_frame = render_caption_on_frame(bg_frame, caption_text, caption_speaker)
+                    elif frame_num < 10:
+                        logger.info(f"💬 [{request_id}] Frame {frame_num}: No caption at time {current_time:.2f}s")
             
 
                 # Write frame
@@ -589,7 +615,7 @@ def create_background_video_with_speaker_overlays(script_text, audio_path, backg
         background_video_path=background_video_path,
         output_path=output_path,
         speaker_pair=speaker_pair,
-        enable_captions=False,  # Disabled for ultra-fast processing
+        enable_captions=True,  # Enable captions for better user experience
         timing_data=timing_data
     )
 

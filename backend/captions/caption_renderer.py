@@ -21,21 +21,31 @@ class CaptionRenderer:
         self.video_width = video_width
         self.video_height = video_height
         
-        # Caption styling settings
-        self.font = self._get_montserrat_font_path()
-        self.font_size = 72
-        self.font_thickness = 3
-        self.line_spacing = 20  # Pixels between lines
+        # Calculate scaling factor based on video size (1080p as baseline)
+        scale_factor = min(video_width / 1080, video_height / 1920)
         
-        # Position settings (bottom third of video)
-        self.caption_top_margin = 200  # Pixels from bottom
-        self.caption_side_margin = 60     # Pixels from sides
+        # Caption styling settings (scaled to video size)
+        self.font = self._get_montserrat_font_path()
+        self.font_size = max(16, int(72 * scale_factor))  # Minimum 16px, scaled from 72px baseline
+        self.font_thickness = max(1, int(3 * scale_factor))  # Minimum 1px thickness
+        self.line_spacing = max(8, int(20 * scale_factor))  # Pixels between lines
+        
+        # Position settings (bottom third of video) - scaled
+        self.caption_top_margin = max(40, int(200 * scale_factor))  # Pixels from bottom
+        self.caption_side_margin = max(20, int(60 * scale_factor))  # Pixels from sides
         self.caption_max_width = video_width - (2 * self.caption_side_margin)
         
-        # Background settings
-        self.background_padding = 15      # Padding around text
-        self.background_alpha = 0.0       # Background transparency (0-1)
-        self.corner_radius = 15           # Rounded corners
+        # Background settings - scaled
+        self.background_padding = max(8, int(15 * scale_factor))  # Padding around text
+        self.background_alpha = 0.8       # Background transparency (0-1) - increased for better readability
+        self.corner_radius = max(5, int(15 * scale_factor))  # Rounded corners
+        
+        # Log the calculated settings
+        logger.info(f"🎨 Caption renderer initialized for {video_width}x{video_height}")
+        logger.info(f"📐 Scale factor: {scale_factor:.2f}")
+        logger.info(f"🔤 Font size: {self.font_size}px (thickness: {self.font_thickness})")
+        logger.info(f"📍 Margins: top={self.caption_top_margin}px, side={self.caption_side_margin}px")
+        logger.info(f"🎨 Background: padding={self.background_padding}px, alpha={self.background_alpha}, radius={self.corner_radius}px")
         
         # Speaker-specific colors (BGR format for OpenCV)
         self.speaker_colors = {
@@ -338,12 +348,20 @@ class CaptionRenderer:
             logger.error(f"❌ Failed to render caption: {str(e)}")
             return frame
     
-# Global instance
-caption_renderer = CaptionRenderer()
+# Global instance - will be initialized with proper dimensions
+caption_renderer = None
 
 def render_caption_on_frame(frame: np.ndarray, caption_text: str, 
                            speaker: str = 'default') -> np.ndarray:
     """
     Main function to render caption on video frame
     """
+    global caption_renderer
+    
+    # Initialize renderer with frame dimensions if not already done
+    if caption_renderer is None:
+        video_height, video_width = frame.shape[:2]
+        logger.info(f"🎨 Initializing caption renderer for video dimensions: {video_width}x{video_height}")
+        caption_renderer = CaptionRenderer(video_width, video_height)
+    
     return caption_renderer.render_caption(frame, caption_text, speaker)

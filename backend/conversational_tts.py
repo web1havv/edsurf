@@ -418,22 +418,23 @@ def batch_generate_voice_segments(segments_data, output_dir):
                         logger.warning(f"⚠️ Batch phonetics failed for {speaker_name}: {e}")
                 
                 # Use the unified voice generation function
-                success = generate_voice_segment(processed_text, voice_id, output_path, speaker_name)
+                result = generate_voice_segment(processed_text, voice_id, output_path, speaker_name)
                 
-                if success:
+                if result and isinstance(result, dict) and result.get('success'):
                     # Extract speaker from filename
                     speaker = speaker_name  # Use the actual speaker name passed in
                     successful_segments.append((speaker, output_path))
                     
-                    # For ElevenLabs speakers, we'll get real timing data from the response
+                    # Collect real timing data from ElevenLabs response
                     timing_data_collection.append({
                         'speaker': speaker,
                         'text': text,
-                        'timing_data': None,  # Will be filled by ElevenLabs response
+                        'timing_data': result.get('timing_data'),  # Get actual timing data from ElevenLabs
                         'segment_index': segment_index
                     })
                     
                     logger.info(f"✅ Voice segment generated successfully for {speaker}")
+                    logger.info(f"🔍 Timing data collected: {result.get('timing_data') is not None}")
                 else:
                     logger.warning(f"⚠️ Failed to generate segment {segment_index + 1} for {speaker_name}")
                     continue
@@ -443,6 +444,9 @@ def batch_generate_voice_segments(segments_data, output_dir):
                 continue
         
         logger.info(f"✅ Batch generation completed: {len(successful_segments)}/{len(segments_data)} segments successful")
+        logger.info(f"🔍 TIMING DATA COLLECTION DEBUG: {len(timing_data_collection)} timing entries")
+        for i, td in enumerate(timing_data_collection[:2]):  # Show first 2
+            logger.info(f"🔍 Timing entry {i}: speaker={td.get('speaker')}, has_timing_data={td.get('timing_data') is not None}")
         return successful_segments, timing_data_collection
         
     except Exception as e:
