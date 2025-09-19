@@ -600,7 +600,7 @@ def generate_conversational_script(article_text: str, speaker_pair: str = "trump
         logger.info(f"🎭 - Article text length: {len(article_text)}")
         logger.info(f"🎭 - Is case study: {is_case_study}")
 
-        # Choose appropriate prompt based on speaker pair and content type
+        # Choose appropriate prompt based on speaker pair - USE CASE STUDY PROMPTS FOR ALL
         if speaker_pair == "trump_mrbeast":
             logger.info(f"🎭 - Using TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT")
             prompt = TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT.format(article_text=article_text)
@@ -616,12 +616,6 @@ def generate_conversational_script(article_text: str, speaker_pair: str = "trump
         elif speaker_pair == "modi_trump":
             logger.info(f"🎭 - Using MODI_TRUMP_SCRIPT_PROMPT")
             prompt = MODI_TRUMP_SCRIPT_PROMPT.format(article_text=article_text)
-        elif speaker_pair == "trump_mrbeast":
-            logger.info(f"🎭 - Using TRUMP_MRBEAST_SCRIPT_PROMPT")
-            prompt = TRUMP_MRBEAST_SCRIPT_PROMPT.format(article_text=article_text)
-        elif speaker_pair == "ronaldo_ishowspeed":
-            logger.info(f"🎭 - Using RONALDO_ISHOWSPEED_SCRIPT_PROMPT")
-            prompt = RONALDO_ISHOWSPEED_SCRIPT_PROMPT.format(article_text=article_text)
         else:
             logger.info(f"🎭 - Using default CONVERSATIONAL_SCRIPT_PROMPT for {speaker_pair}")
             prompt = CONVERSATIONAL_SCRIPT_PROMPT.format(article_text=article_text)
