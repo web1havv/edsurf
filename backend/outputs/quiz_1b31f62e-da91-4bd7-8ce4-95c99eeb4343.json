@@ -1,0 +1,69 @@
+{
+  "quiz_id": "1b31f62e-da91-4bd7-8ce4-95c99eeb4343",
+  "title": "Case Study Quiz: Attention is All You Need",
+  "description": "Test your understanding of the Transformer model.",
+  "questions": [
+    {
+      "question_id": 1,
+      "question": "What is the primary innovation of the Transformer model?",
+      "options": [
+        "Using convolutional neural networks for sequence transduction",
+        "Employing recurrent neural networks for parallel processing",
+        "Relying solely on attention mechanisms for sequence transduction",
+        "Combining recurrent and convolutional networks for improved accuracy"
+      ],
+      "correct_answer": 2,
+      "explanation": "The Transformer replaces recurrent and convolutional layers with a purely attention-based mechanism."
+    },
+    {
+      "question_id": 2,
+      "question": "Why does the Transformer offer significant speed advantages over recurrent models?",
+      "options": [
+        "It uses a smaller number of parameters.",
+        "It uses a simpler architecture.",
+        "It allows for greater parallelization during training.",
+        "It requires less memory."
+      ],
+      "correct_answer": 2,
+      "explanation": "The inherent sequential nature of recurrent models limits parallelization, while the Transformer's attention mechanism allows for much more parallel computation."
+    },
+    {
+      "question_id": 3,
+      "question": "How does the Transformer handle the sequential nature of language processing?",
+      "options": [
+        "Through masking in the self-attention layers of the decoder.",
+        "By using recurrent connections within the attention mechanism.",
+        "It doesn't explicitly address the sequential nature.",
+        "Through a hierarchical attention structure."
+      ],
+      "correct_answer": 0,
+      "explanation": "The decoder's self-attention layers use masking to prevent positions from attending to future positions, maintaining auto-regressive property."
+    },
+    {
+      "question_id": 4,
+      "question": "Based on the results, what is a potential drawback of using too many attention heads?",
+      "options": [
+        "Increased computational cost",
+        "Reduced model accuracy",
+        "Increased training time",
+        "Overfitting of the model"
+      ],
+      "correct_answer": 1,
+      "explanation": "Table 3 shows that while a single head performs poorly, using too many heads also negatively impacts performance, suggesting an optimal number of heads exists."
+    },
+    {
+      "question_id": 5,
+      "question": "What overall conclusion can be drawn regarding the Transformer's performance in machine translation?",
+      "options": [
+        "It showed improvement but not a significant breakthrough compared to existing models.",
+        "It achieved state-of-the-art results on the tested tasks with significantly less training time.",
+        "It demonstrated its strengths particularly in handling shorter sequences.",
+        "It fell short of expectations and needs further development for practical application."
+      ],
+      "correct_answer": 1,
+      "explanation": "The paper concludes that the Transformer achieved new state-of-the-art results on the English-to-German and English-to-French translation tasks, significantly reducing training time."
+    }
+  ],
+  "generated_at": "2025-09-19T11:50:50.396460",
+  "total_questions": 5
+}

@@ -1,0 +1,69 @@
+{
+  "quiz_id": "0a106185-6676-4ef0-9e2e-a4b2cbe83aab",
+  "title": "Case Study Quiz: APM Compensation",
+  "description": "Test your understanding of the APM compensation package.",
+  "questions": [
+    {
+      "question_id": 1,
+      "question": "What is the total CTC (Cost to Company) offered in this compensation package?",
+      "options": [
+        "₹ 18,00,000",
+        "₹ 5,22,424",
+        "₹ 26,84,910",
+        "₹ 38,961"
+      ],
+      "correct_answer": 2,
+      "explanation": "The total CTC is explicitly stated as ₹ 26,84,910."
+    },
+    {
+      "question_id": 2,
+      "question": "Over what period do the ESOPs vest?",
+      "options": [
+        "1 year",
+        "2 years",
+        "3 years",
+        "4 years"
+      ],
+      "correct_answer": 3,
+      "explanation": "The case study specifies that ESOPs vest over 4 years."
+    },
+    {
+      "question_id": 3,
+      "question": "How much is the monthly limit for telephone reimbursements?",
+      "options": [
+        "₹ 5,000",
+        "₹ 1,000",
+        "₹ 10,000",
+        "₹ 500"
+      ],
+      "correct_answer": 1,
+      "explanation": "The case study clearly states a monthly limit of ₹1,000 for telephone reimbursements."
+    },
+    {
+      "question_id": 4,
+      "question": "Based on the provided information, which component of the compensation package has a one-time payout with the first payroll?",
+      "options": [
+        "Relocation Bonus",
+        "Gratuity",
+        "ESOPs",
+        "Bonus Payouts"
+      ],
+      "correct_answer": 0,
+      "explanation": "The Relocation Bonus is the only component described as a one-time payout with the first payroll."
+    },
+    {
+      "question_id": 5,
+      "question": "Considering the provided information, what is the most significant component of the cash compensation package?",
+      "options": [
+        "Variable Pay",
+        "Base Pay",
+        "Bonus Payouts",
+        "Relocation Bonus"
+      ],
+      "correct_answer": 1,
+      "explanation": "The base pay (₹ 18,00,000) significantly outweighs the other cash components mentioned."
+    }
+  ],
+  "generated_at": "2025-09-19T11:26:50.004893",
+  "total_questions": 5
+}

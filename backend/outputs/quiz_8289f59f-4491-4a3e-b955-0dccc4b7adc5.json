@@ -1,0 +1,69 @@
+{
+  "quiz_id": "8289f59f-4491-4a3e-b955-0dccc4b7adc5",
+  "title": "Case Study Quiz: Attention Is All You Need",
+  "description": "Test your understanding of the Transformer model.",
+  "questions": [
+    {
+      "question_id": 1,
+      "question": "What is the primary innovation of the Transformer model as described in the paper?",
+      "options": [
+        "Use of convolutional layers for parallel processing",
+        "Use of recurrent layers for sequential processing",
+        "Sole reliance on attention mechanisms for sequence transduction",
+        "Combination of recurrent and convolutional layers for improved performance"
+      ],
+      "correct_answer": 2,
+      "explanation": "The Transformer replaces recurrent and convolutional layers with attention mechanisms."
+    },
+    {
+      "question_id": 2,
+      "question": "What problem with traditional recurrent models does the Transformer address?",
+      "options": [
+        "Inability to handle long sequences",
+        "High computational cost",
+        "Lack of parallelization during training",
+        "All of the above"
+      ],
+      "correct_answer": 3,
+      "explanation": "Recurrent models' sequential nature limits parallelization, especially with long sequences."
+    },
+    {
+      "question_id": 3,
+      "question": "How does the Transformer utilize multi-head attention?",
+      "options": [
+        "It uses a single attention head to process the entire input sequence.",
+        "It uses multiple attention heads to process different parts of the input sequence in parallel.",
+        "It uses attention mechanisms only in the decoder part of the model.",
+        "It does not use attention mechanisms at all."
+      ],
+      "correct_answer": 1,
+      "explanation": "Multi-head attention allows parallel processing of different aspects of the input."
+    },
+    {
+      "question_id": 4,
+      "question": "Based on the results, what is a significant advantage of the Transformer compared to previous state-of-the-art models?",
+      "options": [
+        "Lower BLEU scores",
+        "Increased training time",
+        "Higher computational cost",
+        "Superior quality and faster training"
+      ],
+      "correct_answer": 3,
+      "explanation": "The Transformer achieved state-of-the-art results with significantly less training time."
+    },
+    {
+      "question_id": 5,
+      "question": "What is the main reason the authors chose to use sinusoidal positional encoding instead of learned positional embeddings?",
+      "options": [
+        "Sinusoidal encoding is computationally less expensive.",
+        "Learned embeddings performed significantly worse in experiments.",
+        "Sinusoidal encoding allows better extrapolation to longer sequences.",
+        "The authors had no preference, the choice was arbitrary."
+      ],
+      "correct_answer": 2,
+      "explanation": "The paper suggests sinusoidal encoding might allow better extrapolation to unseen sequence lengths."
+    }
+  ],
+  "generated_at": "2025-09-19T11:53:53.351197",
+  "total_questions": 5
+}

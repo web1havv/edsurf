@@ -1,0 +1,69 @@
+{
+  "quiz_id": "7954d087-6ad9-4ad5-b808-d20b3cd9204d",
+  "title": "Case Study Quiz: Attention Is All You Need",
+  "description": "Test your understanding of the Transformer model.",
+  "questions": [
+    {
+      "question_id": 1,
+      "question": "What is the primary innovation of the Transformer model?",
+      "options": [
+        "The use of recurrent neural networks for sequence transduction.",
+        "The use of convolutional neural networks for parallel processing.",
+        "The reliance solely on attention mechanisms for sequence transduction.",
+        "The incorporation of a novel form of gating mechanism in RNNs."
+      ],
+      "correct_answer": 2,
+      "explanation": "The Transformer model is unique in its reliance on attention mechanisms without recurrence or convolutions."
+    },
+    {
+      "question_id": 2,
+      "question": "What was a key limitation of recurrent models that the Transformer aimed to address?",
+      "options": [
+        "Inability to handle long sequences effectively.",
+        "High computational cost due to sequential processing.",
+        "Difficulty in learning long-range dependencies.",
+        "All of the above."
+      ],
+      "correct_answer": 3,
+      "explanation": "Recurrent models' sequential nature limits parallelization and makes learning long-range dependencies challenging."
+    },
+    {
+      "question_id": 3,
+      "question": "How does the Transformer's multi-head attention mechanism improve performance?",
+      "options": [
+        "By allowing the model to attend to information from different representation subspaces.",
+        "By reducing the computational complexity of attention calculations.",
+        "By enabling the use of larger input sequences.",
+        "By simplifying the training process."
+      ],
+      "correct_answer": 0,
+      "explanation": "Multi-head attention allows the model to attend to information from different representation subspaces simultaneously."
+    },
+    {
+      "question_id": 4,
+      "question": "What is a potential drawback of using dot-product attention in the Transformer, and how was it mitigated?",
+      "options": [
+        "High computational complexity; mitigated by using multi-head attention.",
+        "Difficulty in learning long-range dependencies; mitigated by positional encoding.",
+        "Sensitivity to large values of dk; mitigated by scaling the dot products by 1/√dk.",
+        "Inability to handle variable-length sequences; mitigated by padding."
+      ],
+      "correct_answer": 2,
+      "explanation": "For large dk values, dot products can become large, affecting softmax gradients.  Scaling by 1/√dk mitigates this."
+    },
+    {
+      "question_id": 5,
+      "question": "Based on the results, what is a significant advantage of the Transformer architecture over previous state-of-the-art models for machine translation?",
+      "options": [
+        "Improved accuracy with significantly less training time and cost.",
+        "Simpler architecture requiring less computational resources.",
+        "Ability to handle longer sentences.",
+        "Better handling of rare words."
+      ],
+      "correct_answer": 0,
+      "explanation": "The Transformer achieved state-of-the-art results with significantly reduced training time and computational cost compared to previous models."
+    }
+  ],
+  "generated_at": "2025-09-19T12:02:31.483729",
+  "total_questions": 5
+}

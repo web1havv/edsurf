@@ -1,0 +1,69 @@
+{
+  "quiz_id": "9fe06d68-7402-43ee-a5a3-ce2c7858c978",
+  "title": "Case Study Quiz: Attention is All You Need",
+  "description": "Test your understanding of the Transformer model.",
+  "questions": [
+    {
+      "question_id": 1,
+      "question": "What is the primary innovation of the Transformer model?",
+      "options": [
+        "Using convolutional neural networks for sequence transduction",
+        "Employing recurrent neural networks for enhanced parallelization",
+        "Relying solely on attention mechanisms for sequence transduction",
+        "Combining recurrent and convolutional networks with attention mechanisms"
+      ],
+      "correct_answer": 2,
+      "explanation": "The Transformer replaces recurrent and convolutional layers with an attention mechanism."
+    },
+    {
+      "question_id": 2,
+      "question": "Why is the Transformer more parallelizable than recurrent models?",
+      "options": [
+        "It uses convolutional layers which are inherently parallelizable",
+        "Recurrent models cannot process sequences in parallel, while the Transformer can",
+        "The Transformer uses multiple GPUs, while recurrent models use a single GPU",
+        "It employs a feed-forward network that can be parallelized efficiently"
+      ],
+      "correct_answer": 1,
+      "explanation": "Recurrent models process sequentially; the Transformer's attention mechanism allows parallel processing."
+    },
+    {
+      "question_id": 3,
+      "question": "In what ways does the Transformer utilize multi-head attention?",
+      "options": [
+        "Only in the decoder for autoregressive generation",
+        "In encoder-decoder attention, encoder self-attention, and decoder self-attention",
+        "Exclusively in encoder self-attention for input representation",
+        "Primarily in the feed-forward network for improved efficiency"
+      ],
+      "correct_answer": 1,
+      "explanation": "Multi-head attention is used in three ways: encoder-decoder attention, encoder self-attention, and decoder self-attention."
+    },
+    {
+      "question_id": 4,
+      "question": "How does the Transformer handle the sequential nature of language, given its lack of recurrence?",
+      "options": [
+        "By using a modified recurrent network in parallel with the attention mechanism",
+        "It inherently captures sequence information through the attention mechanism itself",
+        "Through the addition of positional encodings to the input embeddings",
+        "By using a convolutional layer to capture local dependencies in the sequence"
+      ],
+      "correct_answer": 2,
+      "explanation": "Positional encodings are added to input embeddings to provide information about word order."
+    },
+    {
+      "question_id": 5,
+      "question": "Based on the results, what is a significant advantage of the Transformer model for machine translation?",
+      "options": [
+        "It requires less training data compared to other models",
+        "It achieves higher BLEU scores with significantly less training time and cost",
+        "It is simpler to implement than existing models",
+        "It uses fewer parameters than other state-of-the-art models"
+      ],
+      "correct_answer": 1,
+      "explanation": "The Transformer achieves state-of-the-art BLEU scores while requiring significantly less training time and computational resources."
+    }
+  ],
+  "generated_at": "2025-09-19T11:57:09.919481",
+  "total_questions": 5
+}

@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Info Reeler - AI-Powered Case Study Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>EDSURF - AI-Powered Case Study Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,29 +15,104 @@
         }
 
         body {
-            font-family: 'JetBrains Mono', 'Source Code Pro', monospace;
-            background: #000000;
+            font-family: 'Orbitron', 'JetBrains Mono', 'Source Code Pro', monospace;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 0, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #000000 0%, #001100 25%, #000000 50%, #110800 75%, #000000 100%);
             color: #00ff00;
             min-height: 100vh;
             overflow-x: hidden;
             line-height: 1.6;
+            position: relative;
+            animation: backgroundPulse 8s ease-in-out infinite alternate, matrixShift 20s linear infinite;
+        }
+
+        @keyframes matrixShift {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 100% 0%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        @keyframes backgroundPulse {
+            0% { background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%; }
+            100% { background-size: 120% 120%, 120% 120%, 120% 120%, 100% 100%; }
         }
 
         .terminal-header {
-            background: #111111;
+            background: 
+                linear-gradient(135deg, #111111 0%, #1a1a1a 50%, #111111 100%);
             border-bottom: 2px solid #ffd700;
             padding: 20px 0;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+            box-shadow: 
+                0 2px 10px rgba(255, 215, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
         .terminal-title {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            font-weight: 900;
             color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            text-shadow: 
+                0 0 5px rgba(255, 215, 0, 1),
+                0 0 10px rgba(255, 215, 0, 0.8),
+                0 0 15px rgba(255, 215, 0, 0.6),
+                0 0 20px rgba(255, 215, 0, 0.4),
+                0 0 35px rgba(255, 215, 0, 0.2),
+                0 0 40px rgba(255, 215, 0, 0.1);
             margin-bottom: 10px;
-            letter-spacing: 2px;
+            letter-spacing: 8px;
+            animation: titleGlow 1.5s ease-in-out infinite alternate, titleFloat 4s ease-in-out infinite;
+            position: relative;
+            z-index: 10;
+            transform-style: preserve-3d;
+        }
+
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0px) rotateX(0deg); }
+            25% { transform: translateY(-3px) rotateX(2deg); }
+            50% { transform: translateY(0px) rotateX(0deg); }
+            75% { transform: translateY(3px) rotateX(-2deg); }
+        }
+
+
+        @keyframes titleGlow {
+            0% { 
+                text-shadow: 
+                    0 0 10px rgba(255, 215, 0, 0.8),
+                    0 0 20px rgba(255, 215, 0, 0.6),
+                    0 0 30px rgba(255, 215, 0, 0.4);
+            }
+            100% { 
+                text-shadow: 
+                    0 0 15px rgba(255, 215, 0, 1),
+                    0 0 25px rgba(255, 215, 0, 0.8),
+                    0 0 35px rgba(255, 215, 0, 0.6);
+            }
         }
 
         .terminal-subtitle {
@@ -60,45 +136,125 @@
         }
 
         .terminal-tab {
-            background: #111111;
+            background: 
+                linear-gradient(135deg, #111111 0%, #1a1a1a 50%, #111111 100%);
             border: 2px solid #333333;
             color: #00ff00;
             padding: 15px 30px;
             cursor: pointer;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Orbitron', 'JetBrains Mono', monospace;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            overflow: hidden;
+            clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+            transform-style: preserve-3d;
+        }
+
+        .terminal-tab::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 0, 0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .terminal-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .terminal-tab:hover::before {
+            left: 100%;
+        }
+
+        .terminal-tab:hover::after {
+            transform: translateX(100%);
         }
 
         .terminal-tab:hover {
             border-color: #ffd700;
             color: #ffd700;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.4),
+                inset 0 0 20px rgba(255, 215, 0, 0.1),
+                0 10px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px) rotateX(10deg);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
         }
 
         .terminal-tab.active {
-            background: #ffd700;
+            background: 
+                linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
             color: #000000;
             border-color: #ffd700;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.5),
+                0 4px 15px rgba(255, 215, 0, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .terminal-tab.active::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
         }
 
         .terminal-content {
             display: none;
-            background: #111111;
+            background: 
+                linear-gradient(135deg, #111111 0%, #1a1a1a 50%, #111111 100%);
             border: 2px solid #333333;
             border-radius: 0;
             padding: 30px;
             margin: 20px 0;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00ff00, #ffd700, #00ff00, #ffd700);
+            animation: borderGlow 3s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .terminal-content.active {
             display: block;
-            animation: terminalFadeIn 0.5s ease-out;
+            animation: terminalSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes terminalSlideIn {
+            0% { 
+                opacity: 0; 
+                transform: translateY(30px) scale(0.95);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
         }
 
         .terminal-form-group {
@@ -146,28 +302,49 @@
         }
 
         .terminal-btn {
-            background: #000000;
+            background: 
+                linear-gradient(135deg, #000000 0%, #111111 50%, #000000 100%);
             border: 2px solid #ffd700;
             color: #ffd700;
             padding: 15px 30px;
             font-family: 'JetBrains Mono', monospace;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
             letter-spacing: 1px;
             position: relative;
             overflow: hidden;
         }
 
+        .terminal-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .terminal-btn:hover::before {
+            left: 100%;
+        }
+
         .terminal-btn:hover {
-            background: #ffd700;
+            background: 
+                linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
             color: #000000;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.6),
+                0 4px 15px rgba(255, 215, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px) scale(1.02);
         }
 
         .terminal-btn:active {
-            transform: translateY(1px);
+            transform: translateY(0) scale(0.98);
         }
 
         .terminal-btn-secondary {
@@ -175,10 +352,19 @@
             color: #00ff00;
         }
 
+        .terminal-btn-secondary::before {
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.3), transparent);
+        }
+
         .terminal-btn-secondary:hover {
-            background: #00ff00;
+            background: 
+                linear-gradient(135deg, #00ff00 0%, #4dff4d 50%, #00ff00 100%);
             color: #000000;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.6),
+                0 4px 15px rgba(0, 255, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px) scale(1.02);
         }
 
         .terminal-btn-success {
@@ -186,19 +372,48 @@
             color: #00ff00;
         }
 
+        .terminal-btn-success::before {
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.3), transparent);
+        }
+
         .terminal-btn-success:hover {
-            background: #00ff00;
+            background: 
+                linear-gradient(135deg, #00ff00 0%, #4dff4d 50%, #00ff00 100%);
             color: #000000;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.6),
+                0 4px 15px rgba(0, 255, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px) scale(1.02);
         }
 
         .terminal-loading {
             display: none;
             text-align: center;
             padding: 40px;
-            background: #111111;
-            border: 2px solid #333333;
+            background: 
+                linear-gradient(135deg, #111111 0%, #1a1a1a 50%, #111111 100%);
+            border: 2px solid #ffd700;
             margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-loading::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffd700, #00ff00, #ffd700, #00ff00);
+            z-index: -1;
+            animation: borderRotate 4s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .terminal-spinner {
@@ -599,12 +814,247 @@
             color: #cccccc;
             line-height: 1.6;
         }
+
+        /* Floating Particles Effect */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Holographic Grid Overlay */
+        .holo-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridShift 10s linear infinite;
+        }
+
+        @keyframes gridShift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: float 10s linear infinite;
+        }
+
+        .particle:nth-child(2n) { 
+            background: #ffd700; 
+            animation-duration: 8s;
+        }
+        .particle:nth-child(3n) { 
+            background: #00ff00; 
+            animation-duration: 12s;
+        }
+        .particle:nth-child(4n) { 
+            background: #ffd700; 
+            animation-duration: 15s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Matrix-style text effect */
+        .matrix-text {
+            animation: matrixGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes matrixGlow {
+            0% { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+            100% { color: #4dff4d; text-shadow: 0 0 10px #00ff00, 0 0 15px #00ff00; }
+        }
+
+        /* Enhanced Features Section */
+        .terminal-info {
+            position: relative;
+        }
+
+        .terminal-info::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00ff00, transparent);
+            animation: lineGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes lineGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Quiz Language Popup Modal */
+        .quiz-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        .quiz-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #111111 0%, #1a1a1a 50%, #111111 100%);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 
+                0 0 30px rgba(255, 215, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translate(-50%, -60%) scale(0.9);
+            }
+            to { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .quiz-modal h3 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .quiz-modal p {
+            color: #cccccc;
+            text-align: center;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .quiz-modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #cccccc;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #ffd700;
+        }
     </style>
 </head>
 <body>
+    <!-- Holographic Grid -->
+    <div class="holo-grid"></div>
+    
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Quiz Language Selection Modal -->
+    <div id="quizLanguageModal" class="quiz-modal">
+        <div class="quiz-modal-content">
+            <span class="modal-close" onclick="closeQuizLanguagePopup()">&times;</span>
+            <h3><i class="fas fa-language"></i> Select Quiz Language</h3>
+            <p>Choose the language for your interactive quiz questions:</p>
+            
+            <div class="terminal-form-group">
+                <select id="modalQuizLanguage" class="terminal-input terminal-select">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi (हिंदी)</option>
+                    <option value="Bengali">Bengali (বাংলা)</option>
+                    <option value="Telugu">Telugu (తెలుగు)</option>
+                    <option value="Marathi">Marathi (मराठी)</option>
+                    <option value="Tamil">Tamil (தமிழ்)</option>
+                    <option value="Gujarati">Gujarati (ગુજરાતી)</option>
+                    <option value="Kannada">Kannada (ಕನ್ನಡ)</option>
+                    <option value="Malayalam">Malayalam (മലയാളം)</option>
+                    <option value="Punjabi">Punjabi (ਪੰਜਾਬੀ)</option>
+                    <option value="Odia">Odia (ଓଡ଼ିଆ)</option>
+                    <option value="Assamese">Assamese (অসমীয়া)</option>
+                </select>
+            </div>
+            
+            <div class="quiz-modal-actions">
+                <button class="terminal-btn terminal-btn-secondary" onclick="closeQuizLanguagePopup()">
+                    <i class="fas fa-times"></i> CANCEL
+                </button>
+                <button class="terminal-btn terminal-btn-success" onclick="startQuizWithLanguage()">
+                    <i class="fas fa-play"></i> GENERATE QUIZ
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quiz Scorecard Modal -->
+    <div id="scorecardModal" class="quiz-modal">
+        <div class="quiz-modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+            <span class="modal-close" onclick="closeScorecardPopup()">&times;</span>
+            <div id="scorecardModalContent">
+                <!-- Scorecard content will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
     <div class="terminal-header">
-        <h1 class="terminal-title">INFO REELER</h1>
-        <p class="terminal-subtitle">AI-Powered Case Study Platform</p>
+        <h1 class="terminal-title">EDSURF</h1>
     </div>
 
     <div class="container">
@@ -673,15 +1123,15 @@
                 </select>
             </div>
             
-            <div class="terminal-form-group">
-                <label class="terminal-label" for="summaryLanguage">SUMMARY LANGUAGE:</label>
+            <div class="terminal-form-group" id="languageSelectionGroup" style="display: none;">
+                <label class="terminal-label" for="summaryLanguage">TRANSLATE SUMMARY TO:</label>
                 <select id="summaryLanguage" class="terminal-input terminal-select">
                     <option value="English">English</option>
                     <option value="Hindi">Hindi (हिंदी)</option>
                     <option value="Bengali">Bengali (বাংলা)</option>
                     <option value="Telugu">Telugu (తెలుగు)</option>
                     <option value="Marathi">Marathi (मराठी)</option>
-                    <option value="Tamil">Tamil (தமிழ்)</option>
+                    <option value="Tamil">Tamil (தமিழ்)</option>
                     <option value="Gujarati">Gujarati (ગુજરાતી)</option>
                     <option value="Kannada">Kannada (ಕನ್ನಡ)</option>
                     <option value="Malayalam">Malayalam (മലയാളം)</option>
@@ -697,19 +1147,24 @@
                 </h4>
                 
                 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 20px;">
-                    <button class="terminal-btn" onclick="generateCaseStudySummary()" id="generateBtn" style="min-width: 250px;">
+                    <button class="terminal-btn" onclick="generateCaseStudySummary()" id="generateBtn" style="min-width: 200px;">
                         <i class="fas fa-brain"></i> GENERATE SUMMARY
                     </button>
                     
-                    <button class="terminal-btn terminal-btn-success" onclick="generateCaseStudyVideo()" id="generateVideoBtn" style="min-width: 250px;">
-                        <i class="fas fa-video"></i> GENERATE 40-SEC REEL
+                    <button class="terminal-btn terminal-btn-success" onclick="generateCaseStudyVideo()" id="generateVideoBtn" style="min-width: 200px;">
+                        <i class="fas fa-video"></i> GENERATE REEL
+                    </button>
+                    
+                    <button class="terminal-btn terminal-btn-secondary" onclick="showQuizLanguagePopup()" id="generateQuizBtn" style="min-width: 200px;">
+                        <i class="fas fa-question-circle"></i> GENERATE QUIZ
                     </button>
                 </div>
                 
                 <p style="color: #cccccc; font-size: 0.9em; margin: 0;">
                     <i class="fas fa-info-circle"></i> 
                     <strong>Summary:</strong> AI analysis only | 
-                    <strong>40-Sec Reel:</strong> Requires speaker pair selection for video generation
+                    <strong>Reel:</strong> Requires speaker pair selection | 
+                    <strong>Quiz:</strong> Interactive questions from content
                 </p>
             </div>
             
@@ -731,42 +1186,58 @@
                     <i class="fas fa-brain"></i> TEST YOUR KNOWLEDGE
                 </h3>
                 <p style="text-align: center; color: #cccccc; margin-bottom: 20px;">
-                    Ready to test your understanding? Choose your preferred language and start the quiz!
+                    Click "Generate Quiz" above to automatically create interactive questions from your case study content. The system will process your content and generate questions in your preferred language.
                 </p>
                 
-                <div class="terminal-form-group" style="max-width: 400px; margin: 0 auto 30px;">
-                    <label class="terminal-label" for="quizLanguage">QUIZ LANGUAGE:</label>
-                    <select id="quizLanguage" class="terminal-input terminal-select">
-                        <option value="English">English</option>
-                        <option value="Hindi">Hindi (हिंदी)</option>
-                        <option value="Bengali">Bengali (বাংলা)</option>
-                        <option value="Telugu">Telugu (తెలుగు)</option>
-                        <option value="Marathi">Marathi (मराठी)</option>
-                        <option value="Tamil">Tamil (தமிழ்)</option>
-                        <option value="Gujarati">Gujarati (ગુજરાતી)</option>
-                        <option value="Kannada">Kannada (ಕನ್ನಡ)</option>
-                        <option value="Malayalam">Malayalam (മലയാളം)</option>
-                        <option value="Punjabi">Punjabi (ਪੰਜਾਬੀ)</option>
-                        <option value="Odia">Odia (ଓଡ଼ିଆ)</option>
-                        <option value="Assamese">Assamese (অসমীয়া)</option>
-                    </select>
-                </div>
                 
-                <div style="text-align: center;">
-                    <button class="terminal-btn terminal-btn-success" onclick="startQuiz()" style="min-width: 200px;">
-                        <i class="fas fa-play"></i> GENERATE & START QUIZ
-                    </button>
-                </div>
             </div>
-            
-            <div class="terminal-info">
-                <h4>
-                    <i class="fas fa-info-circle"></i> ABOUT CASE STUDY PLATFORM
-                </h4>
-                <p>
-                    <strong>Current Features:</strong> Upload case studies, generate AI summaries, create conversational scripts, generate FULL VIDEOS with speaker pairs, and take interactive quizzes.<br>
-                    <strong>Video Generation:</strong> Select a speaker pair to generate complete videos with audio and visual overlays from your case study content!
-                </p>
+        </div>
+
+        <div class="terminal-info" style="margin: 15px 0;">
+            <h4 style="font-size: 16px; margin-bottom: 10px;">
+                <i class="fas fa-star"></i> FEATURES
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 8px;">
+                <div style="background: rgba(0, 255, 0, 0.05); border: 1px solid #00ff00; border-radius: 4px; padding: 6px;">
+                    <span style="color: #00ff00; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-search"></i> Topic Search
+                    </span>
+                </div>
+                <div style="background: rgba(255, 215, 0, 0.05); border: 1px solid #ffd700; border-radius: 4px; padding: 6px;">
+                    <span style="color: #ffd700; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-users"></i> Speaker Selection
+                    </span>
+                </div>
+                <div style="background: rgba(0, 255, 0, 0.05); border: 1px solid #00ff00; border-radius: 4px; padding: 6px;">
+                    <span style="color: #00ff00; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-video"></i> Video Generation
+                    </span>
+                </div>
+                <div style="background: rgba(255, 215, 0, 0.05); border: 1px solid #ffd700; border-radius: 4px; padding: 6px;">
+                    <span style="color: #ffd700; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-book"></i> Case Studies
+                    </span>
+                </div>
+                <div style="background: rgba(0, 255, 0, 0.05); border: 1px solid #00ff00; border-radius: 4px; padding: 6px;">
+                    <span style="color: #00ff00; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-brain"></i> AI Quizzes
+                    </span>
+                </div>
+                <div style="background: rgba(255, 215, 0, 0.05); border: 1px solid #ffd700; border-radius: 4px; padding: 6px;">
+                    <span style="color: #ffd700; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-globe"></i> Multi-Language
+                    </span>
+                </div>
+                <div style="background: rgba(0, 255, 0, 0.05); border: 1px solid #00ff00; border-radius: 4px; padding: 6px;">
+                    <span style="color: #00ff00; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-microphone"></i> Voice AI
+                    </span>
+                </div>
+                <div style="background: rgba(255, 215, 0, 0.05); border: 1px solid #ffd700; border-radius: 4px; padding: 6px;">
+                    <span style="color: #ffd700; font-weight: bold; font-size: 12px;">
+                        <i class="fas fa-mobile-alt"></i> Responsive
+                    </span>
+                </div>
             </div>
         </div>
 
@@ -805,19 +1276,6 @@
             </div>
         </div>
 
-        <div class="terminal-features">
-            <h3>FEATURES:</h3>
-            <ul>
-                <li>🎯 <strong>Topic Search:</strong> Enter any topic and we'll find & explain it</li>
-                <li>🎭 <strong>Speaker Selection:</strong> Choose from Trump, Elon, Samay, Arpit, or Baburao</li>
-                <li>🎬 <strong>Video Generation:</strong> Create engaging videos with speaker overlays</li>
-                <li>📚 <strong>Case Study Platform:</strong> Upload PDFs and generate summaries</li>
-                <li>🧠 <strong>Interactive Quizzes:</strong> Test your knowledge with AI-generated questions</li>
-                <li>🌍 <strong>Multi-Language Support:</strong> Summaries and quizzes in 12+ Indian languages</li>
-                <li>🎵 <strong>Voice Generation:</strong> Natural-sounding voiceovers</li>
-                <li>📱 <strong>Responsive Design:</strong> Works on all devices</li>
-            </ul>
-        </div>
     </div>
 
     <script>
@@ -984,7 +1442,7 @@
                 resultHTML += `
                     <div class="terminal-video">
                         <h4 style="color: #ffd700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
-                            <i class="fas fa-video"></i> GENERATED 40-SEC REEL
+                            <i class="fas fa-video"></i> GENERATED REEL
                         </h4>
                         <div style="position: relative; display: inline-block;">
                             <video controls style="width: 100%; max-width: 600px; border: 2px solid #00ff00; border-radius: 8px;" 
@@ -1072,7 +1530,7 @@
                     statusMessage = `
                         <div style="background: #ff9500; color: #000; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
                             <i class="fas fa-exclamation-triangle"></i> 
-                            <strong>Partial Success:</strong> Content generated successfully, but 40-second reel generation failed. 
+                            <strong>Partial Success:</strong> Content generated successfully, but reel generation failed. 
                             This may be due to server limitations or FFmpeg issues.
                         </div>
                     `;
@@ -1080,7 +1538,7 @@
                     statusMessage = `
                         <div style="background: #00ff00; color: #000; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
                             <i class="fas fa-check-circle"></i> 
-                            <strong>Success:</strong> 40-second reel and content generated successfully!
+                            <strong>Success:</strong> Reel and content generated successfully!
                         </div>
                     `;
                 }
@@ -1114,7 +1572,7 @@
             showLoading("🎬 Generating your video... This may take a few minutes!");
             
             try {
-                const response = await fetch(`${API_BASE}/generate-conversational-reel`, {
+                const response = await fetch(`${API_BASE}/generate-reel`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1181,7 +1639,7 @@
             }
 
             console.log('✅ Input validation passed, showing loading...');
-            showLoading("🎬 Generating 40-SECOND CASE STUDY REEL... This may take 1-2 minutes!");
+            showLoading("🎬 Generating CASE STUDY REEL... This may take 2-5 minutes!");
             console.log('✅ Loading shown, starting video generation...');
 
             try {
@@ -1305,6 +1763,10 @@
             }
 
             console.log('✅ Input validation passed, showing loading...');
+            
+            // Hide language selection until summary is generated
+            document.getElementById('languageSelectionGroup').style.display = 'none';
+            
             showLoading("📚 Processing case study and generating summary... This may take a minute!");
             console.log('✅ Loading shown, starting try block...');
 
@@ -1340,6 +1802,9 @@
                     currentSummaryLanguage = 'English';
                     document.getElementById('summaryContent').innerHTML = data.summary;
                     document.getElementById('caseStudySummary').style.display = 'block';
+                    
+                    // Show language selection now that summary is generated
+                    document.getElementById('languageSelectionGroup').style.display = 'block';
                     
                     // Show result with summary and script
                     showResult(data);
@@ -1388,6 +1853,9 @@
                     currentSummaryLanguage = 'English';
                     document.getElementById('summaryContent').innerHTML = data.summary;
                     document.getElementById('caseStudySummary').style.display = 'block';
+                    
+                    // Show language selection now that summary is generated
+                    document.getElementById('languageSelectionGroup').style.display = 'block';
                     
                     // Show result with summary and script
                     showResult(data);
@@ -1468,16 +1936,99 @@
             }
         }
 
-        async function startQuiz() {
-            if (!currentCaseStudyContent) {
-                showError('No case study content available for quiz generation');
+        // Show quiz language selection popup
+        function showQuizLanguagePopup() {
+            const fileInputEl = document.getElementById('caseStudyFile');
+            const textInput = document.getElementById('caseStudyText').value.trim();
+            
+            const inputFile = (fileInputEl && fileInputEl.files && fileInputEl.files[0]) || null;
+            const dropFile = (droppedFiles && droppedFiles[0]) || null;
+            const fileToUse = selectedFile || dropFile || inputFile;
+            const hasFile = !!fileToUse;
+            
+            if (!hasFile && !textInput) {
+                showError('Please upload a case study file or paste text content first before generating a quiz.');
                 return;
             }
+            
+            document.getElementById('quizLanguageModal').style.display = 'block';
+        }
 
-            const quizLanguage = document.getElementById('quizLanguage').value;
+        // Close quiz language selection popup
+        function closeQuizLanguagePopup() {
+            document.getElementById('quizLanguageModal').style.display = 'none';
+        }
+
+        // Start quiz with selected language from popup
+        async function startQuizWithLanguage() {
+            const quizLanguage = document.getElementById('modalQuizLanguage').value;
+            closeQuizLanguagePopup();
+            
+            await startQuiz(quizLanguage);
+        }
+
+        async function startQuiz(quizLanguage = 'English') {
             showLoading(`🧠 Generating quiz questions in ${quizLanguage}... This may take a moment!`);
             
             try {
+                // If we don't have content yet, generate summary first (in background)
+                if (!currentCaseStudyContent) {
+                    console.log('🔄 No existing content, generating summary first...');
+                    showLoading(`📚 Processing content and generating quiz in ${quizLanguage}... This may take 1-2 minutes!`);
+                    
+                    const fileInputEl = document.getElementById('caseStudyFile');
+                    const textInput = document.getElementById('caseStudyText').value.trim();
+                    
+                    const inputFile = (fileInputEl && fileInputEl.files && fileInputEl.files[0]) || null;
+                    const dropFile = (droppedFiles && droppedFiles[0]) || null;
+                    const fileToUse = selectedFile || dropFile || inputFile;
+                    const hasFile = !!fileToUse;
+                    
+                    if (hasFile) {
+                        // Process file to get content for quiz
+                        const formData = new FormData();
+                        formData.append('file', fileToUse);
+                        
+                        const response = await fetch(`${API_BASE}/generate-case-study`, {
+                            method: 'POST',
+                            body: formData,
+                            signal: AbortSignal.timeout(120000)
+                        });
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.detail || 'Failed to process case study file');
+                        }
+                        
+                        const data = await response.json();
+                        currentCaseStudyContent = data.content;
+                        // Don't show the summary - just store it for quiz generation
+                        
+                    } else if (textInput) {
+                        // Process text input to get content for quiz
+                        const requestBody = { text: textInput };
+                        
+                        const response = await fetch(`${API_BASE}/generate-case-study-text`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestBody),
+                            signal: AbortSignal.timeout(120000)
+                        });
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.detail || 'Failed to process case study text');
+                        }
+                        
+                        const data = await response.json();
+                        currentCaseStudyContent = textInput;
+                        // Don't show the summary - just store it for quiz generation
+                    }
+                }
+                
+                // Now generate the quiz with the content we have
+                showLoading(`🧠 Creating quiz questions in ${quizLanguage}... Almost ready!`);
+                
                 const response = await fetch(`${API_BASE}/generate-quiz`, {
                     method: 'POST',
                     headers: {
@@ -1495,6 +2046,7 @@
                 }
 
                 const quizData = await response.json();
+                console.log('✅ Quiz data received:', quizData);
                 currentQuiz = quizData;
                 currentQuestionIndex = 0;
                 userAnswers = {};
@@ -1521,6 +2073,11 @@
                 }
                 
                 hideLoading();
+                
+                // Hide other sections and show quiz
+                document.getElementById('caseStudySummary').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                
                 showQuiz(currentQuiz);
                 
             } catch (error) {
@@ -1529,18 +2086,25 @@
         }
 
         function showQuiz(quizData) {
+            console.log('🎯 Showing quiz with data:', quizData);
             const quizSection = document.getElementById('quizSection');
+            console.log('🎯 Quiz section element:', quizSection);
             quizSection.innerHTML = `
-                <h3 style="text-align: center; margin-bottom: 20px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">
+                <h3 style="text-align: center; margin-bottom: 30px; color: #ffd700; text-transform: uppercase; letter-spacing: 1px;">
                     <i class="fas fa-brain"></i> ${quizData.title}
                 </h3>
-                <div class="terminal-quiz-progress">
-                    <div class="terminal-quiz-progress-bar" id="progressBar"></div>
+                <div class="terminal-quiz-progress" style="margin-bottom: 30px;">
+                    <div style="background: #333; height: 10px; border-radius: 5px; overflow: hidden;">
+                        <div class="terminal-quiz-progress-bar" id="progressBar" style="height: 100%; background: linear-gradient(90deg, #00ff00, #ffd700); width: 0%; transition: width 0.3s ease;"></div>
+                    </div>
                 </div>
-                <div id="quizContent">
+                <div id="quizContent" style="min-height: 300px;">
                     <!-- Quiz content will be loaded here -->
                 </div>
             `;
+            
+            // Scroll to quiz section
+            quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             
             loadQuestion(0);
         }
@@ -1636,8 +2200,10 @@
                 }
 
                 const results = await response.json();
+                console.log('✅ Quiz submission results received:', results);
                 hideLoading();
-                showScorecard(results);
+                
+                showScorecardPopup(results);
                 
             } catch (error) {
                 showError('Error: ' + error.message);
@@ -1645,11 +2211,15 @@
         }
 
         function showScorecard(results) {
+            alert('🎯 showScorecard function called!'); // Temporary debug alert
             console.log('🎯 Debug - showScorecard called with results:', results);
             console.log('🎯 Debug - results.question_results:', results.question_results);
-            console.log('🎯 Debug - results.details:', results.details);
+            console.log('🎯 Debug - results.score:', results.score);
+            console.log('🎯 Debug - results.total_questions:', results.total_questions);
+            console.log('🎯 Debug - results.percentage:', results.percentage);
             
             const quizSection = document.getElementById('quizSection');
+            console.log('🎯 Debug - quizSection element:', quizSection);
             const score = results.score;
             const percentage = results.percentage;
             
@@ -1699,7 +2269,7 @@
                     </div>
                     
                     <div style="margin-top: 30px;">
-                        <button class="terminal-btn terminal-btn-secondary" onclick="startQuiz()">
+                        <button class="terminal-btn terminal-btn-secondary" onclick="showQuizLanguagePopup()">
                             <i class="fas fa-redo"></i> RETAKE QUIZ
                         </button>
                         <button class="terminal-btn" onclick="downloadScorecard()">
@@ -1708,6 +2278,83 @@
                     </div>
                 </div>
             `;
+            
+            console.log('🎯 Debug - Scorecard HTML set, scrolling to view');
+            
+            // Add a visible alert for debugging
+            console.log('🎯 SCORECARD SHOULD BE VISIBLE NOW!');
+            
+            // Scroll to the scorecard
+            quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function showScorecardPopup(results) {
+            console.log('🎯 Debug - showScorecardPopup called with results:', results);
+            
+            const score = results.score;
+            const percentage = results.percentage;
+            
+            let scoreClass = 'terminal-score-poor';
+            let scoreMessage = 'Keep learning!';
+            let scoreColor = '#ff6b6b';
+            
+            if (percentage >= 80) {
+                scoreClass = 'terminal-score-excellent';
+                scoreMessage = 'Excellent work!';
+                scoreColor = '#00ff00';
+            } else if (percentage >= 60) {
+                scoreClass = 'terminal-score-good';
+                scoreMessage = 'Good job!';
+                scoreColor = '#ffd700';
+            }
+            
+            const scorecardContent = `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h3 style="color: #ffd700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; font-size: 24px;">
+                        <i class="fas fa-trophy"></i> QUIZ RESULTS
+                    </h3>
+                    <div style="font-size: 48px; font-weight: bold; color: ${scoreColor}; margin: 20px 0;">
+                        ${score}/${results.total_questions}
+                    </div>
+                    <div style="font-size: 32px; color: ${scoreColor}; margin-bottom: 10px;">
+                        ${percentage}%
+                    </div>
+                    <div style="font-size: 18px; color: #ffd700;">
+                        ${scoreMessage}
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; max-height: 300px; overflow-y: auto;">
+                    <h4 style="color: #00ff00; margin-bottom: 20px; text-align: center;">DETAILED RESULTS:</h4>
+                    ${results.question_results.map((result, index) => `
+                        <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid ${result.correct ? '#00ff00' : '#ff0000'}; margin: 10px 0; padding: 15px; border-radius: 5px;">
+                            <div style="color: #ffd700; font-weight: bold; margin-bottom: 10px; font-size: 14px;">
+                                Q${index + 1}: ${result.question}
+                            </div>
+                            <div style="color: ${result.correct ? '#00ff00' : '#ff0000'}; margin-bottom: 5px; font-weight: bold;">
+                                ${result.correct ? '✅ Correct' : '❌ Incorrect'}
+                            </div>
+                            ${!result.correct ? `<div style="color: #00ff00; font-size: 12px;">Correct Answer: Option ${result.correct_answer + 1}</div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="margin-top: 30px; text-align: center;">
+                    <button class="terminal-btn terminal-btn-secondary" onclick="closeScorecardPopup(); showQuizLanguagePopup();" style="margin-right: 10px;">
+                        <i class="fas fa-redo"></i> RETAKE QUIZ
+                    </button>
+                    <button class="terminal-btn" onclick="closeScorecardPopup();">
+                        <i class="fas fa-times"></i> CLOSE
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('scorecardModalContent').innerHTML = scorecardContent;
+            document.getElementById('scorecardModal').style.display = 'block';
+        }
+
+        function closeScorecardPopup() {
+            document.getElementById('scorecardModal').style.display = 'none';
         }
 
         function downloadScorecard() {
@@ -1804,9 +2451,101 @@
             }
         });
 
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 80;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (6 + Math.random() * 10) + 's';
+                
+                // Add random glow effect
+                if (Math.random() > 0.5) {
+                    particle.style.boxShadow = '0 0 10px currentColor';
+                }
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+
+        // Add typing effect to title
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Initialize cool effects
+        function initCoolEffects() {
+            createParticles();
+            
+            // Close modal when clicking outside of it
+            window.onclick = function(event) {
+                const quizModal = document.getElementById('quizLanguageModal');
+                const scorecardModal = document.getElementById('scorecardModal');
+                
+                if (event.target === quizModal) {
+                    closeQuizLanguagePopup();
+                }
+                if (event.target === scorecardModal) {
+                    closeScorecardPopup();
+                }
+            }
+            
+            // Add some random glitch effects
+            setInterval(() => {
+                const elements = document.querySelectorAll('.terminal-title, .matrix-text');
+                elements.forEach(el => {
+                    if (Math.random() < 0.1) { // 10% chance
+                        el.style.textShadow = '2px 0 #ffd700, -2px 0 #00ff00';
+                        setTimeout(() => {
+                            el.style.textShadow = '';
+                        }, 100);
+                    }
+                });
+            }, 2000);
+
+            // Add random screen flicker effect
+            setInterval(() => {
+                if (Math.random() < 0.05) { // 5% chance
+                    document.body.style.filter = 'brightness(1.2) contrast(1.1)';
+                    setTimeout(() => {
+                        document.body.style.filter = '';
+                    }, 100);
+                }
+            }, 3000);
+
+            // Add holographic interference
+            setInterval(() => {
+                const grid = document.querySelector('.holo-grid');
+                if (Math.random() < 0.1) {
+                    grid.style.opacity = '0.3';
+                    setTimeout(() => {
+                        grid.style.opacity = '1';
+                    }, 200);
+                }
+            }, 1000);
+        }
+
         // Initialize the page
-        console.log('🚀 Info Reeler Terminal Interface Loaded');
+        console.log('🚀 EDSURF Terminal Interface Loaded');
         console.log('🔧 All functions initialized successfully');
+        
+        // Initialize cool effects
+        initCoolEffects();
         
         // Add event listener as backup for the button (immediate execution)
         const generateBtn = document.getElementById('generateBtn');
