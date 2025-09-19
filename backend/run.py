@@ -6,9 +6,11 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Hardcoded Gemini API key
-GEMINI_API_KEY = "AIzaSyBALLCySBJgG34579ZD3OehRoktbVyecGc"
+# Hardcoded Gemini API key with fallback
+GEMINI_API_KEY = "AIzaSyD4ZEDaYrP5bD50fdeJfDqHzP7xJvBmb3M"
+FALLBACK_API_KEY = "AIzaSyBjjwI_efGOFQvijmHfP3N7coYgzEonp5s"
 print(f"🔑 Using hardcoded Gemini API Key: {GEMINI_API_KEY[:10]}...{GEMINI_API_KEY[-4:]}")
+print(f"🔑 Fallback Gemini API Key available: {FALLBACK_API_KEY[:10]}...{FALLBACK_API_KEY[-4:]}")
 
 print("✅ Environment variables loaded successfully!")
 print("🚀 Starting Info Reeler backend server...")

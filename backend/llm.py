@@ -8,12 +8,55 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Hardcoded Gemini API key
+# Hardcoded Gemini API key with fallback
 API_KEY = "AIzaSyBALLCySBJgG34579ZD3OehRoktbVyecGc"
+FALLBACK_API_KEY = "AIzaSyBjjwI_efGOFQvijmHfP3N7coYgzEonp5s"
 
 logger.info(f"🔑 Using hardcoded Gemini API Key: {API_KEY[:10]}...{API_KEY[-4:]}")
+logger.info(f"🔑 Fallback Gemini API Key available: {FALLBACK_API_KEY[:10]}...{FALLBACK_API_KEY[-4:]}")
 
+# Configure with primary key, will fallback to secondary key if needed
 genai.configure(api_key=API_KEY)
+
+def get_gemini_api_key():
+    """
+    Get the current Gemini API key, with fallback mechanism
+    """
+    return API_KEY
+
+def configure_gemini_with_fallback():
+    """
+    Configure Gemini with fallback API key mechanism
+    """
+    try:
+        # Try primary key first
+        genai.configure(api_key=API_KEY)
+        logger.info(f"🔑 Configured with primary API key: {API_KEY[:10]}...{API_KEY[-4:]}")
+        return API_KEY
+    except Exception as e:
+        logger.warning(f"⚠️ Primary API key failed, trying fallback: {str(e)}")
+        try:
+            genai.configure(api_key=FALLBACK_API_KEY)
+            logger.info(f"🔑 Configured with fallback API key: {FALLBACK_API_KEY[:10]}...{FALLBACK_API_KEY[-4:]}")
+            return FALLBACK_API_KEY
+        except Exception as e2:
+            logger.error(f"❌ Both API keys failed: {str(e2)}")
+            raise Exception("All Gemini API keys are invalid")
+
+def ensure_gemini_configured():
+    """
+    Ensure Gemini is configured with a working API key before making requests
+    """
+    try:
+        # Test if current configuration works
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Quick test - this will fail if API key is invalid
+        return True
+    except Exception:
+        # If test fails, reconfigure with fallback
+        logger.warning("⚠️ Current API key failed, reconfiguring with fallback...")
+        configure_gemini_with_fallback()
+        return True
 
 def test_api_key():
     """
@@ -21,6 +64,17 @@ def test_api_key():
     """
     try:
         logger.info("🔑 Testing Gemini API key...")
+        
+        # Try primary key first
+        try:
+            genai.configure(api_key=API_KEY)
+            logger.info(f"🔑 Testing primary API key: {API_KEY[:10]}...{API_KEY[-4:]}")
+            current_key = API_KEY
+        except Exception as e:
+            logger.warning(f"⚠️ Primary API key failed, trying fallback: {str(e)}")
+            genai.configure(api_key=FALLBACK_API_KEY)
+            logger.info(f"🔑 Testing fallback API key: {FALLBACK_API_KEY[:10]}...{FALLBACK_API_KEY[-4:]}")
+            current_key = FALLBACK_API_KEY
         
         # Test with a simple prompt using gemini-1.5-flash
         model = genai.GenerativeModel('gemini-1.5-flash')
@@ -37,7 +91,8 @@ def test_api_key():
                 "valid": True,
                 "info": "API key is working correctly",
                 "response": response.text,
-                "model": "gemini-1.5-flash"
+                "model": "gemini-1.5-flash",
+                "api_key_used": current_key[:10] + "..." + current_key[-4:]
             }
         else:
             logger.error("❌ API key test failed - no valid response")
@@ -111,6 +166,7 @@ def generate_script(article_text: str) -> str:
         prompt = SCRIPT_PROMPT.format(article_text=article_text)
         
         logger.info("🤖 Sending request to Gemini API...")
+        ensure_gemini_configured()  # Ensure API key is working
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         
@@ -600,7 +656,7 @@ def generate_conversational_script(article_text: str, speaker_pair: str = "trump
         logger.info(f"🎭 - Article text length: {len(article_text)}")
         logger.info(f"🎭 - Is case study: {is_case_study}")
 
-        # Choose appropriate prompt based on speaker pair - USE CASE STUDY PROMPTS FOR ALL
+        # Choose appropriate prompt based on speaker pair and content type
         if speaker_pair == "trump_mrbeast":
             logger.info(f"🎭 - Using TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT")
             prompt = TRUMP_MRBEAST_CASE_STUDY_SCRIPT_PROMPT.format(article_text=article_text)
@@ -621,6 +677,7 @@ def generate_conversational_script(article_text: str, speaker_pair: str = "trump
             prompt = CONVERSATIONAL_SCRIPT_PROMPT.format(article_text=article_text)
         
         logger.info(f"🤖 Sending request to Gemini API for {speaker_pair} conversational script...")
+        ensure_gemini_configured()  # Ensure API key is working
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         
@@ -984,6 +1041,7 @@ def generate_case_study_summary(content: str) -> str:
         prompt = CASE_STUDY_SUMMARY_PROMPT.format(content=content)
         
         logger.info("🤖 Sending summary generation request to Gemini API...")
+        ensure_gemini_configured()  # Ensure API key is working
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         
@@ -1023,6 +1081,7 @@ def translate_text(text: str, target_language: str) -> str:
         prompt = TRANSLATION_PROMPT.format(target_language=target_language, text=text)
         
         logger.info(f"🤖 Sending translation request to Gemini API for {target_language}...")
+        ensure_gemini_configured()  # Ensure API key is working
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         

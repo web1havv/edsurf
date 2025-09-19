@@ -18,9 +18,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Hardcoded Gemini API key
-GEMINI_API_KEY = "AIzaSyBALLCySBJgG34579ZD3OehRoktbVyecGc"
+# Hardcoded Gemini API key with fallback
+GEMINI_API_KEY = "AIzaSyD4ZEDaYrP5bD50fdeJfDqHzP7xJvBmb3M"
+FALLBACK_API_KEY = "AIzaSyBjjwI_efGOFQvijmHfP3N7coYgzEonp5s"
 logger.info(f"🔑 Using hardcoded Gemini API Key: {GEMINI_API_KEY[:10]}...{GEMINI_API_KEY[-4:]}")
+logger.info(f"🔑 Fallback Gemini API Key available: {FALLBACK_API_KEY[:10]}...{FALLBACK_API_KEY[-4:]}")
 
 logger.info("✅ Environment variables loaded successfully!")
 

@@ -13,9 +13,31 @@ import os
 
 logger = logging.getLogger(__name__)
 
-# Configure Gemini API with the provided key
+# Configure Gemini API with the provided key and fallback
 GEMINI_API_KEY = "AIzaSyBALLCySBJgG34579ZD3OehRoktbVyecGc"
-genai.configure(api_key=GEMINI_API_KEY)
+FALLBACK_API_KEY = "AIzaSyBjjwI_efGOFQvijmHfP3N7coYgzEonp5s"
+
+def configure_gemini_with_fallback():
+    """
+    Configure Gemini with fallback API key mechanism
+    """
+    try:
+        # Try primary key first
+        genai.configure(api_key=GEMINI_API_KEY)
+        logger.info(f"🔑 Configured with primary API key: {GEMINI_API_KEY[:10]}...{GEMINI_API_KEY[-4:]}")
+        return GEMINI_API_KEY
+    except Exception as e:
+        logger.warning(f"⚠️ Primary API key failed, trying fallback: {str(e)}")
+        try:
+            genai.configure(api_key=FALLBACK_API_KEY)
+            logger.info(f"🔑 Configured with fallback API key: {FALLBACK_API_KEY[:10]}...{FALLBACK_API_KEY[-4:]}")
+            return FALLBACK_API_KEY
+        except Exception as e2:
+            logger.error(f"❌ Both API keys failed: {str(e2)}")
+            raise Exception("All Gemini API keys are invalid")
+
+# Configure with fallback
+configure_gemini_with_fallback()
 
 QUIZ_GENERATION_PROMPT = """
 You are an expert quiz creator. Create a comprehensive 5-question quiz based on the provided case study content.
@@ -75,6 +97,7 @@ def generate_quiz_from_content(content: str) -> Dict[str, Any]:
         prompt = QUIZ_GENERATION_PROMPT.format(content=content)
         
         logger.info("🤖 Sending quiz generation request to Gemini API...")
+        configure_gemini_with_fallback()  # Ensure API key is working
         model = genai.GenerativeModel('gemini-1.5-flash')
         response = model.generate_content(prompt)
         
