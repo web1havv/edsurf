@@ -6,13 +6,9 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Check for required API keys - use fallback if not set
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD4ZEDaYrP5bD50fdeJfDqHzP7xJvBmb3M")
-if not GEMINI_API_KEY:
-    print("❌ Error: GEMINI_API_KEY environment variable is required!")
-    print("Please create a .env file with your API keys:")
-    print("GEMINI_API_KEY=your_gemini_api_key_here")
-    sys.exit(1)
+# Hardcoded Gemini API key
+GEMINI_API_KEY = "AIzaSyBALLCySBJgG34579ZD3OehRoktbVyecGc"
+print(f"🔑 Using hardcoded Gemini API Key: {GEMINI_API_KEY[:10]}...{GEMINI_API_KEY[-4:]}")
 
 print("✅ Environment variables loaded successfully!")
 print("🚀 Starting Info Reeler backend server...")

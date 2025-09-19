@@ -9,7 +9,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 # Hardcoded Gemini API key
-API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD4ZEDaYrP5bD50fdeJfDqHzP7xJvBmb3M")
+API_KEY = "AIzaSyBALLCySBJgG34579ZD3OehRoktbVyecGc"
 
 logger.info(f"🔑 Using hardcoded Gemini API Key: {API_KEY[:10]}...{API_KEY[-4:]}")
 
@@ -508,93 +508,88 @@ Generate ONLY clean, professional alternating dialogue with 4-6 short segments:
 """
 
 TRUMP_MRBEAST_SCRIPT_PROMPT = """
-Write an explosive 40-second conversation between Donald Trump and MrBeast discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
+Write a 1-minute comedy skit featuring Donald Trump as a loud and curious student and MrBeast as a patient teacher discussing this article.
 
 LENGTH REQUIREMENTS:
-- Total duration: 40 seconds (STRICTLY 40 seconds - NOT 20 or 60 seconds)
-- Each speaker should have 4-6 dialogue segments maximum
-- Each dialogue segment should be 6-10 words maximum
-- Keep individual responses short and punchy
+Total duration: 1 minute (60 seconds)
+Each speaker should have 4-6 dialogue segments
+Each dialogue segment should be 8-12 words maximum
+Keep individual responses short and punchy
 
-CHARACTER PERSONALITIES:
-- Trump: ULTRA-CONFIDENT businessman. Uses signature phrases: "Tremendous!", "Incredible!", "The best deal ever!", "Nobody does it better!", "Believe me!", "We're gonna win so much!". Talks about deals, success, winning, making America great, business achievements. Direct, bombastic, always emphasizing scale and success.
-- MrBeast: HYPER-ENERGETIC philanthropist and content creator. Uses phrases: "This is INSANE!", "We're changing the world!", "Let's give away millions!", "One person at a time!", "This is going viral!", "We're making history!". Focuses on helping people, massive giveaways, viral challenges, positive impact.
+Follow this structure:
+1. Trump opens the scene with a bold, curious question about the article topic.
+2. MrBeast responds with a clear, relatable explanation (often using money or challenge analogies).
+3. Trump follows up with exaggerated or simplified takes, keeping curiosity alive.
+4. MrBeast patiently explains again, making it simple, funny, and educational.
 
-CONVERSATION ENERGY LEVELS:
-- Trump: HIGH-ENERGY business enthusiasm, deal-making excitement
-- MrBeast: EXPLOSIVE positivity, philanthropic passion, viral content energy
-- Both: Building momentum throughout, getting MORE excited as conversation progresses
-- Create VIRAL MOMENTS and quotable lines
-- Make it SHAREABLE and MEMORABLE
+Tone:
+Educational first, funny second.
+Fast-paced, sharp, and character-driven.
+Humor should support the explanation, not overshadow it.
+Trump and MrBeast may use their famous catchphrases if it adds clarity.
 
-ENHANCED DIALOGUE REQUIREMENTS:
-- 4-6 alternating dialogue segments (40 seconds total - STRICTLY 40 seconds)
-- Trump speaks FIRST with EXPLOSIVE energy about the article
-- Each speaker gets equal time but BUILDS ENERGY throughout
-- Include SPECIFIC article details and facts
-- Make it EDUCATIONAL while being ENTERTAINING
-- Create moments that would go VIRAL on social media
-- Include their most ICONIC phrases and mannerisms
-- End with MASSIVE energy and collaboration
+CRITICAL REQUIREMENTS:
+Dialogue only. No narration.
+Skit must fit within 1 minute (60 seconds) of spoken conversation.
+Create ONLY natural dialogue between Trump and MrBeast
+NO annotations, scene markers, or formatting
+NO speaker labels like "Trump:" or "MrBeast:"
+NO asterisks, parentheses, or special formatting
+NO stage directions
+Just pure conversational dialogue that flows naturally
+Each speaker should have distinct personality and style
+Target length: 30 seconds when spoken
+Make it suitable for social media (TikTok/Instagram Reels)
 
-CONVERSATION FLOW STRUCTURE (40-second format):
-1. Trump EXPLODES with enthusiasm about article topic + specific facts
-2. MrBeast matches energy with philanthropic angle + viral potential
-3. Trump talks DEALS, BUSINESS SUCCESS + article applications
-4. MrBeast discusses HELPING MILLIONS + community impact
-5. EXPLOSIVE finale about working together + article impact
+CRITICAL FOCUS REQUIREMENT:
+STAY FOCUSED ON THE ACTUAL ARTICLE CONTENT
+Discuss the specific topics, facts, and details from the article
+Don’t get distracted by unrelated topics
+Make the conversation ABOUT the article content
+Reference specific points, data, or claims from the article
+Keep the humor and personality but centered on the article topic
+EXPLAIN THE CONCEPT IN DEPTH while keeping it accessible
 
-VIRAL CONTENT REQUIREMENTS:
-- Include QUOTABLE moments that would trend on social media
-- Reference current events and trending topics when relevant
-- Make it EDUCATIONAL - people should learn from the article
-- Create SHAREABLE sound bites
-- Include their most FAMOUS catchphrases naturally
-- Build to a CLIMACTIC ending
-- Make viewers want to SHARE and COMMENT
+CONVERSATION STRUCTURE:
+Trump always opens with the first line
+4-6 total segments (2-3 exchanges)
+Each speaker should have 2-3 speaking turns
+End with a natural conclusion about the article topic
 
-ARTICLE INTEGRATION:
-- Reference AT LEAST 3 specific facts/points from the article
-- Explain HOW the article content applies to their work
-- Connect article insights to Trump's business success
-- Connect article insights to MrBeast's philanthropic missions
-- Make the article content EXCITING and RELEVANT
-- Educate viewers about the article topic through their conversation
+REAL-WORLD DYNAMICS TO CAPTURE:
+Trump’s bombastic, simplified curiosity
+MrBeast’s patient, relatable, challenge/money-driven explanations
+Their contrast: political exaggeration vs YouTube clarity
+Light humor, but explanations should dominate
 
-ADVANCED PERSONALITY DETAILS:
-- Trump: Emphasize his deal-making, business success, American achievements, "winning" mentality, scale of his projects
-- MrBeast: Emphasize his massive giveaways, helping communities, viral challenges, positive impact, changing lives
-- Both: Show mutual respect while maintaining their distinct personalities
-- Include references to their actual achievements and projects
-- Make it feel like a REAL conversation between these two icons
+SEGMENT LENGTH:
+Each speaking turn should be 5-8 seconds when spoken
+Keep total duration to 30 seconds maximum
 
-CRITICAL TECHNICAL REQUIREMENTS:
-- Generate ONLY pure speech text - no formatting whatsoever
-- NO speaker labels, scene markers, or descriptions
-- Each speaking turn: 6-8 seconds when spoken aloud
-- Total duration: EXACTLY 40 seconds (STRICTLY 40 seconds)
-- Natural conversational flow with building energy
-- Include pauses and natural speech patterns
-- Make it sound like TWO PEOPLE actually talking
+HUMOR REQUIREMENTS:
+Keep humor light, playful, and supportive of education
+Capture their actual speaking patterns and quirks
+Use mild exaggerations and simple one-liners
+Avoid heavy scandal jokes—focus on clarity and accessibility
+Include Trump’s “huge,” “tremendous,” “believe me” style
+Include MrBeast’s challenge/giveaway framing for analogies
 
-ENERGY AND PACING:
-- Start HIGH ENERGY and build to EXPLOSIVE
-- Each speaker should MATCH and RAISE the other's energy
-- Include natural excitement, enthusiasm, and passion
-- Create moments of PEAK ENERGY that would go viral
-- End with MAXIMUM ENTHUSIASM about collaboration
+EXPLANATION REQUIREMENTS:
+Break down complex concepts in simple terms
+Use analogies with money, giveaways, or real-life stunts
+Make technical topics easy to understand
+Explain the "why" and "how" behind concepts
+Make it feel like a quick, funny classroom exchange
 
-FORMATTING RULES (CRITICAL):
-- Use ONLY normal punctuation: periods, commas, question marks, exclamation points
-- NO asterisks, parentheses, brackets, quotation marks around speech
-- NO stage directions, descriptions, or formatting
-- NO emphasis markers like **bold** or *italics*
-- Just pure, clean conversational speech
-- Separate each speaker's turn with double line breaks
+FORMATTING RULES:
+Use only normal punctuation
+NO asterisks, parentheses, brackets, or special characters
+NO stage directions or descriptions
+Just clean, natural speech
 
-Article Content: {article_text}
+Article: {article_text}
 
-Generate ONLY explosive, viral-worthy conversational dialogue with 4-6 alternating segments (STRICTLY 40 seconds total) that will make people want to SHARE, COMMENT, and LEARN:
+Generate ONLY clean, natural conversational dialogue with 4-6 short segments:
 """
 
 def generate_conversational_script(article_text: str, speaker_pair: str = "trump_mrbeast", is_case_study: bool = False) -> str:
@@ -833,96 +828,60 @@ Generate ONLY clean, natural conversational dialogue with 4-6 short segments:
 
 
 RONALDO_ISHOWSPEED_SCRIPT_PROMPT = """
-Write an explosive 40-second conversation between Cristiano Ronaldo (football legend) and iShowSpeed (gaming streamer) discussing this article content. This should be HIGHLY ENGAGING, viral-worthy content that showcases their authentic personalities while diving deep into the article topic.
-NEVER SAY ARTICLE, OR CASE STUDY WORDS IN THE SUMMARY. ONLY USE THE CONTENT OF THE ARTICLE. ALSO DONT SAY ANY PUNCTUATION WORD IN THE SUMMARY LIKE ASTERISKS, PARENTHESES, BRACKETS, ETC.
+Write a 1-minute educational skit featuring Cristiano Ronaldo as a patient teacher and IShowSpeed as a curious student discussing this article.
+
 LENGTH REQUIREMENTS:
-- Total duration: 40 seconds (STRICTLY 40 seconds - NOT 20 or 60 seconds)
-- Each speaker should have 4-6 dialogue segments maximum
-- Each dialogue segment should be 6-10 words maximum
-- Keep individual responses short and punchy
+Total duration: 1 minute (60 seconds)
+Each speaker should have 3-5 dialogue segments
+Each dialogue segment should be 8-12 words maximum
+Keep dialogue short, clear, and educational
 
-CHARACTER PERSONALITIES:
-- Ronaldo: CONFIDENT football legend and businessman. Uses signature phrases: "Siuuu!", "CR7!", "I am the best!", "Hard work pays off!", "Believe in yourself!", "Never give up!", "This is incredible!", "Amazing!", "Perfect!", "Vamos!", "Hala Madrid!", "I am Cristiano Ronaldo!", "The GOAT!", "Number one!", "Champion!". Talks about success, dedication, winning mentality, business ventures, and inspiring others. Direct, motivational, always emphasizing excellence and achievement. References his football career, records, and business empire.
-- iShowSpeed: HYPER-ENERGETIC gaming streamer and entertainer. Uses phrases: "Let's gooo!", "This is crazy!", "Oh my God!", "No way!", "This is insane!", "We're going viral!", "This is fire!", "Bro, this is amazing!", "Speed!", "What's good chat!", "We lit!", "This is bussin!", "No cap!", "Facts!", "On God!", "Deadass!", "This is wild!", "Chat, we're winning!". Focuses on entertainment, gaming, viral content, reactions, and connecting with fans. References his streaming career, gaming achievements, and community.
+Follow this structure:
+1. Ronaldo begins with a clear question or fact from the article.
+2. Speed asks direct, curious questions (simple, sometimes exaggerated).
+3. Ronaldo explains carefully using analogies (fitness, discipline, training, teamwork).
+4. Speed reacts with excitement but stays focused on learning.
+5. Ronaldo closes with a concise educational takeaway.
 
-ENERGY AND STYLE:
-- Ronaldo: Confident, motivational, business-focused, inspirational
-- iShowSpeed: Explosive reactions, gaming energy, viral content focus, fan engagement
-- Both: Building momentum throughout, getting MORE excited as conversation progresses
-- Create VIRAL MOMENTS and quotable lines
-- Make it SHAREABLE and MEMORABLE
+Tone:
+Educational first, light humor second.
+Ronaldo speaks calmly, structured, and confident.
+Speed is energetic and enthusiastic but genuinely trying to understand.
+Humor only enhances learning, never overshadows it.
 
-ENHANCED DIALOGUE REQUIREMENTS:
-- 4-6 alternating dialogue segments (40 seconds total - STRICTLY 40 seconds)
-- Ronaldo speaks FIRST with CONFIDENT energy about the article
-- Each speaker gets equal time but BUILDS ENERGY throughout
-- Include SPECIFIC article details and facts
-- Make it EDUCATIONAL while being ENTERTAINING
-- Create moments that would go VIRAL on social media
-- Include their most ICONIC phrases and mannerisms
-- End with MASSIVE energy and collaboration
+CRITICAL REQUIREMENTS:
+Dialogue only. No narration.
+No speaker labels or formatting.
+No stage directions or descriptions.
+Keep the focus on the article content.
+Explanations must be simple, accurate, and educational.
 
-CONVERSATION FLOW STRUCTURE (40-second format):
-1. Ronaldo opens with CONFIDENT analysis of article topic + specific insights
-2. iShowSpeed responds with EXPLOSIVE reactions + gaming/entertainment perspective
-3. Ronaldo discusses SUCCESS STRATEGIES + business applications
-4. iShowSpeed explores VIRAL POTENTIAL + fan engagement opportunities
-5. Ronaldo concludes with MOTIVATIONAL message + collaboration proposal
-6. iShowSpeed ends with MASSIVE entertainment value + community impact
+CONVERSATION STRUCTURE:
+4-6 total segments (2-3 exchanges).
+Ronaldo explains with real-world clarity.
+Speed asks questions that reflect the audience’s confusion.
+End with Ronaldo summarizing the key idea clearly.
 
-VIRAL CONTENT REQUIREMENTS:
-- Include QUOTABLE moments that would trend on social media
-- Reference current events and trending topics when relevant
-- Make it EDUCATIONAL - people should learn from the article
-- Create SHAREABLE sound bites
-- Include their most FAMOUS catchphrases naturally
-- Build to a CLIMACTIC ending
-- Make viewers want to SHARE and COMMENT
+REAL-WORLD DYNAMICS TO CAPTURE:
+Ronaldo as the disciplined teacher figure.
+Speed as the curious but impulsive student.
+Occasional catchphrases (“Siuu”, “Calma”) only if they help teaching.
+Keep the energy but always tied to the lesson.
 
-ARTICLE INTEGRATION:
-- Reference AT LEAST 3 specific facts/points from the article
-- Explain HOW the article content applies to their expertise
-- Connect article insights to Ronaldo's success mindset
-- Connect article insights to iShowSpeed's entertainment approach
-- Make complex topics ACCESSIBLE and ENGAGING
-- Include ACTIONABLE insights and lessons
+EXPLANATION REQUIREMENTS:
+Break down complex ideas into clear, simple steps.
+Use sports, training, or teamwork analogies.
+Make it accessible for a general audience.
+Ensure viewers leave understanding the article better.
 
-PERSONALITY AUTHENTICITY:
-- Ronaldo: Emphasize his work ethic, winning mentality, business acumen, motivational leadership. Include his football achievements (5 Ballon d'Or, Champions League records), business ventures (CR7 brand, hotels), and signature celebrations. Reference his dedication, training regime, and "never give up" attitude.
-- iShowSpeed: Emphasize his reactions, gaming passion, viral content creation, fan connection. Include his streaming achievements, gaming skills, community building, and signature catchphrases. Reference his energy, authenticity, and connection with his audience.
-- Both: Show mutual respect while maintaining their distinct personalities
-- Include references to their actual achievements and projects
-- Make it feel like a REAL conversation between these two icons
-- Ronaldo should be confident and motivational, iShowSpeed should be energetic and entertaining
+FORMATTING RULES:
+Use only normal punctuation.
+NO special characters, labels, or extra formatting.
+Just clean, natural dialogue.
 
-CRITICAL TECHNICAL REQUIREMENTS:
-- Generate ONLY pure speech text - no formatting whatsoever
-- NO speaker labels, scene markers, or descriptions
-- Each speaking turn: 6-8 seconds when spoken aloud
-- Total duration: EXACTLY 40 seconds (STRICTLY 40 seconds)
-- Natural conversational flow with building energy
-- Include pauses and natural speech patterns
-- Make it sound like TWO PEOPLE actually talking
+Article: {article_text}
 
-ENERGY AND PACING:
-- Start HIGH ENERGY and build to EXPLOSIVE
-- Each speaker should MATCH and RAISE the other's energy
-- Include natural excitement, enthusiasm, and passion
-- Create moments of genuine surprise and amazement
-- Build to a CLIMACTIC, memorable ending
-
-FORMATTING RULES (CRITICAL):
-- Use ONLY normal punctuation: periods, commas, question marks, exclamation points
-- NO asterisks, parentheses, brackets, quotation marks around speech
-- NO stage directions, descriptions, or formatting
-- NO speaker labels like "Ronaldo:" or "iShowSpeed:"
-- NO annotations, scene markers, or special formatting
-- Just pure, clean conversational speech
-- Separate each speaker's turn with double line breaks
-
-Article Content: {article_text}
-
-Generate ONLY explosive, viral-worthy conversational dialogue with 4-6 alternating segments (STRICTLY 40 seconds total) that will make people want to SHARE, COMMENT, and LEARN:
+Generate ONLY natural conversational dialogue with 4-6 short segments:
 """
 
 RONALDO_ISHOWSPEED_CASE_STUDY_SCRIPT_PROMPT = """

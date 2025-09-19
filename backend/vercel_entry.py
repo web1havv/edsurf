@@ -9,11 +9,9 @@ import sys
 # Add the backend directory to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# Check for required API keys (Vercel will provide these via environment variables)
-if not os.getenv("GEMINI_API_KEY"):
-    print("❌ Error: GEMINI_API_KEY environment variable is required!")
-    print("Please set the GEMINI_API_KEY environment variable in Vercel dashboard")
-    sys.exit(1)
+# Hardcoded Gemini API key
+GEMINI_API_KEY = "AIzaSyBALLCySBJgG34579ZD3OehRoktbVyecGc"
+print(f"🔑 Using hardcoded Gemini API Key: {GEMINI_API_KEY[:10]}...{GEMINI_API_KEY[-4:]}")
 
 print("✅ Environment variables loaded successfully!")
 print("🚀 Starting Info Reeler backend server on Vercel...")

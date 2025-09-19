@@ -14,7 +14,7 @@ import os
 logger = logging.getLogger(__name__)
 
 # Configure Gemini API with the provided key
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD4ZEDaYrP5bD50fdeJfDqHzP7xJvBmb3M")
+GEMINI_API_KEY = "AIzaSyBALLCySBJgG34579ZD3OehRoktbVyecGc"
 genai.configure(api_key=GEMINI_API_KEY)
 
 QUIZ_GENERATION_PROMPT = """
