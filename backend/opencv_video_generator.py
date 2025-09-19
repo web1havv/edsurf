@@ -259,8 +259,8 @@ class OpenCVVideoGenerator:
             baburao_img = self.load_and_resize_image("assets/baburao.png")
             arpit_img = self.load_and_resize_image("assets/arpit.png")
             mrbeast_img = self.load_and_resize_image("assets/mrbeast.png")
-            ronaldo_img = self.load_and_resize_image("assets/WhatsApp Image 2025-09-07 at 01.44.46.jpeg")
-            ishowspeed_img = self.load_and_resize_image("assets/e1e58108-2c92-4e61-ade3-1d580a3614c4.jpeg")
+            ronaldo_img = self.load_and_resize_image("assets/ronaldo.png")
+            ishowspeed_img = self.load_and_resize_image("assets/speed.png")
 
 
             logger.info(f"✅ [{request_id}] Speaker images loaded and processed")

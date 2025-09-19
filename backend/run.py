@@ -6,8 +6,9 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Check for required API keys
-if not os.getenv("GEMINI_API_KEY"):
+# Check for required API keys - use fallback if not set
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD4ZEDaYrP5bD50fdeJfDqHzP7xJvBmb3M")
+if not GEMINI_API_KEY:
     print("❌ Error: GEMINI_API_KEY environment variable is required!")
     print("Please create a .env file with your API keys:")
     print("GEMINI_API_KEY=your_gemini_api_key_here")

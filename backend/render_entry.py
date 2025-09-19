@@ -18,8 +18,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Check for required API keys
-if not os.getenv("GEMINI_API_KEY"):
+# Check for required API keys - use fallback if not set
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD4ZEDaYrP5bD50fdeJfDqHzP7xJvBmb3M")
+if not GEMINI_API_KEY:
     logger.error("❌ Error: GEMINI_API_KEY environment variable is required!")
     logger.error("Please set the GEMINI_API_KEY environment variable in Render dashboard")
     sys.exit(1)
