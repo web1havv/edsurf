@@ -508,7 +508,7 @@ Generate ONLY clean, professional alternating dialogue with 4-6 short segments:
 """
 
 TRUMP_MRBEAST_SCRIPT_PROMPT = """
-Write a 1-minute comedy skit featuring Donald Trump as a loud and curious student and MrBeast as a patient teacher discussing this article.
+Write a 30 second comedy skit featuring Donald Trump as a loud and curious student and MrBeast as a patient teacher discussing this article.
 
 LENGTH REQUIREMENTS:
 Total duration: 1 minute (60 seconds)
