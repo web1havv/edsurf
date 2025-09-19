@@ -116,7 +116,7 @@ async def generate_info_reel(article: ArticleInput):
         # Step 2: Generate script (async)
         logger.info(f"🤖 [{request_id}] Step 2: Generating script with Gemini AI")
         loop = asyncio.get_event_loop()
-        script = await loop.run_in_executor(None, generate_conversational_reel, content, article.speaker_pair,False)
+        script = await loop.run_in_executor(None, generate_conversational_script, content, article.speaker_pair, False)
         logger.info(f"📜 [{request_id}] Script generated successfully")
         logger.info(f"📜 [{request_id}] Script length: {len(script)} characters")
         logger.debug(f"📜 [{request_id}] Script preview: {script[:200]}...")
